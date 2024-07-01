@@ -69,13 +69,13 @@ public class Burn(int duration, double applyChance) : DamageStatus(duration, app
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
 		return base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"🔥 **{target.Stand!.Name} ({target.User.Mention}) burns for `{target.DamageOverTime}` damage**")
+			.WithDescription($"🔥 **{target.Stand!.CoolName} ({target.User.Mention}) burns for `{target.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.Orange));
 	}
 
 	protected override void Apply(BattlePlayer target)
 	{
-		target.DamageOverTime = (int)Math.Ceiling(target.DamageReceived * 0.1);
+		target.DamageOverTime = target.DamageReceived * 2;
 		base.Apply(target);
 	}
 }
@@ -87,7 +87,7 @@ public class Bleed(int duration, double applyChance) : DamageStatus(duration, ap
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
 		return base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"🩸 **{target.Stand!.Name} ({target.User.Mention}) bleeds for `{target.DamageOverTime}` damage**")
+			.WithDescription($"🩸 **{target.Stand!.CoolName} ({target.User.Mention}) bleeds for `{target.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.DarkRed));
 	}
 
@@ -105,7 +105,7 @@ public class Poison(int duration, double applyChance) : DamageStatus(duration, a
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
 		var output = base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"💀 **{target.Stand!.Name} ({target.User.Mention}) suffers poison for `{target.DamageOverTime}` damage**")
+			.WithDescription($"💀 **{target.Stand!.CoolName} ({target.User.Mention}) suffers poison for `{target.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.Purple));
 		target.DamageOverTime -= (int)Math.Ceiling(target.DamageOverTime * 0.3);
 		return output;
@@ -199,7 +199,7 @@ public class Sleep(int duration, double applyChance) : TurnSkipStatus(duration, 
 		target.ReduceStatusDuration(remove: true);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"⏰ **{target.Stand!.Name} ({target.User.Mention}) has woken up!**")
+			.WithDescription($"⏰ **{target.Stand!.CoolName} ({target.User.Mention}) has woken up!**")
 			.WithColor(DiscordColor.Blurple));
 	}
 }

@@ -1,6 +1,7 @@
 using DSharpPlus;
+using DSharpPlus.Commands;
+using DSharpPlus.Commands.ContextChecks;
 using DSharpPlus.Entities;
-using DSharpPlus.SlashCommands;
 using JoJoBot.Handlers;
 using JoJoData.Helpers;
 using JoJoData.Library;
@@ -8,18 +9,16 @@ using JoJoData.Library;
 namespace JoJoBot.Commands.Slash;
 
 
-public class BattleCommand : ApplicationCommandModule
+public class BattleCommand
 {
-	[GuildOnly]
-	[SlashCommand("battle", "Challenge a friend to a battle")]
-	public async Task Execute(InteractionContext ctx,
-		[Option("player", "Friend you want to have a stand off with")] DiscordUser player)
+	[Command("battle"), RequireGuild]
+	public async Task Execute(CommandContext ctx, DiscordUser player)
 	{
 		try 
 		{
 			if (player.IsBot || player == ctx.User) 
 			{
-				await ctx.CreateResponseAsync("https://tenor.com/view/jotaro-jojo-jojo-bizarre-adventure-bike-jojo-bike-gif-4228712888990777929");
+				await ctx.RespondAsync("https://tenor.com/view/jotaro-jojo-jojo-bizarre-adventure-bike-jojo-bike-gif-4228712888990777929");
 				return;
 			}
 			var player1 = new Player(ctx.Guild!, ctx.User);
@@ -37,8 +36,8 @@ public class BattleCommand : ApplicationCommandModule
 				.WithColor(DiscordColor.Gold)
 				.WithFooter("Do you accept?", player2.User.AvatarUrl);
 
-			var acceptBtn = new DiscordButtonComponent(ButtonStyle.Success, $"{IDHelper.Battle.PLAYER_CHALLENGE_ACCEPT}\\{player1.User.Id}\\{player2.User.Id}", "Accept");
-			var declineBtn = new DiscordButtonComponent(ButtonStyle.Danger, $"{IDHelper.Battle.PLAYER_CHALLENGE_DECLINE}\\{player1.User.Id}\\{player2.User.Id}", "Decline");
+			var acceptBtn = new DiscordButtonComponent(DiscordButtonStyle.Success, $"{IDHelper.Battle.PLAYER_CHALLENGE_ACCEPT}\\{player1.User.Id}\\{player2.User.Id}", "Accept");
+			var declineBtn = new DiscordButtonComponent(DiscordButtonStyle.Danger, $"{IDHelper.Battle.PLAYER_CHALLENGE_DECLINE}\\{player1.User.Id}\\{player2.User.Id}", "Decline");
 
 			var msg = new DiscordMessageBuilder()
 				.WithContent(player2.User.Mention)
@@ -46,7 +45,7 @@ public class BattleCommand : ApplicationCommandModule
 				.AddEmbed(embed)
 				.AddComponents(new DiscordComponent[] {acceptBtn, declineBtn});
 
-			await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(msg));
+			await ctx.RespondAsync(msg);
 		}
 		catch (Exception ex) 
 		{

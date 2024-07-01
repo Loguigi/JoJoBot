@@ -66,7 +66,7 @@ public class BattlePlayer : Player
 	public BattlePlayer(BattlePlayer player) : base(player.Guild, player.User)
 	{
 		Client = player.Client;
-		Hp = player.Hp;
+		_hp = player._hp;
 		MaxHp = player.MaxHp;
 		Barrier = player.Barrier;
 		Mp = player.Mp;
@@ -76,6 +76,7 @@ public class BattlePlayer : Player
 		CritDamageMultiplier = player.CritDamageMultiplier;
 		Status = player.Status;
 		StatusDuration = player.StatusDuration;
+		DamageOverTime = player.DamageOverTime;
 		Buff = player.Buff;
 		BuffDuration = player.BuffDuration;
 	}
@@ -179,7 +180,7 @@ public class BattlePlayer : Player
 		var info = new StringBuilder();
 		if (Barrier > 0)
 		{
-			info.Append($"{DiscordEmoji.FromName(s, ":blue_heart:", false)} HP: {Hp + Barrier} / {MaxHp}\n");
+			info.Append($"{DiscordEmoji.FromName(s, ":blue_heart:", false)} HP: {Hp} / {MaxHp}\n");
 		}
 		else
 		{
@@ -188,10 +189,10 @@ public class BattlePlayer : Player
 		info.Append($"{DiscordEmoji.FromName(s, ":gem:", false)} MP: {Mp} / {BattleConstants.BASE_MP}\n");
 		info.Append($"{DiscordEmoji.FromName(s, ":crossed_swords:", false)} Damage: {MinDamage} - {MaxDamage}\n");
 		if (Buff != null)
-			info.Append($"{DiscordEmoji.FromName(s, ":up_arrow:", false)} Buff: {Buff.GetName(s)} `({Buff.Duration})`\n");
+			info.Append($"{DiscordEmoji.FromName(s, ":up_arrow:", false)} Buff: {Buff.GetName(s)} `({BuffDuration})`\n");
 
 		if (Status != null)
-			info.Append($"{DiscordEmoji.FromName(s, ":down_arrow:", false)} Status: {Status.GetName(s)} `({Status.Duration})`\n");
+			info.Append($"{DiscordEmoji.FromName(s, ":down_arrow:", false)} Status: {Status.GetName(s)} `({StatusDuration})`\n");
 
 		return info.ToString();
 	}

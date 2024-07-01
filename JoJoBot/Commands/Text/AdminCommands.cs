@@ -1,14 +1,14 @@
 using DSharpPlus.Entities;
-using DSharpPlus.CommandsNext;
 using JoJoData.Library;
 using JoJoData.Controllers;
-using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Commands;
+using DSharpPlus.Commands.ContextChecks;
 
 namespace JoJoBot.Commands.Text;
 
-public class AdminCommands : BaseCommandModule
+public class AdminCommands
 {
-	[Command("givestand")]
+	[Command("givestand"), RequireGuild]
 	public async Task GiveStand(CommandContext ctx, DiscordUser user, int id) 
 	{
 		var player = new Player(ctx.Guild!, user);

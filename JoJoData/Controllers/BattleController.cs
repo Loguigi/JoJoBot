@@ -124,7 +124,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 	{
 		var embed = new DiscordEmbedBuilder()
 			.WithAuthor($"{CurrentPlayer.User.GlobalName}'s turn", "", CurrentPlayer.User.AvatarUrl)
-			.WithTitle($"「{CurrentPlayer.Stand!.Name}」")
+			.WithTitle($"{CurrentPlayer.Stand!.CoolName}")
 			.WithThumbnail(CurrentPlayer.Stand.ImageUrl)
 			.WithColor(DiscordColor.Aquamarine)
 			.WithFooter($"Round {CurrentRound}");
@@ -145,7 +145,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 	{
 		foreach (var msg in msgs.Where(x => x is not null)) 
 		{
-			await Channel!.SendMessageAsync(msg!);
+			await Channel.SendMessageAsync(msg);
 			await Task.Delay(1000);
 		}
 	}

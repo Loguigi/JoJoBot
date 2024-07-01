@@ -8,7 +8,7 @@ public abstract class Attack(double damage)
 {
 	public double DamageMultiplier { get; private set; } = damage;
 	
-	public virtual string GetDescription(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":crossed_swords:")} Damage: {DamageMultiplier}x\n";
+	public virtual string GetDescription(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":dagger:")}: {DamageMultiplier}x";
 	
 	public virtual DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender) 
 	{
@@ -17,7 +17,7 @@ public abstract class Attack(double damage)
 		defender.ReceiveDamage(dmg);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"{DiscordEmoji.FromName(attacker.Client, ":crossed_swords:")} **{attacker.Stand!.Name} ({attacker.User.Mention}) attacks {(crit ? $"__with a {DiscordEmoji.FromName(attacker.Client, ":sparkles:")} CRIT__" : "")} for `{dmg}` damage**")
+			.WithDescription($"{DiscordEmoji.FromName(attacker.Client, ":crossed_swords:")} **{attacker.Stand!.CoolName} ({attacker.User.Mention}) attacks {(crit ? $"with a {DiscordEmoji.FromName(attacker.Client, ":sparkles:")} CRIT" : "")} for `{dmg}` damage**")
 			.WithFooter($"{DiscordEmoji.FromName(attacker.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(attacker.Client, ":arrow_right:")} {DiscordEmoji.FromName(attacker.Client, ":heart:")} {defender.Hp}", defender.User.AvatarUrl)
 			.WithColor(DiscordColor.Red));
 	}
@@ -47,7 +47,7 @@ public class BypassProtectAttack(double damage) : Attack(damage)
 {
 	public override string GetDescription(DiscordClient s)
 	{
-		return base.GetDescription(s) + $"{DiscordEmoji.FromName(s, ":axe:")} Pierces enemy defense\n";
+		return base.GetDescription(s) + $"{DiscordEmoji.FromName(s, ":axe:")} Pierce ";
 	}
 	
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
@@ -68,7 +68,7 @@ public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(da
 
 	public override string GetDescription(DiscordClient s)
 	{
-		return base.GetDescription(s) + $"{DiscordEmoji.FromName(s, ":tornado:")} Multihit ({MinHits}-{MaxHits} hits)\n";
+		return base.GetDescription(s) + $"{DiscordEmoji.FromName(s, ":tornado:")}: ({MinHits}-{MaxHits} hits) ";
 	}
 	
 	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
@@ -86,7 +86,7 @@ public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(da
 		defender.ReceiveDamage(sum);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"{DiscordEmoji.FromName(attacker.Client, ":crossed_swords:")} **{attacker.Stand!.Name} ({attacker.User.Mention}) attacks {hits} times {(critCount > 0 ? $"__with {DiscordEmoji.FromName(attacker.Client, ":sparkles:")} CRIT(x{critCount})__" : "")} for `{sum}` damage**")
+			.WithDescription($"{DiscordEmoji.FromName(attacker.Client, ":crossed_swords:")} **{attacker.Stand!.CoolName} ({attacker.User.Mention}) attacks {hits} times {(critCount > 0 ? $"__with {DiscordEmoji.FromName(attacker.Client, ":sparkles:")} CRIT(x{critCount})__" : "")} for `{sum}` damage**")
 			.WithFooter($"{DiscordEmoji.FromName(attacker.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(attacker.Client, ":arrow_right:")} {DiscordEmoji.FromName(attacker.Client, ":heart:")} {defender.Hp}", defender.User.AvatarUrl)
 			.WithColor(DiscordColor.Red));
 	}
@@ -98,7 +98,7 @@ public class CritChanceIncreaseAttack(double damage, double increase) : Attack(d
 
 	public override string GetDescription(DiscordClient s)
 	{
-		return base.GetDescription(s) + $"{DiscordEmoji.FromName(s, ":sparkles:")} Crit Chance Increase: +{CritChanceIncrease * 100}%\n";
+		return base.GetDescription(s) + $"{DiscordEmoji.FromName(s, ":sparkles:")} Crit Chance +{CritChanceIncrease * 100}% ";
 	}
 	
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)

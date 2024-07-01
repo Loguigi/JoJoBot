@@ -25,7 +25,7 @@ public class Heal(double healPercent) : StatChange
 		target.Heal(heal);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"{DiscordEmoji.FromName(target.Client, ":sparkling_heart:")} **{target.Stand!.Name} ({target.User.Mention}) heals for `{heal}` HP**")
+			.WithDescription($"{DiscordEmoji.FromName(target.Client, ":sparkling_heart:")} **{target.Stand!.CoolName} ({target.User.Mention}) heals for `{heal}` HP**")
 			.WithColor(DiscordColor.Rose)
 			.WithFooter($"{DiscordEmoji.FromName(target.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(target.Client, ":arrow_right:")} {DiscordEmoji.FromName(target.Client, ":heart:")} {target.Hp}", target.User.AvatarUrl));
 	}
@@ -47,7 +47,7 @@ public class Barrier(double barrier) : StatChange
 		target.GrantBarrier(barrier);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"{DiscordEmoji.FromName(target.Client, ":shield:")} **{target.Stand!.Name} ({target.User.Mention}) creates a barrier for `{barrier}` HP**")
+			.WithDescription($"{DiscordEmoji.FromName(target.Client, ":shield:")} **{target.Stand!.CoolName} ({target.User.Mention}) creates a barrier for `{barrier}` HP**")
 			.WithColor(DiscordColor.CornflowerBlue)
 			.WithFooter($"{DiscordEmoji.FromName(target.Client, ":blue_heart:")} {barrierBefore} {DiscordEmoji.FromName(target.Client, ":arrow_right:")} {DiscordEmoji.FromName(target.Client, ":blue_heart:")} {target.Barrier}", target.User.AvatarUrl));
 	}

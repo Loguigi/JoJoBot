@@ -1,12 +1,11 @@
 ﻿using DSharpPlus;
 using JoJoData.Controllers;
-using DSharpPlus.Entities;
-using DSharpPlus.SlashCommands;
-using DSharpPlus.CommandsNext;
-using JoJoBot.Commands.Slash;
 using JoJoBot.Handlers;
-using JoJoBot.Commands.Text;
-using Microsoft.Extensions.Logging;
+using DSharpPlus.Commands;
+using DSharpPlus.Commands.Processors.TextCommands;
+using DSharpPlus.Commands.Processors.TextCommands.Parsing;
+using DSharpPlus.Commands.Processors.SlashCommands;
+using JoJoData;
 
 namespace JoJoBot;
 
@@ -16,28 +15,27 @@ public class Bot
 
 	public static async Task Main() 
 	{
+		var builder = DiscordClientBuilder.CreateDefault(Config.Token, DiscordIntents.All);
+		builder.ConfigureEventHandlers
+		(
+			b => b.HandleComponentInteractionCreated(BattleHandlers.HandleAcceptChallenge)
+				.HandleComponentInteractionCreated(BattleHandlers.HandleDeclineChallenge)
+				.HandleComponentInteractionCreated(BattleHandlers.HandleAbilitySelect)
+		);
+		var client = builder.Build();
 
-		var client = new DiscordClient(new DiscordConfiguration()
+		var commands = client.UseCommands(new CommandsConfiguration()
 		{
-			Intents = DiscordIntents.All,
-			TokenType = TokenType.Bot,
-			Token = Environment.GetEnvironmentVariable("JOJOTOKEN") ?? throw new Exception("No token set"),
-			AutoReconnect = true,
-			LogTimestampFormat = "MMM dd yyyy - hh:mm:ss tt",
-			MinimumLogLevel = LogLevel.Debug,
+			DebugGuildId = 0,
+			RegisterDefaultCommandProcessors = true
 		});
-
-		var text = client.UseCommandsNext(new CommandsNextConfiguration()
+		commands.AddCommands(typeof(Bot).Assembly);
+		var text = new TextCommandProcessor(new()
 		{
-			StringPrefixes = ["--"],
+			PrefixResolver = new DefaultPrefixResolver(true, "--").ResolvePrefixAsync
 		});
-		text.RegisterCommands<AdminCommands>();
-		var slash = client.UseSlashCommands();
-		slash.RegisterCommands<BattleCommand>();
-
-		client.ComponentInteractionCreated += BattleHandlers.HandleAcceptChallenge;
-		client.ComponentInteractionCreated += BattleHandlers.HandleDeclineChallenge;
-		client.ComponentInteractionCreated += BattleHandlers.HandleAbilitySelect;
+		var slash = new SlashCommandProcessor();
+		await commands.AddProcessorsAsync(text, slash);
 
 		DiscordController.Create(client);
 		StandLoader.Load();

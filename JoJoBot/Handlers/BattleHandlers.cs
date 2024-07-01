@@ -10,7 +10,7 @@ namespace JoJoBot.Handlers;
 
 public static class BattleHandlers
 {
-	public static async Task HandleDeclineChallenge(DiscordClient s, ComponentInteractionCreateEventArgs e) 
+	public static async Task HandleDeclineChallenge(DiscordClient s, ComponentInteractionCreatedEventArgs e) 
 	{
 		if (!e.Id.Contains(IDHelper.Battle.PLAYER_CHALLENGE_DECLINE) || e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, PLAYER2_INDEX))) 
 		{
@@ -34,7 +34,7 @@ public static class BattleHandlers
 		await e.Channel.SendMessageAsync(msg);
 	}
 	
-	public static async Task HandleAcceptChallenge(DiscordClient s, ComponentInteractionCreateEventArgs e) 
+	public static async Task HandleAcceptChallenge(DiscordClient s, ComponentInteractionCreatedEventArgs e) 
 	{
 		if (!e.Id.Contains(IDHelper.Battle.PLAYER_CHALLENGE_ACCEPT) || e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, PLAYER2_INDEX)))
 		{
@@ -56,7 +56,7 @@ public static class BattleHandlers
 		}
 	}
 	
-	public static async Task HandleAbilitySelect(DiscordClient s, ComponentInteractionCreateEventArgs e) 
+	public static async Task HandleAbilitySelect(DiscordClient s, ComponentInteractionCreatedEventArgs e) 
 	{
 		if (!e.Id.Contains(IDHelper.Battle.ABILITY_SELECT)) 
 		{
@@ -66,7 +66,7 @@ public static class BattleHandlers
 		
 		if (e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, CURRENT_PLAYER_INDEX))) 
 		{
-			await e.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(new DiscordMessageBuilder().WithContent("It's not your turn!")).AsEphemeral());
+			await e.Interaction.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(new DiscordMessageBuilder().WithContent("It's not your turn!")).AsEphemeral());
 			return;
 		}
 
@@ -83,7 +83,7 @@ public static class BattleHandlers
 		
 		if (!battle.Rounds[battle.CurrentRound].AbilitySelectCheck(ability, DiscordController.Client!, out var msg)) 
 		{
-			await e.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(msg).AsEphemeral());
+			await e.Interaction.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(msg).AsEphemeral());
 			return;
 		}
 

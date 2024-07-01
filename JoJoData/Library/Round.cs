@@ -62,7 +62,12 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 
 	public void Execute(Ability ability, out List<DiscordMessageBuilder?> battleMsgs)
 	{
-		battleMsgs = [];
+		battleMsgs =
+		[
+			new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithDescription($"🌟 {CurrentPlayer.Stand!.CoolName} ({CurrentPlayer.User.Mention}) uses {ability.Name}!")
+				.WithColor(DiscordColor.Gold))
+		];
 		CurrentPlayer.UseMP(ability.MpCost);
 		
 		if (ability is AttackAbility attack)

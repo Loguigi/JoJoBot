@@ -5,6 +5,7 @@ using System.Runtime.InteropServices.Marshalling;
 using Dapper;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using JoJoData;
 namespace JoJoData.Data;
 
 public class DataAccess 
@@ -57,5 +58,5 @@ public class DataAccess
 		}
 	}
 
-	private readonly string? _connectionString = Environment.GetEnvironmentVariable("JOJOCNN");
+	private readonly string? _connectionString = Config.ConnectionString;
 }
