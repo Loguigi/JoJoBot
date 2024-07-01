@@ -35,7 +35,7 @@ public abstract class Attack(double damage)
 
 	protected static double RollCrit(double critChance, double critDamage, out bool crit)
 	{
-		var critDmg = RandomHelper.RNG.NextDouble() < critChance ? 1 : critDamage;
+		var critDmg = RandomHelper.RNG.NextDouble() < critChance ? critDamage : 1;
 		crit = critDmg > 1;
 		return critDmg;
 	}
