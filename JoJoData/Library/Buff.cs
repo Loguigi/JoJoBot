@@ -15,7 +15,8 @@ public abstract class Buff(int duration)
 		target.BuffDuration = Duration;
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"⬆️ **{target.User.Mention}: {GetName(target.Client)} for `{Duration}` turns**")
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription($"⬆️ **{GetName(target.Client)} for `{Duration}` turns**")
 			.WithColor(DiscordColor.Aquamarine));
 	}
 
@@ -28,7 +29,8 @@ public abstract class Buff(int duration)
 		else 
 		{
 			return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-				.WithDescription($"**{target.User.Mention}: {GetName(target.Client)} has worn off**")
+				.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+				.WithDescription($"**{GetName(target.Client)} has worn off**")
 				.WithColor(DiscordColor.Green));
 		}
 	}

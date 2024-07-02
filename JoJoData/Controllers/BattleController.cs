@@ -8,6 +8,7 @@ using JoJoData.Library;
 using JoJoData.Abilities;
 using Dapper;
 using JoJoData.Models;
+using System.Data;
 
 namespace JoJoData.Controllers;
 
@@ -145,7 +146,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 	{
 		foreach (var msg in msgs.Where(x => x is not null)) 
 		{
-			await Channel.SendMessageAsync(msg);
+			await Channel.SendMessageAsync(msg!);
 			await Task.Delay(1000);
 		}
 	}
@@ -171,6 +172,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 		try 
 		{
 			var param = new DynamicParameters(new BattleModel(this));
+			param.Add("@Id", Id, DbType.Int32, ParameterDirection.InputOutput);
 			var result = SaveData(StoredProcedures.SAVE_BATTLE_DATA, param);
 			if (result.Status != StatusCodes.SUCCESS) throw new Exception(result.Message);
 

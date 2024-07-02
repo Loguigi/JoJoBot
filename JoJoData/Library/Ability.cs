@@ -9,6 +9,7 @@ namespace JoJoData.Library;
 public abstract class Ability
 {
 	public string Name { get; set; } = string.Empty;
+	public string CoolName => $"「{Name}」";
 	public string Description { get; protected set; } = string.Empty;
 	public int MpCost { get; protected set; } = 0;
 	
@@ -25,7 +26,7 @@ public abstract class Ability
 		};
 		
 		return new DiscordSelectComponentOption(
-			$"{Name} {DiscordEmoji.FromName(s, ":gem:", false)} {MpCost} MP",
+			$"{CoolName} {DiscordEmoji.FromName(s, ":gem:", false)} {MpCost} MP",
 			abilityNum.ToString(),
 			FormatDescription(s),
 			false,

@@ -23,7 +23,8 @@ public abstract class Status(int duration, double applyChance) {
 
 		Apply(target);
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"⬇️ **{target.User.Mention}: {GetName(target.Client)} for `{target.StatusDuration}` turns**")
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription($"⬇️ **{GetName(target.Client)} for `{target.StatusDuration}` turns**")
 			.WithColor(DiscordColor.Purple));
 	}
 
@@ -36,7 +37,8 @@ public abstract class Status(int duration, double applyChance) {
 		else 
 		{
 			return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-				.WithDescription($"**{target.User.Mention}: {GetName(target.Client)} has worn off**")
+				.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+				.WithDescription($"**{GetName(target.Client)} has worn off**")
 				.WithColor(DiscordColor.Green));
 		}
 	}
@@ -69,7 +71,8 @@ public class Burn(int duration, double applyChance) : DamageStatus(duration, app
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
 		return base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"🔥 **{target.Stand!.CoolName} ({target.User.Mention}) burns for `{target.DamageOverTime}` damage**")
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription($"🔥 **{target.Stand!.CoolName} burns for `{target.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.Orange));
 	}
 
@@ -87,7 +90,8 @@ public class Bleed(int duration, double applyChance) : DamageStatus(duration, ap
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
 		return base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"🩸 **{target.Stand!.CoolName} ({target.User.Mention}) bleeds for `{target.DamageOverTime}` damage**")
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription($"🩸 **{target.Stand!.CoolName} bleeds for `{target.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.DarkRed));
 	}
 
@@ -105,7 +109,8 @@ public class Poison(int duration, double applyChance) : DamageStatus(duration, a
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
 		var output = base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"💀 **{target.Stand!.CoolName} ({target.User.Mention}) suffers poison for `{target.DamageOverTime}` damage**")
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription($"💀 **{target.Stand!.CoolName} suffers poison for `{target.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.Purple));
 		target.DamageOverTime -= (int)Math.Ceiling(target.DamageOverTime * 0.3);
 		return output;
@@ -128,6 +133,7 @@ public class Silence(int duration, double applyChance) : PassiveStatus(duration,
 
 	public DiscordMessageBuilder SilenceMessage(BattlePlayer target) => new DiscordMessageBuilder().AddEmbed(
 		new DiscordEmbedBuilder()
+		.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
 		.WithDescription($"{DiscordEmoji.FromName(target.Client, ":mute:", false)} Silenced! Cannot use MP abilities for {target.StatusDuration} turns!")
 		.WithColor(DiscordColor.Black)
 	);
@@ -160,8 +166,9 @@ public class Weak(int duration, double drReduction) : PassiveStatus(duration, 1)
 #endregion
 
 #region Turn Skip Statuses
-public abstract class TurnSkipStatus(int duration, double applyChance) : Status(duration, applyChance) {
-	
+public abstract class TurnSkipStatus(int duration, double applyChance) : Status(duration, applyChance) 
+{
+
 }
 
 public class TimeStop(int duration) : TurnSkipStatus(duration, 1) 
@@ -172,16 +179,24 @@ public class TimeStop(int duration) : TurnSkipStatus(duration, 1)
 	{
 		if (caster.Stand!.Name == "Star Platinum") 
 		{
-			return base.TryApply(caster, target)!.WithContent("https://tenor.com/view/star-platinum-za-warduo-gif-26209527");
+			return base.TryApply(caster, target)!.AddEmbed(new DiscordEmbedBuilder().WithImageUrl("https://tenor.com/view/star-platinum-za-warduo-gif-26209527"));
 		}
 		else if (caster.Stand!.Name == "The World")
 		{
-			return base.TryApply(caster, target)!.WithContent("https://tenor.com/view/dio-the-world-power-charge-gif-13331683");
+			return base.TryApply(caster, target)!.AddEmbed(new DiscordEmbedBuilder().WithImageUrl("https://tenor.com/view/dio-the-world-power-charge-gif-13331683"));
 		}
 		else
 		{
 			return base.TryApply(caster, target);
 		}
+	}
+
+	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
+	{
+		return base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription("🕐 **Time is frozen...** 🕥")
+			.WithColor(DiscordColor.DarkBlue));
 	}
 }
 

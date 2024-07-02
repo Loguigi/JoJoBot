@@ -39,8 +39,11 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			else if (CurrentPlayer.Status is TurnSkipStatus tsStatus)
 			{
 				battleMsgs.Add(tsStatus.Execute(Opponent, CurrentPlayer));
-				RoundSkipped = true;
-				return;
+				if (CurrentPlayer.Status is not null) 
+				{
+					RoundSkipped = true;
+					return;
+				}
 			}
 		}
 		
@@ -65,7 +68,8 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		battleMsgs =
 		[
 			new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-				.WithDescription($"🌟 {CurrentPlayer.Stand!.CoolName} ({CurrentPlayer.User.Mention}) uses {ability.Name}!")
+				.WithAuthor(CurrentPlayer.User.GlobalName, "", CurrentPlayer.User.AvatarUrl)
+				.WithDescription($"🌟 **{CurrentPlayer.Stand!.CoolName} uses {ability.CoolName}!**")
 				.WithColor(DiscordColor.Gold))
 		];
 		CurrentPlayer.UseMP(ability.MpCost);

@@ -10,7 +10,7 @@ public class Ora : AttackAbility
 	{
 		Name = "Ora";
 		Description = "";
-		MpCost = 10;
+		MpCost = 15;
 		Attack = new BasicAttack(damage: 2);
 	}
 }
@@ -21,8 +21,8 @@ public class OraOraOraOra : AttackAbility
 	{
 		Name = "Ora Ora Ora Ora";
 		Description = "";
-		MpCost = 25;
-		Attack = new MultiHitAttack(damage: 0.65, minHits: 2, maxHits: 5);
+		MpCost = 35;
+		Attack = new MultiHitAttack(damage: 0.75, minHits: 2, maxHits: 5);
 	}
 }
 
@@ -45,7 +45,7 @@ public class StarPlatinumTheWorld : InflictStatusAbility
 		Name = "Star Platinum : The World";
 		Description = "";
 		MpCost = 75;
-		Status = new TimeStop(duration: 2);
+		Status = new TimeStop(duration: 3);
 	}
 }
 #endregion
@@ -248,7 +248,7 @@ public class Sandstorm : StatusAttackAbility
 	public Sandstorm()
 	{
 		MpCost = 35;
-		Attack = new MultiHitAttack(damage: 0.3, minHits: 1, maxHits: 3);
+		Attack = new MultiHitAttack(damage: 0.9, minHits: 2, maxHits: 4);
 		Status = new Confusion(duration: 3, applyChance: 0.2);
 	}
 }
@@ -270,7 +270,7 @@ public class Muda : AttackAbility
 	{
 		Name = "MUDA";
 		Description = "";
-		MpCost = 10;
+		MpCost = 15;
 		Attack = new BasicAttack(damage: 2);
 	}
 }
@@ -282,7 +282,7 @@ public class MudaMudaMudaMuda : AttackAbility
 		Name = "MUDA MUDA MUDA MUDA";
 		Description = "";
 		MpCost = 25;
-		Attack = new MultiHitAttack(damage: 0.85, minHits: 1, maxHits: 6);
+		Attack = new MultiHitAttack(damage: 0.75, minHits: 1, maxHits: 6);
 	}
 }
 
@@ -292,8 +292,8 @@ public class RoadRoller : AttackAbility
 	{
 		Name = "ROAD ROLLA DA";
 		Description = "";
-		MpCost = 25;
-		Attack = new CritChanceIncreaseAttack(damage: 4, increase: 0);
+		MpCost = 35;
+		Attack = new CritChanceIncreaseAttack(damage: 3, increase: 0);
 	}
 }
 

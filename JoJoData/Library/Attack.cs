@@ -17,7 +17,8 @@ public abstract class Attack(double damage)
 		defender.ReceiveDamage(dmg);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"{DiscordEmoji.FromName(attacker.Client, ":crossed_swords:")} **{attacker.Stand!.CoolName} ({attacker.User.Mention}) attacks {(crit ? $"with a {DiscordEmoji.FromName(attacker.Client, ":sparkles:")} CRIT" : "")} for `{dmg}` damage**")
+			.WithAuthor(attacker.User.GlobalName, "", attacker.User.AvatarUrl)
+			.WithDescription($"{DiscordEmoji.FromName(attacker.Client, ":crossed_swords:")} **{attacker.Stand!.CoolName} attacks {(crit ? $"with a {DiscordEmoji.FromName(attacker.Client, ":sparkles:")} CRIT" : "")} for `{dmg}` damage**")
 			.WithFooter($"{DiscordEmoji.FromName(attacker.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(attacker.Client, ":arrow_right:")} {DiscordEmoji.FromName(attacker.Client, ":heart:")} {defender.Hp}", defender.User.AvatarUrl)
 			.WithColor(DiscordColor.Red));
 	}
