@@ -2,6 +2,7 @@ using System.Reflection;
 using DSharpPlus;
 using DSharpPlus.Commands;
 using DSharpPlus.Commands.ContextChecks;
+using DSharpPlus.Commands.Processors.SlashCommands;
 using DSharpPlus.Entities;
 using JoJoBot.Handlers;
 using JoJoData.Helpers;
@@ -13,7 +14,7 @@ namespace JoJoBot.Commands.Slash;
 public class BattleCommand
 {
 	[Command("battle"), RequireGuild]
-	public async Task Execute(CommandContext ctx, DiscordUser player)
+	public async Task Execute(SlashCommandContext ctx, DiscordUser player)
 	{
 		try 
 		{
@@ -27,8 +28,15 @@ public class BattleCommand
 			
 			if (player1.Stand is null) 
 			{
-				// TODO no stand error
-				//await ctx.CreateResponseAsync()
+				await ctx.RespondAsync(new DiscordEmbedBuilder()
+					.WithDescription("❌ You don't have a Stand to fight with!")
+					.WithColor(DiscordColor.Red), ephemeral: true);
+			}
+			else if (player2.Stand is null) 
+			{
+				await ctx.RespondAsync(new DiscordEmbedBuilder()
+					.WithDescription($"❌ {player2.User.Mention} doesn't have a Stand to fight with!")
+					.WithColor(DiscordColor.Red), ephemeral: true);
 			}
 
 			var embed = new DiscordEmbedBuilder()

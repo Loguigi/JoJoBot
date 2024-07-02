@@ -50,9 +50,17 @@ public static class BattleHandlers
 		battle.StartBattle();
 		Bot.Battles.Add(battle.Id, battle);
 
-		if (battle.Winner != null)
+		if (battle.Winner is not null)
 		{
 			Bot.Battles.Remove(battle.Id);
+			await e.Channel.SendMessageAsync(new DiscordEmbedBuilder()
+				.WithAuthor(battle.Winner.User.GlobalName, "", battle.Winner.User.AvatarUrl)
+				.WithDescription($"### 🎉 {battle.Winner.Stand!.CoolName} wins! 🎉")
+				.WithThumbnail(battle.Winner.Stand!.ImageUrl)
+				.AddField("Rounds", battle.CurrentRound.ToString(), true)
+				.AddField("Start", battle.BattleStart.ToString("M/d h:m tt"), true)
+				.AddField("End", battle.BattleEnd?.ToString("M/d h:m tt") ?? "never", true)
+				.WithColor(DiscordColor.HotPink));
 		}
 	}
 	
@@ -90,9 +98,17 @@ public static class BattleHandlers
 		await e.Message.DeleteAsync();
 		battle.ContinueBattle(ability);
 		
-		if (battle.Winner != null) 
+		if (battle.Winner is not null) 
 		{
 			Bot.Battles.Remove(battle.Id);
+			await e.Channel.SendMessageAsync(new DiscordEmbedBuilder()
+				.WithAuthor(battle.Winner.User.GlobalName, "", battle.Winner.User.AvatarUrl)
+				.WithDescription($"### 🎉 {battle.Winner.Stand!.CoolName} wins! 🎉")
+				.WithThumbnail(battle.Winner.Stand!.ImageUrl)
+				.AddField("Rounds", battle.CurrentRound.ToString(), true)
+				.AddField("Start", battle.BattleStart.ToString("M/d h:m tt"), true)
+				.AddField("End", battle.BattleEnd?.ToString("M/d h:m tt") ?? "never", true)
+				.WithColor(DiscordColor.HotPink));
 		}
 	}
 
