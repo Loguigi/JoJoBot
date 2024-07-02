@@ -147,6 +147,8 @@ public class Silence(int duration, double applyChance) : PassiveStatus(duration,
 public class Confusion(int duration, double applyChance) : PassiveStatus(duration, applyChance) 
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":question:")} Confusion";
+
+	public bool RollConfusion() => RandomHelper.RNG.NextDouble() < 0.5;
 }
 
 public class Douse(int duration, double applyChance) : PassiveStatus(duration, applyChance) 

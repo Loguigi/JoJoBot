@@ -87,7 +87,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				if (evade) return;
 			}
 			
-			if (CurrentPlayer.Status is Confusion confusion) 
+			if (CurrentPlayer.Status is Confusion confusion && confusion.RollConfusion()) 
 			{
 				// use your attack against yourself
 				battleMsgs.Add(attack.Attack.Execute(attacker: CurrentPlayer, defender: CurrentPlayer));
