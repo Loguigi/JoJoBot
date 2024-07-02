@@ -1,4 +1,5 @@
 using System.Data;
+using System.Reflection;
 using Dapper;
 using DSharpPlus;
 using DSharpPlus.Entities;
@@ -40,6 +41,7 @@ public class Player : DataAccess
 		}
 		catch (Exception ex)
 		{
+			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
 		}
 	}
@@ -53,7 +55,7 @@ public class Player : DataAccess
 		}
 		catch (Exception ex)
 		{
-			
+			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
 		}
 	}
@@ -66,7 +68,8 @@ public class Player : DataAccess
 		}
 		catch (Exception ex)
 		{
-
+			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
+			throw;
 		}
 	}
 	#endregion

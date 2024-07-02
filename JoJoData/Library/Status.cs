@@ -28,11 +28,11 @@ public abstract class Status(int duration, double applyChance) {
 			.WithColor(DiscordColor.Purple));
 	}
 
-	public virtual DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target) 
+	public virtual DiscordMessageBuilder? Execute(BattlePlayer caster, BattlePlayer target) 
 	{
 		if (target.ReduceStatusDuration()) 
 		{
-			return new DiscordMessageBuilder();
+			return Action(caster, target);
 		}
 		else 
 		{
@@ -48,6 +48,8 @@ public abstract class Status(int duration, double applyChance) {
 		target.AddStatus(this);
 		target.StatusDuration = Duration;
 	}
+
+	protected abstract DiscordMessageBuilder? Action(BattlePlayer caster, BattlePlayer target);
 	
 	protected bool RollStatus() => RandomHelper.RNG.NextDouble() < ApplyChance;
 }
@@ -56,11 +58,11 @@ public abstract class Status(int duration, double applyChance) {
 #region Damage Statuses
 public abstract class DamageStatus(int duration, double applyChance) : Status(duration, applyChance) 
 {
-	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
+	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
 		target.ReceiveDamage(target.DamageOverTime);
 
-		return base.Execute(caster, target);
+		return new DiscordMessageBuilder();
 	}
 }
 
@@ -68,9 +70,9 @@ public class Burn(int duration, double applyChance) : DamageStatus(duration, app
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":fire:")} Burn";
 
-	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
+	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
-		return base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
+		return base.Action(caster, target).AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
 			.WithDescription($"🔥 **{target.Stand!.CoolName} burns for `{target.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.Orange));
@@ -87,9 +89,9 @@ public class Bleed(int duration, double applyChance) : DamageStatus(duration, ap
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":drop_of_blood:")} Bleed";
 
-	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
+	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
-		return base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
+		return base.Action(caster, target).AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
 			.WithDescription($"🩸 **{target.Stand!.CoolName} bleeds for `{target.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.DarkRed));
@@ -106,9 +108,9 @@ public class Poison(int duration, double applyChance) : DamageStatus(duration, a
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":snake:")} Poison";
 
-	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
+	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
-		var output = base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
+		var output = base.Action(caster, target).AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
 			.WithDescription($"💀 **{target.Stand!.CoolName} suffers poison for `{target.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.Purple));
@@ -125,7 +127,10 @@ public class Poison(int duration, double applyChance) : DamageStatus(duration, a
 #endregion
 
 #region Passive Statuses
-public abstract class PassiveStatus(int duration, double applyChance) : Status(duration, applyChance) {}
+public abstract class PassiveStatus(int duration, double applyChance) : Status(duration, applyChance) 
+{
+	protected override DiscordMessageBuilder? Action(BattlePlayer caster, BattlePlayer target) => null;
+}
 
 public class Silence(int duration, double applyChance) : PassiveStatus(duration, applyChance) 
 {
@@ -179,11 +184,11 @@ public class TimeStop(int duration) : TurnSkipStatus(duration, 1)
 	{
 		if (caster.Stand!.Name == "Star Platinum") 
 		{
-			return base.TryApply(caster, target)!.AddEmbed(new DiscordEmbedBuilder().WithImageUrl("https://tenor.com/view/star-platinum-za-warduo-gif-26209527"));
+			return base.TryApply(caster, target)!.AddEmbed(new DiscordEmbedBuilder().WithImageUrl("https://c.tenor.com/0kMboLznZGwAAAAC/tenor.gif"));
 		}
 		else if (caster.Stand!.Name == "The World")
 		{
-			return base.TryApply(caster, target)!.AddEmbed(new DiscordEmbedBuilder().WithImageUrl("https://tenor.com/view/dio-the-world-power-charge-gif-13331683"));
+			return base.TryApply(caster, target)!.AddEmbed(new DiscordEmbedBuilder().WithImageUrl("https://c.tenor.com/R_NQbI9vk1UAAAAC/tenor.gif"));
 		}
 		else
 		{
@@ -191,9 +196,9 @@ public class TimeStop(int duration) : TurnSkipStatus(duration, 1)
 		}
 	}
 
-	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
+	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
-		return base.Execute(caster, target).AddEmbed(new DiscordEmbedBuilder()
+		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
 			.WithDescription("🕐 **Time is frozen...** 🕥")
 			.WithColor(DiscordColor.DarkBlue));
@@ -216,6 +221,14 @@ public class Sleep(int duration, double applyChance) : TurnSkipStatus(duration, 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithDescription($"⏰ **{target.Stand!.CoolName} ({target.User.Mention}) has woken up!**")
 			.WithColor(DiscordColor.Blurple));
+	}
+
+	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
+	{
+		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription("💤**Asleep...** 💤")
+			.WithColor(DiscordColor.DarkBlue));
 	}
 }
 #endregion

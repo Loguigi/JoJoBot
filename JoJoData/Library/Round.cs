@@ -19,9 +19,13 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 	{
 		battleMsgs = [];
 		
-		if (CurrentPlayer.Mp < BattleConstants.BASE_MP / 2)
+		if (CurrentPlayer.Mp < BattleConstants.BASE_MP / 2 && CurrentPlayer.Status is not TurnSkipStatus)
 		{
 			CurrentPlayer.GrantMP(BattleConstants.LOW_MP_GAIN);
+			battleMsgs.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(CurrentPlayer.User.GlobalName, "", CurrentPlayer.User.AvatarUrl)
+				.WithDescription("**Low MP Regen**")
+				.WithFooter($"💎 {CurrentPlayer.Mp - BattleConstants.LOW_MP_GAIN} ➡️ 💎 {CurrentPlayer.Mp}")));
 		}
 
 		if (CurrentPlayer.Status is not null)
@@ -76,44 +80,55 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		
 		if (ability is AttackAbility attack)
 		{
-			if (Opponent.Buff is Await await && Opponent.StatusDuration == 2)
+			if (Opponent.Buff is Await await)
 			{
-
+				await.Action(caster: Opponent, target: CurrentPlayer, out bool evade);
+				if (evade) return;
 			}
 			
-			battleMsgs.Add(attack.Attack.Execute(CurrentPlayer, Opponent));
-			if (!Opponent.IsAlive)
-				return;
+			if (CurrentPlayer.Status is Confusion confusion) 
+			{
+				// use your attack against yourself
+				battleMsgs.Add(attack.Attack.Execute(attacker: CurrentPlayer, defender: CurrentPlayer));
+				if (!CurrentPlayer.IsAlive)
+					return;
+			}
+			else 
+			{
+				battleMsgs.Add(attack.Attack.Execute(attacker: CurrentPlayer, defender: Opponent));
+				if (!Opponent.IsAlive)
+					return;
+			}
 
 			if (Opponent.Status is Sleep sleep)
 			{
-				battleMsgs.Add(sleep.RollForWakeUp(Opponent));
+				battleMsgs.Add(sleep.RollForWakeUp(target: Opponent));
 			}
 
 			if (ability is StatusAttackAbility statusAttk) 
 			{
-				battleMsgs.Add(statusAttk.Status.TryApply(CurrentPlayer, Opponent));
+				battleMsgs.Add(statusAttk.Status.TryApply(caster: CurrentPlayer, target: Opponent));
 			}
 			
 			if (ability is BuffAttackAbility buffAtk) 
 			{
-				battleMsgs.Add(buffAtk.Buff.Apply(CurrentPlayer));
+				battleMsgs.Add(buffAtk.Buff.Apply(target: CurrentPlayer));
 			}
 		}
 
 		if (ability is InflictStatusAbility status)
 		{
-			battleMsgs.Add(status.Status.TryApply(CurrentPlayer, Opponent));
+			battleMsgs.Add(status.Status.TryApply(caster: CurrentPlayer, target: Opponent));
 		}
 
 		if (ability is BuffAbility buff)
 		{
-			battleMsgs.Add(buff.Buff.Apply(CurrentPlayer));
+			battleMsgs.Add(buff.Buff.Apply(target: CurrentPlayer));
 		}
 
 		if (ability is StatChangeAbility statChange)
 		{
-			battleMsgs.Add(statChange.StatChange.Execute(CurrentPlayer));
+			battleMsgs.Add(statChange.StatChange.Execute(target: CurrentPlayer));
 		}
 	}
 	
@@ -124,6 +139,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		if (CurrentPlayer.Mp < ability.MpCost) 
 		{
 			msg = new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(CurrentPlayer.User.GlobalName, "", CurrentPlayer.User.AvatarUrl)
 				.WithDescription($"{DiscordEmoji.FromName(s, ":x:", false)} Not enough MP!")
 				.WithColor(DiscordColor.Red));
 			return false;

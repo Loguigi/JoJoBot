@@ -54,7 +54,8 @@ public static class StandLoader
 		} 
 		catch (Exception ex) 
 		{
-			
+			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
+			throw;
 		}
 	}
 

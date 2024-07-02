@@ -61,6 +61,23 @@ public class Haste(int duration) : Buff(duration)
 public class Await() : Buff(duration: 2)
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":dagger:")} Await";
+	
+	public DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target, out bool evade) 
+	{
+		if (caster.BuffDuration == 2) 
+		{
+			evade = true;
+			return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(caster.User.GlobalName, "", caster.User.AvatarUrl)
+				.WithDescription($"🍃 **{caster.Stand!.CoolName} evades the attack!**")
+				.WithColor(DiscordColor.White));
+		}
+		else // duration == 1
+		{
+			evade = false;
+			return new BasicAttack(damage: 2).Execute(attacker: caster, defender: target);
+		}
+	}
 }
 
 public class Charge(int duration) : Buff(duration) 

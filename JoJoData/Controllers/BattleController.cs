@@ -9,6 +9,7 @@ using JoJoData.Abilities;
 using Dapper;
 using JoJoData.Models;
 using System.Data;
+using System.Reflection;
 
 namespace JoJoData.Controllers;
 
@@ -50,7 +51,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 		}
 		catch (Exception ex)
 		{
-			
+			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
 		}
 	}
@@ -79,7 +80,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 		}
 		catch (Exception ex)
 		{
-			
+			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
 		}
 	}
@@ -180,6 +181,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 		} 
 		catch (Exception ex) 
 		{
+			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
 		}
 	}

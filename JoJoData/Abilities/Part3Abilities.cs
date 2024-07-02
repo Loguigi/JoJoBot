@@ -439,6 +439,7 @@ public class MirrorSlash : StatusAttackAbility
 {
 	public MirrorSlash()
 	{
+		Name = "Mirror Slash";
 		MpCost = 15;
 		Attack = new BasicAttack(damage: 1.5);
 		Status = new Bleed(duration: 3, applyChance: 0.2);
@@ -449,19 +450,29 @@ public class LightspeedSlash : AttackAbility
 {
 	public LightspeedSlash()
 	{
+		Name = "Lightspeed Slash";
 		MpCost = 35;
 		Attack = new CritChanceIncreaseAttack(damage: 2.5, increase: 0.3);
 	}
 }
 
-// public class MirrorSneak : Ability, IBuff
-// {
-// 	public Buff Buff { get; set; }
+public class MirrorSneak : BuffAbility 
+{
+	public MirrorSneak() 
+	{
+		Name = "Mirror Sneak";
+		MpCost = 30;
+		Buff = new Charge(duration: 1);
+	}
+}
 
-// 	public MirrorSneak()
-// 	{
-// 		Id = 43;
-// 		MpCost = 69;
-// 	}
-// }
+public class RainBarrier : StatChangeAbility 
+{
+	public RainBarrier() 
+	{
+		Name = "Rain Barrier";
+		MpCost = 40;
+		StatChange = new Barrier(barrier: 0.35);
+	}
+}
 #endregion

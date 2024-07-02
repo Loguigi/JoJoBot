@@ -1,3 +1,4 @@
+using System.Reflection;
 using DSharpPlus;
 using DSharpPlus.Commands;
 using DSharpPlus.Commands.ContextChecks;
@@ -49,6 +50,7 @@ public class BattleCommand
 		}
 		catch (Exception ex) 
 		{
+			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
 		}
 	}

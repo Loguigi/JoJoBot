@@ -107,7 +107,7 @@ public class CritChanceIncreaseAttack(double damage, double increase) : Attack(d
 		return (int)Math.Ceiling(
 			RollDamage(attacker.MinDamage, attacker.MaxDamage) *
 			DamageMultiplier *
-			RollCrit(attacker.CritChance + CritChanceIncrease, attacker.CritDamageMultiplier, out crit) *
+			RollCrit(CritChanceIncrease == 0 ? 0 : attacker.CritChance + CritChanceIncrease, attacker.CritDamageMultiplier, out crit) *
 			(1 - defender.DamageResistance));
 	}
 }
