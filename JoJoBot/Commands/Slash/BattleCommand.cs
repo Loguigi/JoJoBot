@@ -31,12 +31,14 @@ public class BattleCommand
 				await ctx.RespondAsync(new DiscordEmbedBuilder()
 					.WithDescription("❌ You don't have a Stand to fight with!")
 					.WithColor(DiscordColor.Red), ephemeral: true);
+				return;
 			}
 			else if (player2.Stand is null) 
 			{
 				await ctx.RespondAsync(new DiscordEmbedBuilder()
 					.WithDescription($"❌ {player2.User.Mention} doesn't have a Stand to fight with!")
 					.WithColor(DiscordColor.Red), ephemeral: true);
+				return;
 			}
 
 			var embed = new DiscordEmbedBuilder()

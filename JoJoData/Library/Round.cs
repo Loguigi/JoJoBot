@@ -25,6 +25,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			battleMsgs.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 				.WithAuthor(CurrentPlayer.User.GlobalName, "", CurrentPlayer.User.AvatarUrl)
 				.WithDescription("**Low MP Regen**")
+				.WithColor(DiscordColor.Aquamarine)
 				.WithFooter($"💎 {CurrentPlayer.Mp - BattleConstants.LOW_MP_GAIN} ➡️ 💎 {CurrentPlayer.Mp}")));
 		}
 
@@ -129,6 +130,11 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		if (ability is StatChangeAbility statChange)
 		{
 			battleMsgs.Add(statChange.StatChange.Execute(target: CurrentPlayer));
+		}
+		
+		if (CurrentPlayer.Buff is Haste) 
+		{
+			RoundRepeat = true;
 		}
 	}
 	

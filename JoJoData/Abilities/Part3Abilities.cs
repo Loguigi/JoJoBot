@@ -22,7 +22,7 @@ public class OraOraOraOra : AttackAbility
 		Name = "Ora Ora Ora Ora";
 		Description = "";
 		MpCost = 35;
-		Attack = new MultiHitAttack(damage: 0.75, minHits: 2, maxHits: 5);
+		Attack = new MultiHitAttack(damage: 1, minHits: 2, maxHits: 5);
 	}
 }
 
