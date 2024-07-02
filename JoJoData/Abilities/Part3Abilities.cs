@@ -560,3 +560,93 @@ public class Grow : StatChangeAbility
 	}
 }
 #endregion
+
+#region Wheel of Fortune
+public class HitAndRun : AttackAbility 
+{
+	public HitAndRun() 
+	{
+		Name = "Hit and Run";
+		MpCost = 30;
+		Attack = new BasicAttack(damage: 3.5); 
+	}
+}
+
+public class VehicularManslaughter : AttackAbility 
+{
+	public VehicularManslaughter() 
+	{
+		Name = "Vehicular Manslaughter";
+		MpCost = 40;
+		Attack = new CritDamageIncreaseAttack(damage: 2, increase: 1);
+	}
+}
+
+public class GasolineBullets : StatusAttackAbility 
+{
+	public GasolineBullets() 
+	{
+		Name = "Gasoline Bullets";
+		MpCost = 15;
+		Attack = new BasicAttack(damage: 0.5);
+		Status = new Douse(duration: 4, applyChance: 0.5);
+	}
+}
+
+public class CableAttack : AttackAbility 
+{
+	public CableAttack() 
+	{
+		Name = "Cable Attack";
+		MpCost = 20;
+		Attack = new IgniteAttack(damage: 1);
+	}
+}
+#endregion
+
+#region Justice
+// TODO Justice
+#endregion
+
+#region Lovers
+public class BrainDamage : StatusAttackAbility 
+{
+	public BrainDamage() 
+	{
+		Name = "Brain Damage";
+		MpCost = 15;
+		Attack = new BasicAttack(damage: 0.8);
+		Status = new Confusion(duration: 3, applyChance: 0.6);
+	}
+}
+
+public class BrainPod : AttackAbility
+{
+	public BrainPod() 
+	{
+		Name = "Brain Pod";
+		MpCost = 30;
+		Attack = new BasicAttack(damage: 3);
+	}
+}
+
+public class PainSplit : AttackAbility 
+{
+	public PainSplit() 
+	{
+		Name = "Pain Split";
+		MpCost = 25;
+		Attack = new TakeoverAttack(damage: 2.5);
+	}
+}
+
+public class BrainDeath : InflictStatusAbility
+{
+	public BrainDeath() 
+	{
+		Name = "Brain Death";
+		MpCost = 75;
+		Status = new Doom(duration: 6);
+	}
+}
+#endregion

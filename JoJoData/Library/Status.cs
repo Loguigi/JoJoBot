@@ -124,6 +124,25 @@ public class Poison(int duration, double applyChance) : DamageStatus(duration, a
 		base.Apply(target);
 	}
 }
+
+public class Doom(int duration) : DamageStatus(duration, applyChance: 1) 
+{
+	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":skull:")} Doom";
+
+	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
+	{
+		if (target.StatusDuration == 1) 
+		{
+			return new BypassProtectAttack(damage: 9999).Execute(caster, target);
+		}
+		else 
+		{
+			return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+				.WithDescription("Death approaches..."));
+		}
+	}
+}
 #endregion
 
 #region Passive Statuses

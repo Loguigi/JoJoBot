@@ -190,3 +190,18 @@ public class TakeoverAttack(double damage) : Attack(damage)
 		return base.CalculateDamage(defender, attacker, out crit);
 	}
 }
+
+public class IgniteAttack(double damage) : Attack(damage) 
+{
+	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	{
+		if (defender.Status is Douse douse) 
+		{
+			return base.Execute(attacker, defender).AddEmbed(douse.Ignite(attacker, defender).Embeds[0]);
+		}
+		else 
+		{
+			return base.Execute(attacker, defender);
+		}
+	}
+}
