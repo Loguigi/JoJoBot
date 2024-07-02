@@ -83,7 +83,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		{
 			if (Opponent.Buff is Await await)
 			{
-				await.Action(caster: Opponent, target: CurrentPlayer, out bool evade);
+				battleMsgs.Add(await.Action(caster: Opponent, target: CurrentPlayer, out bool evade));
 				if (evade) return;
 			}
 			
