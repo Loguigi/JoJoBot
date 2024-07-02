@@ -54,3 +54,28 @@ public class Barrier(double barrier) : StatChange
 			.WithFooter($"{DiscordEmoji.FromName(target.Client, ":blue_heart:")} {barrierBefore} {DiscordEmoji.FromName(target.Client, ":arrow_right:")} {DiscordEmoji.FromName(target.Client, ":blue_heart:")} {target.Barrier}", target.User.AvatarUrl));
 	}
 }
+
+public class Strength(double increase) : StatChange 
+{
+	public readonly double DamageIncrease = increase;
+
+	public override string GetDescription(DiscordClient s)
+	{
+		// TODO
+		return string.Empty;
+	}
+
+	public override DiscordMessageBuilder Execute(BattlePlayer target)
+	{
+		var minDamageBefore = target.MinDamage;
+		var maxDamageBefore = target.MaxDamage;
+		
+		target.MinDamage += (int)Math.Ceiling(target.MinDamage * DamageIncrease);
+		target.MaxDamage += (int)Math.Ceiling(target.MaxDamage * DamageIncrease);
+
+		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription($"💪 Strength increased")
+			.WithFooter($"🗡️ {minDamageBefore}-{maxDamageBefore} ➡️ {target.MinDamage}-{target.MaxDamage}", target.User.AvatarUrl));
+	}
+}

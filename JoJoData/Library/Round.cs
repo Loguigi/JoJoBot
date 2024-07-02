@@ -39,7 +39,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			}
 			else if (CurrentPlayer.Status is PassiveStatus pStatus)
 			{
-				
+				battleMsgs.Add(pStatus.Execute(Opponent, CurrentPlayer));
 			}
 			else if (CurrentPlayer.Status is TurnSkipStatus tsStatus)
 			{

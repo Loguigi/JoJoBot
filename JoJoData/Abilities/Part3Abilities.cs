@@ -476,3 +476,87 @@ public class RainBarrier : StatChangeAbility
 	}
 }
 #endregion
+
+#region Emperor
+public class ShootGun : AttackAbility
+{
+	public ShootGun() 
+	{
+		Name = "Shoot";
+		MpCost = 15;
+		Attack = new BasicAttack(damage: 2);
+	}
+}
+
+public class UnloadClip : AttackAbility 
+{
+	public UnloadClip() 
+	{
+		Name = "Unload Clip";
+		MpCost = 30;
+		Attack = new MultiHitAttack(damage: 0.75, minHits: 3, maxHits: 8);
+	}
+}
+
+public class PrecisionShot : AttackAbility 
+{
+	public PrecisionShot() 
+	{
+		Name = "Precision Shot";
+		MpCost = 45;
+		Attack = new CritChanceIncreaseAttack(damage: 2.5, increase: 0.4);
+	}
+}
+
+public class HomingBullet : AttackAbility 
+{
+	public HomingBullet() 
+	{
+		Name = "Homing Bullet";
+		MpCost = 25;
+		Attack = new BypassProtectAttack(damage: 3);
+	}
+}
+#endregion
+
+#region Empress
+public class NailStab : AttackAbility 
+{
+	public NailStab() 
+	{
+		Name = "Stab";
+		MpCost = 15;
+		Attack = new CritDamageIncreaseAttack(damage: 3, 0.5);
+	}
+}
+
+public class LifeDrain : AttackAbility 
+{
+	public LifeDrain() 
+	{
+		Name = "Life Drain";
+		MpCost = 45;
+		Attack = new HPLeechAttack(damage: 0.3, hpStealPercent: 0.25);
+	}
+}
+
+public class EssenceDrain : AttackAbility 
+{
+	public EssenceDrain() 
+	{
+		Name = "Essence Drain";
+		MpCost = 0;
+		Attack = new MPStealAttack(damage: 1.5, mpStealAmount: 15, hpLossPercent: 0.15);
+	}
+}
+
+public class Grow : StatChangeAbility 
+{
+	public Grow() 
+	{
+		Name = "Grow";
+		MpCost = 15;
+		StatChange = new Strength(increase: 0.3);
+	}
+}
+#endregion
