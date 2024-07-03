@@ -21,7 +21,7 @@ public abstract class Status(int duration, double applyChance) {
 			return null;
 		}
 
-		Apply(target);
+		Apply(caster, target);
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
 			.WithDescription($"⬇️ **{GetName(target.Client)} for `{target.StatusDuration}` turns**")
@@ -43,7 +43,7 @@ public abstract class Status(int duration, double applyChance) {
 		}
 	}
 
-	protected virtual void Apply(BattlePlayer target) 
+	protected virtual void Apply(BattlePlayer caster, BattlePlayer target) 
 	{
 		target.AddStatus(this);
 		target.StatusDuration = Duration;
@@ -78,10 +78,10 @@ public class Burn(int duration, double applyChance) : DamageStatus(duration, app
 			.WithColor(DiscordColor.Orange));
 	}
 
-	protected override void Apply(BattlePlayer target)
+	protected override void Apply(BattlePlayer caster, BattlePlayer target)
 	{
-		target.DamageOverTime = target.DamageReceived * 2;
-		base.Apply(target);
+		target.DamageOverTime = (int)(caster.MinDamage * 2.5);
+		base.Apply(caster, target);
 	}
 }
 
@@ -97,10 +97,10 @@ public class Bleed(int duration, double applyChance) : DamageStatus(duration, ap
 			.WithColor(DiscordColor.DarkRed));
 	}
 
-	protected override void Apply(BattlePlayer target)
+	protected override void Apply(BattlePlayer caster, BattlePlayer target)
 	{
-		target.DamageOverTime = (int)Math.Ceiling(target.Hp * 0.1);
-		base.Apply(target);
+		target.DamageOverTime = (int)Math.Ceiling(target.Hp * 0.4);
+		base.Apply(caster, target);
 	}
 }
 
@@ -118,10 +118,10 @@ public class Poison(int duration, double applyChance) : DamageStatus(duration, a
 		return output;
 	}
 
-	protected override void Apply(BattlePlayer target)
+	protected override void Apply(BattlePlayer caster, BattlePlayer target)
 	{
-		target.DamageOverTime = (int)Math.Ceiling(target.MaxHp * 0.1);
-		base.Apply(target);
+		target.DamageOverTime = (int)Math.Ceiling(target.MaxHp * 0.2);
+		base.Apply(caster, target);
 	}
 }
 

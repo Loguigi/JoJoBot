@@ -16,9 +16,9 @@ public class BattlePlayer : Player
 	{
 		get 
 		{
-			if (Barrier > 0) 
+			if (_barrier > 0)
 			{
-				return Barrier + _hp;
+				return _barrier + _hp;
 			}
 
 			return _hp;
@@ -29,7 +29,6 @@ public class BattlePlayer : Player
 		}
 	}
 	public int MaxHp { get; private set; }
-	public int Barrier { get; private set; } = 0;
 	public int Mp { get; private set; } = BattleConstants.BASE_MP;
 	public int MinDamage { get; set; }
 	public int MaxDamage { get; set; }
@@ -56,10 +55,11 @@ public class BattlePlayer : Player
 	public BattlePlayer(DiscordClient client, DiscordGuild guild, DiscordUser user) : base(guild, user)
 	{
 		Client = client;
+		Load();
 		Hp = Stand!.BaseHp + ((int)(Stand.BaseHp * 0.30) * Level);
 		MaxHp = Hp;
-		MinDamage = Stand.BaseMinDamage + ((int)(Stand.BaseMinDamage * 0.15) * Level);
-		MaxDamage = Stand.BaseMaxDamage + ((int)(Stand.BaseMaxDamage * 0.20) * Level);
+		MinDamage = _minDamage = Stand.BaseMinDamage + ((int)(Stand.BaseMinDamage * 0.15) * Level);
+		MaxDamage = _maxDamage = Stand.BaseMaxDamage + ((int)(Stand.BaseMaxDamage * 0.20) * Level);
 	}
 
 	// copy constructor
@@ -68,10 +68,10 @@ public class BattlePlayer : Player
 		Client = player.Client;
 		_hp = player._hp;
 		MaxHp = player.MaxHp;
-		Barrier = player.Barrier;
+		_barrier = player._barrier;
 		Mp = player.Mp;
-		MinDamage = Stand!.BaseMinDamage + ((int)(Stand.BaseMinDamage * 0.15) * Level);
-		MaxDamage = Stand.BaseMaxDamage + ((int)(Stand.BaseMaxDamage * 0.20) * Level);
+		MinDamage = _minDamage;
+		MaxDamage = _maxDamage;
 		CritChance = player.CritChance;
 		CritDamageMultiplier = player.CritDamageMultiplier;
 		Status = player.Status;
@@ -86,25 +86,25 @@ public class BattlePlayer : Player
 
 	public void ReceiveDamage(int damage) 
 	{
-		if (Barrier > 0 && damage < Barrier) 
+		if (_barrier > 0 && damage < _barrier) 
 		{
-			Barrier -= damage;
+			_barrier -= damage;
 		}
-		else if (Barrier > 0 && damage > Barrier) 
+		else if (_barrier > 0 && damage > _barrier) 
 		{
-			damage -= Barrier;
-			Barrier = 0;
-			Hp -= damage;
+			damage -= _barrier;
+			_barrier = 0;
+			_hp -= damage;
 		}
 		else 
 		{
-			Hp -= damage;
+			_hp -= damage;
 		}
 		
 		if (Hp <= 0) 
 		{
 			IsAlive = false;
-			Hp = 0;
+			_hp = 0;
 		}
 		
 		DamageReceived = damage;
@@ -149,9 +149,9 @@ public class BattlePlayer : Player
 
 	public void Heal(int hp) 
 	{
-		Hp += hp;
-		if (hp > MaxHp)
-			Hp = MaxHp;
+		_hp += hp;
+		if (_hp > MaxHp)
+			_hp = MaxHp;
 	}
 
 	public void GrantMP(int mp) 
@@ -170,7 +170,13 @@ public class BattlePlayer : Player
 
 	public void GrantBarrier(int barrier) 
 	{
-		Barrier += barrier;
+		_barrier += barrier;
+	}
+	
+	public void IncreaseAttack(int minDamageIncrease, int maxDamageIncrease) 
+	{
+		_minDamage += minDamageIncrease;
+		_maxDamage += maxDamageIncrease;
 	}
 	#endregion
 
@@ -178,7 +184,7 @@ public class BattlePlayer : Player
 	public string FormatBattleInfo(DiscordClient s)
 	{
 		var info = new StringBuilder();
-		if (Barrier > 0)
+		if (_barrier > 0)
 		{
 			info.Append($"{DiscordEmoji.FromName(s, ":blue_heart:", false)} HP: {Hp} / {MaxHp}\n");
 		}
@@ -200,5 +206,8 @@ public class BattlePlayer : Player
 
 	#region Private Members
 	private int _hp = 0;
+	private int _barrier = 0;
+	private int _minDamage = 0;
+	private int _maxDamage = 0;
 	#endregion
 }

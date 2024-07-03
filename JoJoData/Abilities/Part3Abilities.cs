@@ -22,7 +22,7 @@ public class OraOraOraOra : AttackAbility
 		Name = "Ora Ora Ora Ora";
 		Description = "";
 		MpCost = 35;
-		Attack = new MultiHitAttack(damage: 1, minHits: 2, maxHits: 5);
+		Attack = new MultiHitAttack(damage: 0.9, minHits: 2, maxHits: 5);
 	}
 }
 
@@ -44,7 +44,7 @@ public class StarPlatinumTheWorld : InflictStatusAbility
 	{
 		Name = "Star Platinum : The World";
 		Description = "";
-		MpCost = 75;
+		MpCost = 80;
 		Status = new TimeStop(duration: 3);
 	}
 }
@@ -230,7 +230,7 @@ public class SandAttack : AttackAbility
 	public SandAttack()
 	{
 		MpCost = 15;
-		Attack = new BasicAttack(damage: 2);
+		Attack = new BasicAttack(damage: 2.3);
 	}
 }
 
@@ -248,7 +248,7 @@ public class Sandstorm : StatusAttackAbility
 	public Sandstorm()
 	{
 		MpCost = 35;
-		Attack = new MultiHitAttack(damage: 0.9, minHits: 2, maxHits: 4);
+		Attack = new MultiHitAttack(damage: 1, minHits: 2, maxHits: 4);
 		Status = new Confusion(duration: 3, applyChance: 0.2);
 	}
 }
@@ -303,7 +303,7 @@ public class TheWorld : InflictStatusAbility
 	{
 		Name = "The World";
 		Description = "";
-		MpCost = 75;
+		MpCost = 80;
 		Status = new TimeStop(duration: 3);
 	}
 }
@@ -429,7 +429,7 @@ public class MonkeyHug : StatusAttackAbility
 	{
 		MpCost = 0;
 		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 20, hpLossPercent: 0.15);
-		Status = new Confusion(duration: 2, applyChance: 1);
+		Status = new Confusion(duration: 3, applyChance: 1);
 	}
 }
 #endregion
@@ -556,7 +556,7 @@ public class Grow : StatChangeAbility
 	{
 		Name = "Grow";
 		MpCost = 15;
-		StatChange = new Strength(increase: 0.3);
+		StatChange = new Strength(increase: 0.4);
 	}
 }
 #endregion
@@ -646,7 +646,7 @@ public class BrainDeath : InflictStatusAbility
 	{
 		Name = "Brain Death";
 		MpCost = 75;
-		Status = new Doom(duration: 6);
+		Status = new Doom(duration: 5);
 	}
 }
 #endregion

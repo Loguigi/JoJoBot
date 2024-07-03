@@ -25,6 +25,8 @@ public class BattleCommand
 			}
 			var player1 = new Player(ctx.Guild!, ctx.User);
 			var player2 = new Player(ctx.Guild!, player);
+			player1.Load();
+			player2.Load();
 			
 			if (player1.Stand is null) 
 			{
@@ -43,7 +45,6 @@ public class BattleCommand
 
 			var embed = new DiscordEmbedBuilder()
 				.WithDescription($"### {DiscordEmoji.FromName(ctx.Client, ":crossed_swords:", false)} {player1.User.Mention} (Lv. {player1.Level}) challenges {player2.User.Mention} (Lv. {player2.Level})!")
-				.WithThumbnail(player1.Stand!.ImageUrl)
 				.WithColor(DiscordColor.Gold)
 				.WithFooter("Do you accept?", player2.User.AvatarUrl);
 

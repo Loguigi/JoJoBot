@@ -158,6 +158,12 @@ public class HPLeechAttack(double damage, double hpStealPercent) : Attack(damage
 {
 	public double HPStealPercent { get; private set; } = hpStealPercent;
 
+	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	{
+		
+		return base.Execute(attacker, defender);
+	}
+
 	// TODO
 	// public override int PerformAttack(BattlePlayer attacker, BattlePlayer defender)
 	// {

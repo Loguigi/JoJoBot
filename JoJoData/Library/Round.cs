@@ -19,7 +19,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 	{
 		battleMsgs = [];
 		
-		if (CurrentPlayer.Mp < BattleConstants.BASE_MP / 2 && CurrentPlayer.Status is not TurnSkipStatus)
+		if (CurrentPlayer.Mp < BattleConstants.LOW_MP_THRESHOLD && CurrentPlayer.Status is not TurnSkipStatus)
 		{
 			CurrentPlayer.GrantMP(BattleConstants.LOW_MP_GAIN);
 			battleMsgs.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()

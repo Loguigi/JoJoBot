@@ -15,6 +15,7 @@ public class AdminCommands
 		try
 		{
 			var player = new Player(ctx.Guild!, user);
+			player.Load();
 			if (!StandLoader.TryGetStand(id, out var stand))
 			{
 				await ctx.RespondAsync("Stand not found");

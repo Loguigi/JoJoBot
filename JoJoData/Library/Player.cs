@@ -9,11 +9,11 @@ using JoJoData.Models;
 
 namespace JoJoData.Library;
 
-public class Player : DataAccess
+public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 {
 	#region Properties
-	public readonly DiscordGuild Guild;
-	public DiscordUser User { get; private set; }
+	public readonly DiscordGuild Guild = guild;
+	public readonly DiscordUser User = user;
 	public Stand? Stand { get; set; }
 	public int Level { get; private set; }
 	public int Experience { get; set; }
@@ -21,11 +21,8 @@ public class Player : DataAccess
 	#endregion
 
 	#region Public Methods
-	public Player(DiscordGuild guild, DiscordUser user)
+	public void Load() 
 	{
-		Guild = guild;
-		User = user;
-
 		try
 		{
 			var param = new DynamicParameters();
@@ -33,7 +30,7 @@ public class Player : DataAccess
 			param.Add("@PlayerId", (long)User.Id, DbType.Int64, ParameterDirection.Input);
 			var result = GetData<PlayerModel>(StoredProcedures.GET_PLAYER_DATA, param, out var data);
 			if (result.Status != StatusCodes.SUCCESS) throw new Exception(result.Message);
-			if (data.Count != 0) 
+			if (data.Count != 0)
 			{
 				var player = data.First();
 				Stand = StandLoader.Stands[player.StandId];
