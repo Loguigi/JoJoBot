@@ -129,7 +129,7 @@ public class Ensnare : InflictStatusAbility
 		Name = "Ensnare";
 		Description = "";
 		MpCost = 20;
-		Status = new Weak(duration: 4);
+		Status = new Frail(duration: 4);
 	}
 }
 
@@ -162,7 +162,7 @@ public class TwentyMeterEmeraldSplash : AttackAbility
 	{
 		Name = "TWENTY METER EMERALD SPLASH";
 		MpCost = 55;
-		Attack = new MultiHitAttack(damage: 0.75, minHits: 4, maxHits: 10);
+		Attack = new MultiHitAttack(damage: 0.8, minHits: 4, maxHits: 10);
 	}
 }
 
@@ -170,6 +170,7 @@ public class HierophantBodyTakeover : AttackAbility
 {
 	public HierophantBodyTakeover()
 	{
+		Name = "Body Takeover";
 		MpCost = 15;
 		Attack = new TakeoverAttack(damage: 1.5);
 	}
@@ -190,6 +191,7 @@ public class ChariotSlash : StatusAttackAbility
 {
 	public ChariotSlash()
 	{
+		Name = "Slash";
 		MpCost = 10;
 		Attack = new BasicAttack(damage: 1.25);
 		Status = new Bleed(duration: 3, applyChance: 0.2);
@@ -200,6 +202,7 @@ public class HoraRush : AttackAbility
 {
 	public HoraRush()
 	{
+		Name = "Hora Rush";
 		MpCost = 35;
 		Attack = new MultiHitAttack(damage: 0.25, minHits: 5, maxHits: 15);
 	}
@@ -209,9 +212,10 @@ public class ArmorRemoval : BuffAttackAbility
 {
 	public ArmorRemoval()
 	{
+		Name = "Armor Removal";
 		MpCost = 30;
 		Attack = new BasicAttack(damage: 0.3);
-		Buff = new Haste(duration: 1);
+		Buff = new Haste(duration: 2);
 	}
 }
 
@@ -219,9 +223,9 @@ public class SwordLaunch : AttackAbility
 {
 	public SwordLaunch()
 	{
-		MpCost = 25;
-		Attack = new CritDamageIncreaseAttack(damage: 4, increase: 1);
-		// TODO skip ur next turn
+		Name = "Sword Launch";
+		MpCost = 75;
+		Attack = new CritDamageIncreaseAttack(damage: 2, increase: 5);
 	}
 }
 #endregion
@@ -231,6 +235,7 @@ public class SandAttack : AttackAbility
 {
 	public SandAttack()
 	{
+		Name = "Sand Attack";
 		MpCost = 15;
 		Attack = new BasicAttack(damage: 2.3);
 	}
@@ -240,6 +245,7 @@ public class SandConstruct : StatChangeAbility
 {
 	public SandConstruct()
 	{
+		Name = "Sand Construct";
 		MpCost = 45;
 		StatChange = new Barrier(barrier: 0.5);
 	}
@@ -249,7 +255,8 @@ public class Sandstorm : StatusAttackAbility
 {
 	public Sandstorm()
 	{
-		MpCost = 35;
+		Name = "Sandstorm";
+		MpCost = 40;
 		Attack = new MultiHitAttack(damage: 1, minHits: 2, maxHits: 4);
 		Status = new Confusion(duration: 3, applyChance: 0.2);
 	}
@@ -283,7 +290,7 @@ public class MudaMudaMudaMuda : AttackAbility
 	{
 		Name = "MUDA MUDA MUDA MUDA";
 		Description = "";
-		MpCost = 25;
+		MpCost = 30;
 		Attack = new MultiHitAttack(damage: 0.75, minHits: 1, maxHits: 6);
 	}
 }
@@ -294,8 +301,8 @@ public class RoadRoller : AttackAbility
 	{
 		Name = "ROAD ROLLA DA";
 		Description = "";
-		MpCost = 35;
-		Attack = new CritChanceIncreaseAttack(damage: 3, increase: 0);
+		MpCost = 40;
+		Attack = new CritChanceIncreaseAttack(damage: 4, increase: 0);
 	}
 }
 
@@ -332,7 +339,7 @@ public class TowerNeedle : StatusAttackAbility
 		Description = "";
 		MpCost = 25;
 		Attack = new BasicAttack(damage: 1.5);
-		Status = new Bleed(duration: 4, applyChance: 0.25);
+		Status = new Bleed(duration: 4, applyChance: 0.5);
 	}
 }
 
@@ -353,7 +360,7 @@ public class TowerFly : BuffAbility
 	{
 		Name = "Tower Fly";
 		Description = "";
-		MpCost = 25;
+		MpCost = 45;
 		Buff = new Await();
 	}
 }
@@ -443,7 +450,7 @@ public class MirrorSlash : StatusAttackAbility
 	{
 		Name = "Mirror Slash";
 		MpCost = 15;
-		Attack = new BasicAttack(damage: 1.5);
+		Attack = new BasicAttack(damage: 2.3);
 		Status = new Bleed(duration: 3, applyChance: 0.2);
 	}
 }
@@ -454,7 +461,7 @@ public class LightspeedSlash : AttackAbility
 	{
 		Name = "Lightspeed Slash";
 		MpCost = 35;
-		Attack = new CritChanceIncreaseAttack(damage: 2.5, increase: 0.3);
+		Attack = new CritChanceIncreaseAttack(damage: 3, increase: 0.3);
 	}
 }
 
@@ -528,7 +535,7 @@ public class NailStab : AttackAbility
 	{
 		Name = "Stab";
 		MpCost = 15;
-		Attack = new CritDamageIncreaseAttack(damage: 3, 0.5);
+		Attack = new CritDamageIncreaseAttack(damage: 3, increase: 0.5);
 	}
 }
 
@@ -558,7 +565,7 @@ public class Grow : StatChangeAbility
 	{
 		Name = "Grow";
 		MpCost = 15;
-		StatChange = new Strength(increase: 0.4);
+		StatChange = new Strength(increase: 0.2);
 	}
 }
 #endregion
@@ -659,8 +666,8 @@ public class HeatWave : StatChangeAbility
 	public HeatWave() 
 	{
 		Name = "Heat Wave";
-		MpCost = 25;
-		StatChange = new Strength(increase: 0.35);
+		MpCost = 35;
+		StatChange = new Strength(increase: 0.25);
 	}
 }
 
@@ -679,7 +686,7 @@ public class SolarFlare : InflictStatusAbility
 	public SolarFlare() 
 	{
 		Name = "Solar Flare";
-		MpCost = 35;
+		MpCost = 50;
 		Status = new Burn(duration: 3, applyChance: 1);
 	}
 }
@@ -777,4 +784,268 @@ public class GoldenShower : AttackAbility
 		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 25, hpLossPercent: 0.4);
 	}
 }
+#endregion
+
+#region High Priestess
+public class Gnaw : AttackAbility
+{
+	public Gnaw() 
+	{
+		Name = "Gnaw";
+		MpCost = 15;
+		Attack = new MultiHitAttack(damage: 0.7, minHits: 1, 6);
+	}
+}
+
+public class SpearGun : AttackAbility 
+{
+	public SpearGun() 
+	{
+		Name = "Spear Gun";
+		MpCost = 25;
+		Attack = new BasicAttack(damage: 2.5);
+	}
+}
+
+public class BiteBiteBite : StatusAttackAbility 
+{
+	public BiteBiteBite() 
+	{
+		Name = "Bite";
+		MpCost = 35;
+		Attack = new BasicAttack(damage: 2);
+		Status = new Bleed(duration: 3, applyChance: 0.4);
+	}
+}
+
+public class Assimilate : BuffAbility 
+{
+	public Assimilate() 
+	{
+		Name = "Assimilate";
+		MpCost = 50;
+		Buff = new Await();
+	}
+}
+#endregion
+
+#region Geb
+public class WaterSlash : StatusAttackAbility 
+{
+	public WaterSlash() 
+	{
+		Name = "Water Slash";
+		MpCost = 25;
+		Attack = new BasicAttack(damage: 2);
+		Status = new Bleed(duration: 4, applyChance: 0.5);
+	}
+}
+
+public class WaterBullets : AttackAbility 
+{
+	public WaterBullets() 
+	{
+		Name = "Water Bullets";
+		MpCost = 50;
+		Attack = new MultiHitAttack(damage: 1.2, minHits: 3, maxHits: 5);
+	}
+}
+
+public class SandSonar : BuffAbility 
+{
+	public SandSonar() 
+	{
+		Name = "Sand Sonar";
+		MpCost = 30;
+		Buff = new Protect(duration: 1, dr: 0.8);
+	}
+}
+
+public class SurpriseAttack : BuffAbility 
+{
+	public SurpriseAttack() 
+	{
+		Name = "Surprise Attack";
+		MpCost = 40;
+		Buff = new Charge(duration: 1);
+	}
+}
+#endregion
+
+#region Khnum
+public class FlailAbout : AttackAbility 
+{
+	public FlailAbout() 
+	{
+		Name = "Flail Helplessly";
+		MpCost = 30;
+		Attack = new MultiHitAttack(damage: 0.4, minHits: 8, maxHits: 12);
+	}
+}
+
+public class Smoke4Ciggys : StatChangeAbility 
+{
+	public Smoke4Ciggys() 
+	{
+		Name = "Smoke 4 Ciggys";
+		MpCost = 35;
+		StatChange = new Heal(healPercent: 0.2);
+	}
+}
+
+public class SweatNervously : BuffAttackAbility 
+{
+	public SweatNervously() 
+	{
+		Name = "Sweat Nervously";
+		MpCost = 10;
+		Buff = new Haste(duration: 1);
+	}
+}
+
+public class OrangeBomb : InflictStatusAbility 
+{
+	public OrangeBomb() 
+	{
+		Name = "Orange Bomb 🍊";
+		MpCost = 50;
+		Status = new Doom(duration: 10);
+	}
+}
+#endregion
+
+#region Anubis
+public class DarkSlash : StatusAttackAbility 
+{
+	public DarkSlash() 
+	{
+		Name = "Dark Slash";
+		MpCost = 25;
+		Attack = new MultiHitAttack(damage: 1.2, minHits: 1, maxHits: 4);
+		Status = new Bleed(duration: 5, applyChance: 0.3);
+	}
+}
+
+public class CombatDevelopment : StatChangeAbility 
+{
+	public CombatDevelopment() 
+	{
+		Name = "Combat Development";
+		MpCost = 45;
+		StatChange = new Strength(increase: 0.25);
+	}
+}
+
+public class PhaseSlash : AttackAbility 
+{
+	public PhaseSlash() 
+	{
+		Name = "Phase Slash";
+		MpCost = 35;
+		Attack = new BypassProtectAttack(damage: 4);
+	}
+}
+
+public class SwitchHosts : StatChangeAbility 
+{
+	public SwitchHosts() 
+	{
+		Name = "Switch Hosts";
+		MpCost = 100;
+		StatChange = new Heal(healPercent: 0.8);
+	}
+}
+#endregion
+
+#region Bastet
+public class NutsNBolts : AttackAbility
+{
+	public NutsNBolts() 
+	{
+		Name = "Nuts n' Bolts";
+		MpCost = 25;
+		Attack = new MultiHitAttack(damage: 0.2, minHits: 15, maxHits: 30);
+	}
+}
+
+public class OutletElectrocution : StatusAttackAbility
+{
+	public OutletElectrocution() 
+	{
+		Name = "Outlet Electrocution";
+		MpCost = 45;
+		Attack = new BasicAttack(damage: 1.5);
+		Status = new Shock(duration: 3, applyChance: 0.75);
+	}
+}
+
+public class Magnetism : AttackAbility 
+{
+	public Magnetism() 
+	{
+		Name = "Magnetism";
+		MpCost = 35;
+		Attack = new TakeoverAttack(damage: 2.5);
+	}
+}
+
+public class ChargeTheyPhone : BuffAbility
+{
+	public ChargeTheyPhone() 
+	{
+		Name = "Charge They Phone";
+		MpCost = 50;
+		Buff = new Charge(duration: 2);
+	}
+}
+#endregion
+
+#region Sethan
+public class AgeRegression : StatChangeAbility 
+{
+	public AgeRegression() 
+	{
+		Name = "Age Regression";
+		MpCost = 50;
+		StatChange = new Regress(decrease: 0.2);
+	}
+}
+
+public class HatchetStrike : AttackAbility 
+{
+	public HatchetStrike() 
+	{
+		Name = "Hatchet Strike";
+		MpCost = 15;
+		Attack = new BasicAttack(damage: 2);
+	}
+}
+
+public class Predation : InflictStatusAbility 
+{
+	public Predation() 
+	{
+		Name = "Predation";
+		MpCost = 35;
+		Status = new Frail(duration: 4, applyChance: 0.5);
+	}
+}
+
+public class ShadowReflection : AttackAbility 
+{
+	public ShadowReflection() 
+	{
+		Name = "Shadow Reflection";
+		MpCost = 30;
+		Attack = new WeaknessAttack(damage: 1.5, increase: 4, status: typeof(Frail));
+	}
+}
+#endregion
+
+#region Osiris
+// TODO
+#endregion
+
+#region Horus
+
 #endregion

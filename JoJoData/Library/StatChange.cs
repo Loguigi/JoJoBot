@@ -74,7 +74,33 @@ public class Strength(double increase) : StatChange
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
-			.WithDescription($"💪 Strength increased")
+			.WithDescription($"💪 **Strength increased**")
+			.WithColor(DiscordColor.Orange)
+			.WithFooter($"🗡️ {minDamageBefore}-{maxDamageBefore} ➡️ {target.MinDamage}-{target.MaxDamage}", target.User.AvatarUrl));
+	}
+}
+
+public class Regress(double decrease) : StatChange
+{
+	public readonly double DamageDecrease = decrease;
+
+	public override string GetDescription(DiscordClient s)
+	{
+		// TODO
+		return string.Empty;
+	}
+
+	public override DiscordMessageBuilder Execute(BattlePlayer target)
+	{
+		var minDamageBefore = target.MinDamage;
+		var maxDamageBefore = target.MaxDamage;
+
+		target.IncreaseAttack((int)Math.Ceiling(target.MinDamage * DamageDecrease), (int)Math.Ceiling(target.MaxDamage * DamageDecrease));
+
+		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription($"💪 **Strength decreased**")
+			.WithColor(DiscordColor.Red)
 			.WithFooter($"🗡️ {minDamageBefore}-{maxDamageBefore} ➡️ {target.MinDamage}-{target.MaxDamage}", target.User.AvatarUrl));
 	}
 }

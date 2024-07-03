@@ -185,6 +185,14 @@ public class BattlePlayer : Player
 		MinDamage = _minDamage;
 		MaxDamage = _maxDamage;
 	}
+	
+	public void DecreaseAttack(int minDamageDecrease, int maxDamageDecrease) 
+	{
+		_minDamage -= minDamageDecrease;
+		_maxDamage -= maxDamageDecrease;
+		MinDamage = _minDamage;
+		MaxDamage = _maxDamage;
+	}
 	#endregion
 
 	#region Discord Output Methods

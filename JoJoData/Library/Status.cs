@@ -182,13 +182,30 @@ public class Douse(int duration, double applyChance = 1) : PassiveStatus(duratio
 	}
 }
 
-public class Weak(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance)
+public class Frail(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance)
 {
 	public readonly double DRReduction = 0.25;
 
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":umbrella:")} Weak";
+	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":umbrella:")} Frail";
 
 	public void Weaken(BattlePlayer target) => target.DamageResistance -= DRReduction;
+}
+
+public class Shock(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
+{
+	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":zap:")} Shock";
+
+	public DiscordMessageBuilder Electrocute(BattlePlayer caster, BattlePlayer target) 
+	{
+		var hpBefore = target.Hp;
+		target.ReceiveDamage((int)(caster.DamageReceived * 0.5));
+
+		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription($"⛈️ **{target.Stand!.CoolName} shocks themself for `{caster.DamageReceived * 0.5}` damage!**")
+			.WithColor(DiscordColor.Yellow)
+			.WithFooter($"❤️ {hpBefore} ➡️ ❤️ {target.Hp}"));
+	}
 }
 #endregion
 
