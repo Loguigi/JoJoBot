@@ -70,8 +70,7 @@ public class Strength(double increase) : StatChange
 		var minDamageBefore = target.MinDamage;
 		var maxDamageBefore = target.MaxDamage;
 		
-		target.MinDamage += (int)Math.Ceiling(target.MinDamage * DamageIncrease);
-		target.MaxDamage += (int)Math.Ceiling(target.MaxDamage * DamageIncrease);
+		target.IncreaseAttack((int)Math.Ceiling(target.MinDamage * DamageIncrease), (int)Math.Ceiling(target.MaxDamage * DamageIncrease));
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)

@@ -15,9 +15,9 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 	public readonly DiscordGuild Guild = guild;
 	public readonly DiscordUser User = user;
 	public Stand? Stand { get; set; }
-	public int Level { get; private set; }
-	public int Experience { get; set; }
-	public int BattlesWon { get; private set; }
+	public int Level { get; protected set; }
+	public int Experience { get; protected set; }
+	public int BattlesWon { get; protected set; }
 	#endregion
 
 	#region Public Methods

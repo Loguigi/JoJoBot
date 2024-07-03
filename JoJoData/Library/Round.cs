@@ -151,7 +151,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			return false;
 		}
 		
-		if (CurrentPlayer.Status is Silence silence) 
+		if (CurrentPlayer.Status is Silence silence && ability.MpCost > 0)
 		{
 			msg = silence.SilenceMessage(CurrentPlayer);
 			return false;

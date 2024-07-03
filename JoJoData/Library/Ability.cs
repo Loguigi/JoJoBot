@@ -40,7 +40,7 @@ public abstract class Ability
 
 		if (this is AttackAbility ab)
 		{
-			desc.Append(ab.Attack.GetDescription(s));
+			//desc.Append(ab.Attack.GetDescription(s));
 
 			if (this is StatusAttackAbility saa)
 			{

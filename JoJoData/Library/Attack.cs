@@ -131,19 +131,20 @@ public class CritDamageIncreaseAttack(double damage, double increase) : Attack(d
 	}
 }
 
-public class WeaknessAttack(double damage, double increase, Status status) : Attack(damage)
+public class WeaknessAttack(double damage, double increase, Type status) : Attack(damage)
 {
 	public readonly double WeaknessDamageIncrease = increase;
-	public readonly Status Status = status;
+	public readonly Type StatusType = status;
 
 	public override string GetDescription(DiscordClient s)
 	{
-		return base.GetDescription(s) + $"{DiscordEmoji.FromName(s, ":knife:")} Increase Damage Against {Status.GetName(s)}\n";
+		return string.Empty;
+		//return base.GetDescription(s) + $"{DiscordEmoji.FromName(s, ":knife:")} Increase Damage Against {Status.GetName(s)}\n";
 	}
 
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{
-		if (defender.Status is not null && defender.Status.GetType() == Status.GetType()) 
+		if (defender.Status is not null && defender.Status.GetType() == StatusType)
 		{
 			return (int)Math.Ceiling(base.CalculateDamage(attacker, defender, out crit) * WeaknessDamageIncrease);
 		}

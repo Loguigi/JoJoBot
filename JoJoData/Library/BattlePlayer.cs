@@ -28,6 +28,7 @@ public class BattlePlayer : Player
 			_hp = value;
 		}
 	}
+	public int Barrier => _barrier;
 	public int MaxHp { get; private set; }
 	public int Mp { get; private set; } = BattleConstants.BASE_MP;
 	public int MinDamage { get; set; }
@@ -66,12 +67,16 @@ public class BattlePlayer : Player
 	public BattlePlayer(BattlePlayer player) : base(player.Guild, player.User)
 	{
 		Client = player.Client;
+		Stand = player.Stand;
+		Level = player.Level;
+		Experience = player.Experience;
+		
 		_hp = player._hp;
 		MaxHp = player.MaxHp;
 		_barrier = player._barrier;
 		Mp = player.Mp;
-		MinDamage = _minDamage;
-		MaxDamage = _maxDamage;
+		MinDamage = _minDamage = player._minDamage;
+		MaxDamage = _maxDamage = player._maxDamage;
 		CritChance = player.CritChance;
 		CritDamageMultiplier = player.CritDamageMultiplier;
 		Status = player.Status;
@@ -177,6 +182,8 @@ public class BattlePlayer : Player
 	{
 		_minDamage += minDamageIncrease;
 		_maxDamage += maxDamageIncrease;
+		MinDamage = _minDamage;
+		MaxDamage = _maxDamage;
 	}
 	#endregion
 

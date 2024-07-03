@@ -1,5 +1,6 @@
 using JoJoData.Library;
 using Barrier = JoJoData.Library.Barrier;
+using Random = JoJoData.Library.Random;
 
 namespace JoJoData.Abilities;
 
@@ -128,7 +129,7 @@ public class Ensnare : InflictStatusAbility
 		Name = "Ensnare";
 		Description = "";
 		MpCost = 20;
-		Status = new Weak(duration: 4, drReduction: 0.15);
+		Status = new Weak(duration: 4);
 	}
 }
 
@@ -151,7 +152,7 @@ public class EmeraldSplash : AttackAbility
 	{
 		Name = "Emerald Splash";
 		MpCost = 20;
-		Attack = new MultiHitAttack(damage: 0.5, minHits: 2, maxHits: 4);
+		Attack = new MultiHitAttack(damage: 0.75, minHits: 2, maxHits: 4);
 	}
 }
 
@@ -159,8 +160,9 @@ public class TwentyMeterEmeraldSplash : AttackAbility
 {
 	public TwentyMeterEmeraldSplash()
 	{
+		Name = "TWENTY METER EMERALD SPLASH";
 		MpCost = 55;
-		Attack = new MultiHitAttack(damage: 0.5, minHits: 4, maxHits: 10);
+		Attack = new MultiHitAttack(damage: 0.75, minHits: 4, maxHits: 10);
 	}
 }
 
@@ -647,6 +649,132 @@ public class BrainDeath : InflictStatusAbility
 		Name = "Brain Death";
 		MpCost = 75;
 		Status = new Doom(duration: 5);
+	}
+}
+#endregion
+
+#region Sun
+public class HeatWave : StatChangeAbility
+{
+	public HeatWave() 
+	{
+		Name = "Heat Wave";
+		MpCost = 25;
+		StatChange = new Strength(increase: 0.35);
+	}
+}
+
+public class LightRayEnergy : AttackAbility
+{
+	public LightRayEnergy() 
+	{
+		Name = "Light Ray Energy";
+		MpCost = 25;
+		Attack = new MultiHitAttack(damage: 0.3, minHits: 5, maxHits: 15);
+	}
+}
+
+public class SolarFlare : InflictStatusAbility 
+{
+	public SolarFlare() 
+	{
+		Name = "Solar Flare";
+		MpCost = 35;
+		Status = new Burn(duration: 3, applyChance: 1);
+	}
+}
+
+public class TwoRocksLol : AttackAbility 
+{
+	public TwoRocksLol() 
+	{
+		Name = "TWO ROCKS LMAO";
+		MpCost = 10;
+		Attack = new CritDamageIncreaseAttack(damage: 0.25, increase: 100);
+	}
+}
+#endregion
+
+#region Death 13
+public class Bedtime : InflictStatusAbility 
+{
+	public Bedtime()
+	{
+		Name = "Bedtime";
+		MpCost = 30;
+		Status = new Sleep(duration: 3, applyChance: 0.75);
+	}
+}
+
+public class Nightmare : AttackAbility 
+{
+	public Nightmare() 
+	{
+		Name = "Nightmare";
+		MpCost = 35;
+		Attack = new WeaknessAttack(damage: 2.5, increase: 2, typeof(Sleep));
+	}
+}
+
+public class PoopySoupy : StatChangeAbility
+{
+	public PoopySoupy() 
+	{
+		Name = "💩 Poopy Soupy 💩";
+		MpCost = 10;
+		StatChange = new Heal(healPercent: 0.1);
+	}
+}
+
+public class Dreamland : BuffAbility 
+{
+	public Dreamland() 
+	{
+		Name = "Dreamland";
+		MpCost = 40;
+		Buff = new Protect(duration: 4, dr: 0.3);
+	}
+}
+#endregion
+
+#region Judgment
+public class Gaslight : InflictStatusAbility
+{
+	public Gaslight() 
+	{
+		Name = "GASLIGHT";
+		MpCost = 25;
+		Status = new Confusion(duration: 2, applyChance: 0.9);
+	}
+}
+
+public class Gatekeep : BuffAbility 
+{
+	public Gatekeep() 
+	{
+		Name = "Gatekeep";
+		MpCost = 45;
+		Buff = new Protect(duration: 3, dr: 0.3);
+	}
+}
+
+public class Girlboss : InflictStatusAbility 
+{
+	public Girlboss() 
+	{
+		Name = "Girlboss";
+		MpCost = 20;
+		Status = new Random(duration: 3);
+	}
+}
+
+public class GoldenShower : AttackAbility 
+{
+	public GoldenShower() 
+	{
+		Name = "Golden Shower";
+		MpCost = 0;
+		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 25, hpLossPercent: 0.4);
 	}
 }
 #endregion

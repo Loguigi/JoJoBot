@@ -1,3 +1,4 @@
+using System.Reflection;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using JoJoData.Helpers;
@@ -66,7 +67,7 @@ public abstract class DamageStatus(int duration, double applyChance) : Status(du
 	}
 }
 
-public class Burn(int duration, double applyChance) : DamageStatus(duration, applyChance) 
+public class Burn(int duration, double applyChance = 1) : DamageStatus(duration, applyChance) 
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":fire:")} Burn";
 
@@ -85,7 +86,7 @@ public class Burn(int duration, double applyChance) : DamageStatus(duration, app
 	}
 }
 
-public class Bleed(int duration, double applyChance) : DamageStatus(duration, applyChance) 
+public class Bleed(int duration, double applyChance = 1) : DamageStatus(duration, applyChance) 
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":drop_of_blood:")} Bleed";
 
@@ -99,12 +100,12 @@ public class Bleed(int duration, double applyChance) : DamageStatus(duration, ap
 
 	protected override void Apply(BattlePlayer caster, BattlePlayer target)
 	{
-		target.DamageOverTime = (int)Math.Ceiling(target.Hp * 0.4);
+		target.DamageOverTime = (int)Math.Ceiling(target.Hp * 0.25);
 		base.Apply(caster, target);
 	}
 }
 
-public class Poison(int duration, double applyChance) : DamageStatus(duration, applyChance) 
+public class Poison(int duration, double applyChance = 1) : DamageStatus(duration, applyChance) 
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":snake:")} Poison";
 
@@ -125,7 +126,7 @@ public class Poison(int duration, double applyChance) : DamageStatus(duration, a
 	}
 }
 
-public class Doom(int duration) : DamageStatus(duration, applyChance: 1) 
+public class Doom(int duration, double applyChance = 1) : DamageStatus(duration, applyChance) 
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":skull:")} Doom";
 
@@ -151,7 +152,7 @@ public abstract class PassiveStatus(int duration, double applyChance) : Status(d
 	protected override DiscordMessageBuilder? Action(BattlePlayer caster, BattlePlayer target) => null;
 }
 
-public class Silence(int duration, double applyChance) : PassiveStatus(duration, applyChance) 
+public class Silence(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":mute:")} Silence";
 
@@ -163,14 +164,14 @@ public class Silence(int duration, double applyChance) : PassiveStatus(duration,
 	);
 }
 
-public class Confusion(int duration, double applyChance) : PassiveStatus(duration, applyChance) 
+public class Confusion(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":question:")} Confusion";
 
 	public bool RollConfusion() => RandomHelper.RNG.NextDouble() < 0.5;
 }
 
-public class Douse(int duration, double applyChance) : PassiveStatus(duration, applyChance) 
+public class Douse(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":oil:")} Douse";
 
@@ -181,9 +182,9 @@ public class Douse(int duration, double applyChance) : PassiveStatus(duration, a
 	}
 }
 
-public class Weak(int duration, double drReduction) : PassiveStatus(duration, 1)
+public class Weak(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance)
 {
-	public readonly double DRReduction = drReduction;
+	public readonly double DRReduction = 0.25;
 
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":umbrella:")} Weak";
 
@@ -197,7 +198,7 @@ public abstract class TurnSkipStatus(int duration, double applyChance) : Status(
 
 }
 
-public class TimeStop(int duration) : TurnSkipStatus(duration, 1) 
+public class TimeStop(int duration, double applyChance = 1) : TurnSkipStatus(duration, applyChance) 
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":clock10:")} Time Stop";
 
@@ -213,7 +214,7 @@ public class TimeStop(int duration) : TurnSkipStatus(duration, 1)
 		}
 		else
 		{
-			return base.TryApply(caster, target);
+			return base.TryApply(caster, target)!.AddEmbed(new DiscordEmbedBuilder().WithImageUrl("https://c.tenor.com/qAhqQaBghmkAAAAC/tenor.gif"));
 		}
 	}
 
@@ -226,7 +227,7 @@ public class TimeStop(int duration) : TurnSkipStatus(duration, 1)
 	}
 }
 
-public class Sleep(int duration, double applyChance) : TurnSkipStatus(duration, applyChance) 
+public class Sleep(int duration, double applyChance = 1) : TurnSkipStatus(duration, applyChance) 
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":zzz:")} Sleep";
 
@@ -253,3 +254,25 @@ public class Sleep(int duration, double applyChance) : TurnSkipStatus(duration, 
 	}
 }
 #endregion
+
+public class Random(int duration, double applyChance = 1) : Status(duration, applyChance)
+{
+	public override string GetName(DiscordClient s) => $"🎲 Random";
+
+	protected override DiscordMessageBuilder? Action(BattlePlayer caster, BattlePlayer target) => null;
+
+	protected override void Apply(BattlePlayer caster, BattlePlayer target)
+	{
+		var statuses = Assembly.GetExecutingAssembly().GetTypes().Where(x =>
+			x.IsClass &&
+			x.Namespace != null &&
+			x.Namespace.Contains("JoJoData.Library")).ToList().Where(y =>
+			!y.IsAbstract && (y.BaseType == typeof(PassiveStatus) || y.BaseType == typeof(PassiveStatus) || y.BaseType == typeof(TurnSkipStatus))).ToList();
+
+		var selection = RandomHelper.RNG.Next(0, statuses.Count);
+		if (Activator.CreateInstance(statuses[selection], Duration, ApplyChance) is Status status)
+		{
+			status.TryApply(caster, target);
+		}
+	}
+}
