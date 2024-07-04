@@ -37,7 +37,10 @@ public abstract class Status(int duration, double applyChance) {
 		}
 		else 
 		{
-			return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			var msg = Action(caster, target) ?? new DiscordMessageBuilder();
+			target.DamageOverTime = 0;
+			
+			return msg.AddEmbed(new DiscordEmbedBuilder()
 				.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
 				.WithDescription($"**{GetName(target.Client)} has worn off**")
 				.WithColor(DiscordColor.Green));
@@ -132,7 +135,7 @@ public class Doom(int duration, double applyChance = 1) : DamageStatus(duration,
 
 	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
-		if (target.StatusDuration == 1) 
+		if (target.StatusDuration == 0) 
 		{
 			return new BypassProtectAttack(damage: 9999).Execute(caster, target);
 		}

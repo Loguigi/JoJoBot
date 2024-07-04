@@ -126,8 +126,6 @@ public class BattlePlayer : Player
 		if (remove || StatusDuration == 0) 
 		{
 			Status = null;
-			StatusDuration = 0;
-			DamageOverTime = 0;
 			return false;
 		}
 
@@ -145,7 +143,6 @@ public class BattlePlayer : Player
 		if (BuffDuration == 0) 
 		{
 			Buff = null;
-			BuffDuration = 0;
 			return false;
 		}
 

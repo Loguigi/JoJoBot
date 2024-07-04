@@ -75,7 +75,7 @@ public class Await() : Buff(duration: 2)
 		else // duration == 1
 		{
 			evade = false;
-			return new BasicAttack(damage: 2).Execute(attacker: caster, defender: target);
+			return new BasicAttack(damage: 3).Execute(attacker: caster, defender: target);
 		}
 	}
 }

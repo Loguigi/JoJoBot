@@ -62,9 +62,9 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			protect.GrantProtect(Opponent);
 		}
 		
-		if (Opponent.Status != null && Opponent.Status is Weak weak) 
+		if (Opponent.Status != null && Opponent.Status is Frail frail) 
 		{
-			weak.Weaken(Opponent);
+			frail.Weaken(Opponent);
 		}
 	}
 
@@ -100,6 +100,13 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				if (!Opponent.IsAlive)
 					return;
 			}
+			
+			if (CurrentPlayer.Status is Shock shock) 
+			{
+				battleMsgs.Add(shock.Electrocute(Opponent, CurrentPlayer));
+				if (!CurrentPlayer.IsAlive)
+					return;
+			}
 
 			if (Opponent.Status is Sleep sleep)
 			{
@@ -129,7 +136,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 
 		if (ability is StatChangeAbility statChange)
 		{
-			battleMsgs.Add(statChange.StatChange.Execute(target: CurrentPlayer));
+			battleMsgs.Add(statChange.StatChange.Execute(caster: CurrentPlayer, target: Opponent));
 		}
 		
 		if (CurrentPlayer.Buff is Haste) 

@@ -213,9 +213,9 @@ public class ArmorRemoval : BuffAttackAbility
 	public ArmorRemoval()
 	{
 		Name = "Armor Removal";
-		MpCost = 30;
+		MpCost = 40;
 		Attack = new BasicAttack(damage: 0.3);
-		Buff = new Haste(duration: 2);
+		Buff = new Haste(duration: 1);
 	}
 }
 
@@ -879,7 +879,7 @@ public class FlailAbout : AttackAbility
 	{
 		Name = "Flail Helplessly";
 		MpCost = 30;
-		Attack = new MultiHitAttack(damage: 0.4, minHits: 8, maxHits: 12);
+		Attack = new MultiHitAttack(damage: 0.25, minHits: 8, maxHits: 12);
 	}
 }
 
@@ -888,7 +888,7 @@ public class Smoke4Ciggys : StatChangeAbility
 	public Smoke4Ciggys() 
 	{
 		Name = "Smoke 4 Ciggys";
-		MpCost = 35;
+		MpCost = 50;
 		StatChange = new Heal(healPercent: 0.2);
 	}
 }
@@ -898,7 +898,8 @@ public class SweatNervously : BuffAttackAbility
 	public SweatNervously() 
 	{
 		Name = "Sweat Nervously";
-		MpCost = 10;
+		MpCost = 20;
+		Attack = new BasicAttack(damage: -5);
 		Buff = new Haste(duration: 1);
 	}
 }
@@ -908,7 +909,7 @@ public class OrangeBomb : InflictStatusAbility
 	public OrangeBomb() 
 	{
 		Name = "Orange Bomb 🍊";
-		MpCost = 50;
+		MpCost = 65;
 		Status = new Doom(duration: 10);
 	}
 }
@@ -942,7 +943,7 @@ public class PhaseSlash : AttackAbility
 	{
 		Name = "Phase Slash";
 		MpCost = 35;
-		Attack = new BypassProtectAttack(damage: 4);
+		Attack = new BypassProtectAttack(damage: 3);
 	}
 }
 
@@ -951,8 +952,8 @@ public class SwitchHosts : StatChangeAbility
 	public SwitchHosts() 
 	{
 		Name = "Switch Hosts";
-		MpCost = 100;
-		StatChange = new Heal(healPercent: 0.8);
+		MpCost = 60;
+		StatChange = new Heal(healPercent: 0.6);
 	}
 }
 #endregion
@@ -964,7 +965,7 @@ public class NutsNBolts : AttackAbility
 	{
 		Name = "Nuts n' Bolts";
 		MpCost = 25;
-		Attack = new MultiHitAttack(damage: 0.2, minHits: 15, maxHits: 30);
+		Attack = new MultiHitAttack(damage: 0.15, minHits: 15, maxHits: 30);
 	}
 }
 

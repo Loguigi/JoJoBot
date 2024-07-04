@@ -6,7 +6,7 @@ namespace JoJoData.Library;
 public abstract class StatChange 
 {
 	public abstract string GetDescription(DiscordClient s);
-	public abstract DiscordMessageBuilder Execute(BattlePlayer target);
+	public abstract DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target);
 }
 
 public class Heal(double healPercent) : StatChange 
@@ -18,17 +18,17 @@ public class Heal(double healPercent) : StatChange
 		return $"{DiscordEmoji.FromName(s, ":heart:")} Heal: {HealPercent * 100}% of max HP";
 	}
 	
-	public override DiscordMessageBuilder Execute(BattlePlayer target)
+	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
-		int hpBefore = target.Hp;
-		var heal = (int)Math.Ceiling(target.MaxHp * HealPercent);
-		target.Heal(heal);
+		int hpBefore = caster.Hp;
+		var heal = (int)Math.Ceiling(caster.MaxHp * HealPercent);
+		caster.Heal(heal);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
-			.WithDescription($"{DiscordEmoji.FromName(target.Client, ":sparkling_heart:")} **{target.Stand!.CoolName} heals for `{heal}` HP**")
+			.WithAuthor(caster.User.GlobalName, "", caster.User.AvatarUrl)
+			.WithDescription($"{DiscordEmoji.FromName(caster.Client, ":sparkling_heart:")} **{caster.Stand!.CoolName} heals for `{heal}` HP**")
 			.WithColor(DiscordColor.Rose)
-			.WithFooter($"{DiscordEmoji.FromName(target.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(target.Client, ":arrow_right:")} {DiscordEmoji.FromName(target.Client, ":heart:")} {target.Hp}", target.User.AvatarUrl));
+			.WithFooter($"{DiscordEmoji.FromName(caster.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(caster.Client, ":arrow_right:")} {DiscordEmoji.FromName(caster.Client, ":heart:")} {caster.Hp}", caster.User.AvatarUrl));
 	}
 }
 
@@ -41,17 +41,17 @@ public class Barrier(double barrier) : StatChange
 		return $"{DiscordEmoji.FromName(s, ":blue_heart:")} Barrier: {BarrierAmount * 100}% of current HP";
 	}
 	
-	public override DiscordMessageBuilder Execute(BattlePlayer target)
+	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
-		int barrierBefore = target.Barrier;
-		var barrier = (int)Math.Ceiling(target.Hp * BarrierAmount);
-		target.GrantBarrier(barrier);
+		int barrierBefore = caster.Barrier;
+		var barrier = (int)Math.Ceiling(caster.Hp * BarrierAmount);
+		caster.GrantBarrier(barrier);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
-			.WithDescription($"{DiscordEmoji.FromName(target.Client, ":shield:")} **{target.Stand!.CoolName} creates a barrier for `{barrier}` HP**")
+			.WithAuthor(caster.User.GlobalName, "", caster.User.AvatarUrl)
+			.WithDescription($"{DiscordEmoji.FromName(target.Client, ":shield:")} **{caster.Stand!.CoolName} creates a barrier for `{barrier}` HP**")
 			.WithColor(DiscordColor.CornflowerBlue)
-			.WithFooter($"{DiscordEmoji.FromName(target.Client, ":blue_heart:")} {barrierBefore} {DiscordEmoji.FromName(target.Client, ":arrow_right:")} {DiscordEmoji.FromName(target.Client, ":blue_heart:")} {target.Barrier}", target.User.AvatarUrl));
+			.WithFooter($"{DiscordEmoji.FromName(caster.Client, ":blue_heart:")} {barrierBefore} {DiscordEmoji.FromName(caster.Client, ":arrow_right:")} {DiscordEmoji.FromName(caster.Client, ":blue_heart:")} {caster.Barrier}", caster.User.AvatarUrl));
 	}
 }
 
@@ -65,18 +65,18 @@ public class Strength(double increase) : StatChange
 		return string.Empty;
 	}
 
-	public override DiscordMessageBuilder Execute(BattlePlayer target)
+	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
-		var minDamageBefore = target.MinDamage;
-		var maxDamageBefore = target.MaxDamage;
+		var minDamageBefore = caster.MinDamage;
+		var maxDamageBefore = caster.MaxDamage;
 		
-		target.IncreaseAttack((int)Math.Ceiling(target.MinDamage * DamageIncrease), (int)Math.Ceiling(target.MaxDamage * DamageIncrease));
+		caster.IncreaseAttack((int)Math.Ceiling(caster.MinDamage * DamageIncrease), (int)Math.Ceiling(caster.MaxDamage * DamageIncrease));
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithAuthor(caster.User.GlobalName, "", caster.User.AvatarUrl)
 			.WithDescription($"💪 **Strength increased**")
 			.WithColor(DiscordColor.Orange)
-			.WithFooter($"🗡️ {minDamageBefore}-{maxDamageBefore} ➡️ {target.MinDamage}-{target.MaxDamage}", target.User.AvatarUrl));
+			.WithFooter($"🗡️ {minDamageBefore}-{maxDamageBefore} ➡️ {caster.MinDamage}-{caster.MaxDamage}", caster.User.AvatarUrl));
 	}
 }
 
@@ -90,12 +90,12 @@ public class Regress(double decrease) : StatChange
 		return string.Empty;
 	}
 
-	public override DiscordMessageBuilder Execute(BattlePlayer target)
+	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
 		var minDamageBefore = target.MinDamage;
 		var maxDamageBefore = target.MaxDamage;
 
-		target.IncreaseAttack((int)Math.Ceiling(target.MinDamage * DamageDecrease), (int)Math.Ceiling(target.MaxDamage * DamageDecrease));
+		target.DecreaseAttack((int)Math.Ceiling(target.MinDamage * DamageDecrease), (int)Math.Ceiling(target.MaxDamage * DamageDecrease));
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
