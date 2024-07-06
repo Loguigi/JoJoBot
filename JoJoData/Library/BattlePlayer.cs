@@ -89,8 +89,9 @@ public class BattlePlayer : Player
 
 	#region Player Control Methods
 
-	public void ReceiveDamage(int damage) 
+	public void ReceiveDamage(int damage, out int hpBefore) 
 	{
+		hpBefore = Hp;
 		if (_barrier > 0 && damage < _barrier) 
 		{
 			_barrier -= damage;
@@ -149,29 +150,33 @@ public class BattlePlayer : Player
 		return true;
 	}
 
-	public void Heal(int hp) 
+	public void Heal(int hp, out int hpBefore) 
 	{
+		hpBefore = _hp;
 		_hp += hp;
 		if (_hp > MaxHp)
 			_hp = MaxHp;
 	}
 
-	public void GrantMP(int mp) 
+	public void GrantMP(int mp, out int mpBefore) 
 	{
+		mpBefore = Mp;
 		Mp += mp;
 		if (Mp > BattleConstants.BASE_MP)
 			Mp = BattleConstants.BASE_MP;
 	}
 
-	public void UseMP(int mp) 
+	public void UseMP(int mp, out int mpBefore) 
 	{
+		mpBefore = Mp;
 		Mp -= mp;
 		if (Mp < 0)
 			Mp = 0;
 	}
 
-	public void GrantBarrier(int barrier) 
+	public void GrantBarrier(int barrier, out int barrierBefore) 
 	{
+		barrierBefore = _barrier;
 		_barrier += barrier;
 	}
 	

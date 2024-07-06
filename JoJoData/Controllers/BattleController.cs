@@ -45,7 +45,6 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 				Rounds.Add(CurrentRound, new Round(Player2, Player1));
 
 			Rounds[CurrentRound].PreCheck(out var msgs);
-
 			await SendBattleMessages(msgs);
 			await CreateBattleInterface();
 		}
@@ -107,10 +106,22 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 		Rounds[CurrentRound].PreCheck(out var msgs);
 		await SendBattleMessages(msgs);
 
-		if (Rounds[CurrentRound].RoundSkipped)
-			StartNextRound();
+		if (!CurrentPlayer.IsAlive)
+		{
+			EndBattle(winner: Opponent);
+		}
+		else if (!Opponent.IsAlive)
+		{
+			EndBattle(winner: CurrentPlayer);
+		}
 		else
-			await CreateBattleInterface();
+		{
+			// not dead
+			if (Rounds[CurrentRound].RoundSkipped)
+				StartNextRound();
+			else
+				await CreateBattleInterface();
+		}
 	}
 
 	public async void EndBattle(BattlePlayer winner)

@@ -21,12 +21,12 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		
 		if (CurrentPlayer.Mp < BattleConstants.LOW_MP_THRESHOLD && CurrentPlayer.Status is not TurnSkipStatus)
 		{
-			CurrentPlayer.GrantMP(BattleConstants.LOW_MP_GAIN);
+			CurrentPlayer.GrantMP(BattleConstants.LOW_MP_GAIN, out int mpBefore);
 			battleMsgs.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 				.WithAuthor(CurrentPlayer.User.GlobalName, "", CurrentPlayer.User.AvatarUrl)
 				.WithDescription("**Low MP Regen**")
 				.WithColor(DiscordColor.Aquamarine)
-				.WithFooter($"💎 {CurrentPlayer.Mp - BattleConstants.LOW_MP_GAIN} ➡️ 💎 {CurrentPlayer.Mp}")));
+				.WithFooter($"💎 {mpBefore} ➡️ 💎 {CurrentPlayer.Mp}")));
 		}
 
 		if (CurrentPlayer.Status is not null)
@@ -77,7 +77,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				.WithDescription($"🌟 **{CurrentPlayer.Stand!.CoolName} uses {ability.CoolName}!**")
 				.WithColor(DiscordColor.Gold))
 		];
-		CurrentPlayer.UseMP(ability.MpCost);
+		CurrentPlayer.UseMP(ability.MpCost, out _);
 		
 		if (ability is AttackAbility attack)
 		{

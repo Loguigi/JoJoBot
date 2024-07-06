@@ -18,9 +18,8 @@ public class Heal(double healPercent) : StatChange
 	
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
-		int hpBefore = caster.Hp;
 		var heal = (int)Math.Ceiling(caster.MaxHp * HealPercent);
-		caster.Heal(heal);
+		caster.Heal(heal, out int hpBefore);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(caster.User.GlobalName, "", caster.User.AvatarUrl)
@@ -38,9 +37,8 @@ public class Barrier(double barrier) : StatChange
 	
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
-		int barrierBefore = caster.Barrier;
 		var barrier = (int)Math.Ceiling(caster.Hp * BarrierAmount);
-		caster.GrantBarrier(barrier);
+		caster.GrantBarrier(barrier, out int barrierBefore);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(caster.User.GlobalName, "", caster.User.AvatarUrl)

@@ -12,9 +12,8 @@ public abstract class Attack(double damage)
 	
 	public virtual DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender) 
 	{
-		var hpBefore = defender.Hp;
 		var dmg = CalculateDamage(attacker, defender, out bool crit);
-		defender.ReceiveDamage(dmg);
+		defender.ReceiveDamage(dmg, out int hpBefore);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(attacker.User.GlobalName, "", attacker.User.AvatarUrl)
@@ -67,7 +66,6 @@ public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(da
 	
 	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
 	{
-		var hpBefore = defender.Hp;
 		int sum = 0;
 		int critCount = 0;
 		var hits = DiscordController.RNG.Next(MinHits, MaxHits);
@@ -77,10 +75,11 @@ public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(da
 			sum += CalculateDamage(attacker, defender, out bool crit);
 			if (crit) critCount++;
 		}
-		defender.ReceiveDamage(sum);
+		defender.ReceiveDamage(sum, out int hpBefore);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithDescription($"{DiscordEmoji.FromName(attacker.Client, ":crossed_swords:")} **{attacker.Stand!.CoolName} ({attacker.User.Mention}) attacks {hits} times {(critCount > 0 ? $"with {DiscordEmoji.FromName(attacker.Client, ":sparkles:")} CRIT(x{critCount})" : "")} for `{sum}` damage**")
+			.WithAuthor(attacker.User.GlobalName, "", attacker.User.AvatarUrl)
+			.WithDescription($"{DiscordEmoji.FromName(attacker.Client, ":crossed_swords:")} **{attacker.Stand!.CoolName} attacks {hits} times {(critCount > 0 ? $"with {DiscordEmoji.FromName(attacker.Client, ":sparkles:")} CRIT (x{critCount})" : "")} for `{sum}` damage**")
 			.WithFooter($"{DiscordEmoji.FromName(attacker.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(attacker.Client, ":arrow_right:")} {DiscordEmoji.FromName(attacker.Client, ":heart:")} {defender.Hp}", defender.User.AvatarUrl)
 			.WithColor(DiscordColor.Red));
 	}
@@ -137,37 +136,47 @@ public class WeaknessAttack(double damage, double increase, Type status) : Attac
 
 public class HPLeechAttack(double damage, double hpStealPercent) : Attack(damage)
 {
-	public double HPStealPercent { get; private set; } = hpStealPercent;
+	public override string ShortDescription => base.ShortDescription + $" Steal ❤️ {HPStealPercent * 100}% HP";
+	public readonly double HPStealPercent = hpStealPercent;
 
 	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
 	{
+		var hpSteal = (int)(HPStealPercent * defender.Hp);
+		defender.ReceiveDamage(hpSteal, out int enemyHpBefore);
+		attacker.Heal(hpSteal, out int attackerHpBefore);
 		
-		return base.Execute(attacker, defender);
+		return base.Execute(attacker, defender).AddEmbed(new DiscordEmbedBuilder()
+			.WithAuthor(defender.User.GlobalName, "", defender.User.AvatarUrl)
+			.WithDescription($"🔮 **{attacker.Stand!.CoolName} steals `{hpSteal}` HP from {defender.Stand!.CoolName}**")
+			.WithFooter($"❤️ {attackerHpBefore} ➡️ ❤️ {attacker.Hp}", attacker.User.AvatarUrl)
+			.WithColor(DiscordColor.Magenta));
 	}
-
-	// TODO
-	// public override int PerformAttack(BattlePlayer attacker, BattlePlayer defender)
-	// {
-	// 	var leech = (int)(defender.MaxHp * HPStealPercent);
-	// 	defender.ReceiveDamage(leech);
-	// 	attacker.Heal(leech);
-	// 	return base.PerformAttack(attacker, defender);
-	// }
 }
 
 public class MPStealAttack(double damage, int mpStealAmount, double hpLossPercent) : Attack(damage)
 {
+	public override string ShortDescription => base.ShortDescription + $" -❤️ {HpLossAmount * 100}% HP, Steal 💎 {MpStealAmount} MP";
 	public readonly int MpStealAmount = mpStealAmount;
 	public readonly double HpLossAmount = hpLossPercent;
 
-	// TODO
-	// public override int PerformAttack(BattlePlayer attacker, BattlePlayer defender)
-	// {
-	// 	attacker.GrantMP(MpStealAmount);
-	// 	defender.UseMP(MpStealAmount);
-	// 	attacker.ReceiveDamage((int)Math.Ceiling(attacker.MaxHp * HpLossAmount));
-	// 	return base.PerformAttack(attacker, defender);
-	// }
+	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	{
+		var mpSteal = MpStealAmount;
+		if (defender.Mp < MpStealAmount) 
+		{
+			mpSteal = defender.Mp;
+		}
+		
+		attacker.GrantMP(mpSteal, out int mpBefore);
+		defender.UseMP(mpSteal, out _);
+		attacker.ReceiveDamage((int)(HpLossAmount * attacker.Hp), out int hpBefore);
+		
+		return base.Execute(attacker, defender).AddEmbed(new DiscordEmbedBuilder()
+			.WithAuthor(defender.User.GlobalName, "", defender.User.AvatarUrl)
+			.WithDescription($"🔮 **{attacker.Stand!.CoolName} steals `{MpStealAmount}` MP from {defender.Stand!.CoolName}**")
+			.WithFooter($"💎 {mpBefore} ➡️ 💎 {attacker.Mp}, ❤️ {hpBefore} ➡️ ❤️ {attacker.Hp}", attacker.User.AvatarUrl)
+			.WithColor(DiscordColor.Purple));
+	}
 }
 
 public class TakeoverAttack(double damage) : Attack(damage)
@@ -182,8 +191,8 @@ public class TakeoverAttack(double damage) : Attack(damage)
 
 public class IgniteAttack(double damage) : Attack(damage) 
 {
-    public override string ShortDescription => base.ShortDescription + " 100% Burn when Doused";
-    public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	public override string ShortDescription => base.ShortDescription + " 100% Burn when Doused";
+	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
 	{
 		if (defender.Status is Douse douse) 
 		{

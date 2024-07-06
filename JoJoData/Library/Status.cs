@@ -63,7 +63,7 @@ public abstract class DamageStatus(int duration, double applyChance) : Status(du
 {
 	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
-		target.ReceiveDamage(target.DamageOverTime);
+		target.ReceiveDamage(target.DamageOverTime, out _);
 
 		return new DiscordMessageBuilder();
 	}
@@ -198,8 +198,7 @@ public class Shock(int duration, double applyChance = 1) : PassiveStatus(duratio
 
 	public DiscordMessageBuilder Electrocute(BattlePlayer caster, BattlePlayer target) 
 	{
-		var hpBefore = target.Hp;
-		target.ReceiveDamage((int)(caster.DamageReceived * 0.5));
+		target.ReceiveDamage((int)(caster.DamageReceived * 0.5), out int hpBefore);
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
@@ -265,10 +264,8 @@ public class Sleep(int duration, double applyChance = 1) : TurnSkipStatus(durati
 
 	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
-		var hpBefore = target.Hp;
-		var mpBefore = target.Mp;
-		target.GrantMP(10);
-		target.Heal((int)(target.MaxHp * 0.05));
+		target.GrantMP(10, out int mpBefore);
+		target.Heal((int)(target.MaxHp * 0.05), out int hpBefore);
 		
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)

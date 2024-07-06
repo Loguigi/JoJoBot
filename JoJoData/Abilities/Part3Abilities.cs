@@ -9,7 +9,7 @@ public class Ora : AttackAbility
 {
 	public Ora()
 	{
-		Name = "Ora";
+		Name = "ORA!!";
 		Description = "";
 		MpCost = 15;
 		Attack = new BasicAttack(damage: 2);
@@ -20,7 +20,7 @@ public class OraOraOraOra : AttackAbility
 {
 	public OraOraOraOra()
 	{
-		Name = "Ora Ora Ora Ora";
+		Name = "ORA ORA ORA ORA";
 		Description = "";
 		MpCost = 35;
 		Attack = new MultiHitAttack(damage: 0.9, minHits: 2, maxHits: 5);
@@ -32,7 +32,7 @@ public class StarFinger : AttackAbility
 
 	public StarFinger()
 	{
-		Name = "Star Finger";
+		Name = "STAR FINGER!!!";
 		Description = "";
 		MpCost = 25;
 		Attack = new CritChanceIncreaseAttack(damage: 2, increase: 0.3);
@@ -43,7 +43,7 @@ public class StarPlatinumTheWorld : InflictStatusAbility
 {
 	public StarPlatinumTheWorld()
 	{
-		Name = "Star Platinum : The World";
+		Name = "Star Platinum : ZA WARUDO";
 		Description = "";
 		MpCost = 80;
 		Status = new TimeStop(duration: 3);
@@ -68,7 +68,7 @@ public class CrossFireHurricane : AttackAbility
 {
 	public CrossFireHurricane()
 	{
-		Name = "Cross Fire Hurricane";
+		Name = "CROSS FIRE HURRICANE";
 		Description = "";
 		MpCost = 40;
 		Attack = new BasicAttack(damage: 4);
@@ -115,7 +115,7 @@ public class Overdrive : AttackAbility
 {
 	public Overdrive()
 	{
-		Name = "Overdrive";
+		Name = "HAMON OVERDRIVE";
 		Description = "";
 		MpCost = 35;
 		Attack = new CritChanceIncreaseAttack(damage: 2.5, increase: 0.5);
@@ -180,6 +180,7 @@ public class ReroReroRero : StatChangeAbility
 {
 	public ReroReroRero()
 	{
+		Name = "🍒 Rero Rero Rero Rero 🍒";
 		MpCost = 40;
 		StatChange = new Heal(healPercent: 0.25);
 	}
@@ -265,6 +266,7 @@ public class DogBite : AttackAbility
 {
 	public DogBite()
 	{
+		Name = "Doggy Bite";
 		MpCost = 0;
 		Attack = new MPStealAttack(damage: 0.25, mpStealAmount: 20, hpLossPercent: 0.1);
 	}
@@ -309,7 +311,7 @@ public class TheWorld : InflictStatusAbility
 {
 	public TheWorld()
 	{
-		Name = "The World";
+		Name = "ZA WARUDO";
 		Description = "";
 		MpCost = 80;
 		Status = new TimeStop(duration: 3);
@@ -370,6 +372,7 @@ public class WetSlap : AttackAbility
 {
 	public WetSlap()
 	{
+		Name = "Wet Slap";
 		MpCost = 10;
 		Attack = new BasicAttack(damage: 1.5);
 	}
@@ -379,6 +382,7 @@ public class RazorScales : AttackAbility
 {
 	public RazorScales()
 	{
+		Name = "Razor Scales";
 		MpCost = 35;
 		Attack = new MultiHitAttack(damage: 1, minHits: 2, maxHits: 4);
 	}
@@ -388,6 +392,7 @@ public class Barnacles : InflictStatusAbility
 {
 	public Barnacles()
 	{
+		Name = "Barnacles";
 		MpCost = 20;
 		Status = new Poison(duration: 4, applyChance: 0.5);
 	}
@@ -397,6 +402,7 @@ public class Drown : AttackAbility
 {
 	public Drown()
 	{
+		Name = "Drown";
 		MpCost = 50;
 		Attack = new HPLeechAttack(damage: 3, hpStealPercent: 0.15);
 	}
@@ -408,6 +414,7 @@ public class MonkeySlam : AttackAbility
 {
 	public MonkeySlam()
 	{
+		Name = "Monkey Slam";
 		MpCost = 20;
 		Attack = new BasicAttack(damage: 3);
 	}
@@ -417,6 +424,7 @@ public class MonkeyPipeWhip : AttackAbility
 {
 	public MonkeyPipeWhip()
 	{
+		Name = "Monkey Pipe Whip";
 		MpCost = 30;
 		Attack = new CritDamageIncreaseAttack(damage: 2, increase: 1);
 	}
@@ -426,6 +434,7 @@ public class EatBanana : StatChangeAbility
 {
 	public EatBanana()
 	{
+		Name = "🍌";
 		MpCost = 40;
 		StatChange = new Heal(healPercent: 0.25);
 	}
@@ -435,6 +444,7 @@ public class MonkeyHug : StatusAttackAbility
 {
 	public MonkeyHug()
 	{
+		Name = "Monkey Hug";
 		MpCost = 0;
 		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 20, hpLossPercent: 0.15);
 		Status = new Confusion(duration: 3, applyChance: 1);
@@ -748,7 +758,7 @@ public class Gaslight : InflictStatusAbility
 {
 	public Gaslight() 
 	{
-		Name = "GASLIGHT";
+		Name = "Gaslight";
 		MpCost = 25;
 		Status = new Confusion(duration: 2, applyChance: 0.9);
 	}
@@ -792,7 +802,7 @@ public class Gnaw : AttackAbility
 	{
 		Name = "Gnaw";
 		MpCost = 15;
-		Attack = new MultiHitAttack(damage: 0.7, minHits: 1, 6);
+		Attack = new MultiHitAttack(damage: 0.6, minHits: 1, 6);
 	}
 }
 
@@ -1007,7 +1017,7 @@ public class AgeRegression : StatChangeAbility
 	{
 		Name = "Age Regression";
 		MpCost = 50;
-		StatChange = new Regress(decrease: 0.2);
+		StatChange = new Regress(decrease: 0.25);
 	}
 }
 
@@ -1037,7 +1047,7 @@ public class ShadowReflection : AttackAbility
 	{
 		Name = "Shadow Reflection";
 		MpCost = 30;
-		Attack = new WeaknessAttack(damage: 1.5, increase: 4, status: typeof(Frail));
+		Attack = new WeaknessAttack(damage: 1.2, increase: 3, status: typeof(Frail));
 	}
 }
 #endregion

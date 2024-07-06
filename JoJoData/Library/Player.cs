@@ -78,9 +78,9 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 				baseExp = BattleConstants.BASE_EXP_GAIN;
 				BattlesWon++;
 			}
-			else 
+			else if (opponent == winner)
 			{
-				baseExp = BattleConstants.BASE_EXP_GAIN - 2;
+				baseExp = BattleConstants.BASE_EXP_GAIN - 4;
 				BattlesLost--;
 			}
 			
@@ -105,7 +105,7 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 				ExpGain = baseExp / 2;
 			}
 
-			Experience += baseExp;
+			Experience += ExpGain;
 			var newLevel = (int)(Math.Sqrt(10 * ((Experience * 2) + 2.5)) + 5) / 10;
 			if (newLevel > Level) 
 			{
@@ -143,6 +143,8 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 		try
 		{
 			Stand = stand;
+			Level = 1;
+			Experience = 0;
 			Save();
 		}
 		catch (Exception ex)
