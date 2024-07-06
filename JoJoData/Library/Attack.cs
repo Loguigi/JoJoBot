@@ -1,5 +1,6 @@
 using DSharpPlus;
 using DSharpPlus.Entities;
+using JoJoData.Controllers;
 using JoJoData.Helpers;
 
 namespace JoJoData.Library;
@@ -32,11 +33,11 @@ public abstract class Attack(double damage)
 			(1 - defender.DamageResistance));
 	}
 
-	protected static int RollDamage(int min, int max) => RandomHelper.RNG.Next(min, max + 1);
+	protected static int RollDamage(int min, int max) => DiscordController.RNG.Next(min, max + 1);
 
 	protected static double RollCrit(double critChance, double critDamage, out bool crit)
 	{
-		var critDmg = RandomHelper.RNG.NextDouble() < critChance ? critDamage : 1;
+		var critDmg = DiscordController.RNG.NextDouble() < critChance ? critDamage : 1;
 		crit = critDmg > 1;
 		return critDmg;
 	}
@@ -77,7 +78,7 @@ public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(da
 		var hpBefore = defender.Hp;
 		int sum = 0;
 		int critCount = 0;
-		var hits = RandomHelper.RNG.Next(MinHits, MaxHits);
+		var hits = DiscordController.RNG.Next(MinHits, MaxHits);
 		
 		for (var i = 1; i <= hits; ++i) 
 		{

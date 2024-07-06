@@ -6,10 +6,11 @@ public class PlayerModel
 {
 	public long GuildId { get; set; }
 	public long PlayerId { get; set; }
-	public int StandId { get; set; }
+	public int? StandId { get; set; } = null;
 	public int Level { get; set; }
 	public int Experience { get; set; }
 	public int BattlesWon { get; set; }
+	public int BattlesLost { get; set; }
 
 	public PlayerModel() { }
 	
@@ -20,5 +21,7 @@ public class PlayerModel
 		StandId = player.Stand?.Id ?? 0;
 		Level = player.Level;
 		Experience = player.Experience;
+		BattlesWon = player.BattlesWon;
+		BattlesLost = player.BattlesLost;
 	}
 }

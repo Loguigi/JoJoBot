@@ -8,7 +8,7 @@ using JoJoData.Helpers;
 
 namespace JoJoBot.Handlers;
 
-public static class BattleHandlers
+public static class BattleHandler
 {
 	public static async Task HandleDeclineChallenge(DiscordClient s, ComponentInteractionCreatedEventArgs e) 
 	{
@@ -48,20 +48,7 @@ public static class BattleHandlers
 		await e.Message.DeleteAsync();
 		var battle = new BattleController(s, e.Guild, e.Channel, player1, player2);
 		battle.StartBattle();
-		Bot.Battles.Add(battle.Id, battle);
-
-		if (battle.Winner is not null)
-		{
-			Bot.Battles.Remove(battle.Id);
-			await e.Channel.SendMessageAsync(new DiscordEmbedBuilder()
-				.WithAuthor(battle.Winner.User.GlobalName, "", battle.Winner.User.AvatarUrl)
-				.WithDescription($"### 🎉 {battle.Winner.Stand!.CoolName} wins! 🎉")
-				.WithThumbnail(battle.Winner.Stand!.ImageUrl)
-				.AddField("Rounds", battle.CurrentRound.ToString(), true)
-				.AddField("Start", battle.BattleStart.ToString("M/d h:m tt"), true)
-				.AddField("End", battle.BattleEnd?.ToString("M/d h:m tt") ?? "never", true)
-				.WithColor(DiscordColor.HotPink));
-		}
+		DiscordController.Battles.Add(battle.Id, battle);
 	}
 	
 	public static async Task HandleAbilitySelect(DiscordClient s, ComponentInteractionCreatedEventArgs e) 
@@ -78,7 +65,7 @@ public static class BattleHandlers
 			return;
 		}
 
-		var battle = Bot.Battles[int.Parse(IDHelper.GetID(e.Id, BATTLE_ID_INDEX))];
+		var battle = DiscordController.Battles[int.Parse(IDHelper.GetID(e.Id, BATTLE_ID_INDEX))];
 		var ability = int.Parse(e.Values.First()) switch
 		{
 			0 => battle.CurrentPlayer.Stand!.Ability0,
@@ -100,15 +87,7 @@ public static class BattleHandlers
 		
 		if (battle.Winner is not null) 
 		{
-			Bot.Battles.Remove(battle.Id);
-			await e.Channel.SendMessageAsync(new DiscordEmbedBuilder()
-				.WithAuthor(battle.Winner.User.GlobalName, "", battle.Winner.User.AvatarUrl)
-				.WithDescription($"### 🎉 {battle.Winner.Stand!.CoolName} wins! 🎉")
-				.WithThumbnail(battle.Winner.Stand!.ImageUrl)
-				.AddField("Rounds", battle.CurrentRound.ToString(), true)
-				.AddField("Start", battle.BattleStart.ToString("M/d h:m tt"), true)
-				.AddField("End", battle.BattleEnd?.ToString("M/d h:m tt") ?? "never", true)
-				.WithColor(DiscordColor.HotPink));
+			DiscordController.Battles.Remove(battle.Id);
 		}
 	}
 

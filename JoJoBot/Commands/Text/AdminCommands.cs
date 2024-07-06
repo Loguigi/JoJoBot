@@ -21,10 +21,9 @@ public class AdminCommands
 				await ctx.RespondAsync("Stand not found");
 			}
 
-			player.Stand = stand;
-			player.Save();
+			player.ChangeStand(stand);
 
-			await ctx.RespondAsync($"Gave `{player.Stand.Id}` **{player.Stand.Name}** to {user.GlobalName}");
+			await ctx.RespondAsync($"Gave `{player.Stand!.Id}` **{player.Stand.Name}** to {user.GlobalName}");
 		}
 		catch (Exception ex)
 		{

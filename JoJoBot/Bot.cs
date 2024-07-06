@@ -11,16 +11,17 @@ namespace JoJoBot;
 
 public class Bot 
 {
-	public static Dictionary<int, BattleController> Battles { get; set; } = [];
 
 	public static async Task Main() 
 	{
 		var builder = DiscordClientBuilder.CreateDefault(Config.Token, DiscordIntents.All);
 		builder.ConfigureEventHandlers
 		(
-			b => b.HandleComponentInteractionCreated(BattleHandlers.HandleAcceptChallenge)
-				.HandleComponentInteractionCreated(BattleHandlers.HandleDeclineChallenge)
-				.HandleComponentInteractionCreated(BattleHandlers.HandleAbilitySelect)
+			b => b.HandleComponentInteractionCreated(BattleHandler.HandleAcceptChallenge)
+				.HandleComponentInteractionCreated(BattleHandler.HandleDeclineChallenge)
+				.HandleComponentInteractionCreated(BattleHandler.HandleAbilitySelect)
+				.HandleComponentInteractionCreated(ItemHandler.HandleArrowStandAccept)
+				.HandleComponentInteractionCreated(ItemHandler.HandleArrowStandDecline)
 		);
 		var client = builder.Build();
 

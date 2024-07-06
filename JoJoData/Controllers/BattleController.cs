@@ -113,11 +113,32 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			await CreateBattleInterface();
 	}
 
-	public void EndBattle(BattlePlayer winner)
+	public async void EndBattle(BattlePlayer winner)
 	{
+		DiscordController.Battles.Remove(Id);
 		BattleEnd = DateTime.Now;
 		Winner = winner;
+		if (Winner == Player1) 
+		{
+			Player1.GrantExp(opponent: Player2, winner: Player1);
+			Player2.GrantExp(opponent: Player1, winner: Player1);
+		}
+		else if (Winner == Player2) 
+		{
+			Player1.GrantExp(opponent: Player2, winner: Player2);
+			Player2.GrantExp(opponent: Player1, winner: Player2);
+		}
+		
 		SaveBattleInfo();
+		
+		await Channel.SendMessageAsync(new DiscordEmbedBuilder()
+			.WithAuthor(Winner.User.GlobalName, "", Winner.User.AvatarUrl)
+			.WithDescription($"### 🎉 {Winner.Stand!.CoolName} wins! 🎉")
+			.WithThumbnail(Winner.Stand!.ImageUrl)
+			.AddField("Rounds", CurrentRound.ToString(), true)
+			.AddField("Start", BattleStart.ToString("M/d h:m tt"), true)
+			.AddField("End", BattleEnd?.ToString("M/d h:m tt") ?? "never", true)
+			.WithColor(DiscordColor.HotPink));
 	}
 	#endregion
 
@@ -185,9 +206,5 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			throw;
 		}
 	}
-	#endregion
-
-	#region Constants
-	private const int ABILITY_USED = 2;
 	#endregion
 }

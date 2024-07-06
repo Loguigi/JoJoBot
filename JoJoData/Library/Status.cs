@@ -1,6 +1,7 @@
 using System.Reflection;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using JoJoData.Controllers;
 using JoJoData.Helpers;
 
 namespace JoJoData.Library;
@@ -55,7 +56,7 @@ public abstract class Status(int duration, double applyChance) {
 
 	protected abstract DiscordMessageBuilder? Action(BattlePlayer caster, BattlePlayer target);
 	
-	protected bool RollStatus() => RandomHelper.RNG.NextDouble() < ApplyChance;
+	protected bool RollStatus() => DiscordController.RNG.NextDouble() < ApplyChance;
 }
 #endregion
 
@@ -171,7 +172,7 @@ public class Confusion(int duration, double applyChance = 1) : PassiveStatus(dur
 {
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":question:")} Confusion";
 
-	public bool RollConfusion() => RandomHelper.RNG.NextDouble() < 0.5;
+	public bool RollConfusion() => DiscordController.RNG.NextDouble() < 0.5;
 }
 
 public class Douse(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
@@ -252,7 +253,7 @@ public class Sleep(int duration, double applyChance = 1) : TurnSkipStatus(durati
 	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":zzz:")} Sleep";
 
 	public DiscordMessageBuilder? RollForWakeUp(BattlePlayer target) {
-		var awake = RandomHelper.RNG.NextDouble() < 0.5;
+		var awake = DiscordController.RNG.NextDouble() < 0.5;
 		if (!awake)
 		{
 			return null;
@@ -289,7 +290,7 @@ public class Random(int duration, double applyChance = 1) : Status(duration, app
 			x.Namespace.Contains("JoJoData.Library")).ToList().Where(y =>
 			!y.IsAbstract && (y.BaseType == typeof(PassiveStatus) || y.BaseType == typeof(PassiveStatus) || y.BaseType == typeof(TurnSkipStatus))).ToList();
 
-		var selection = RandomHelper.RNG.Next(0, statuses.Count);
+		var selection = DiscordController.RNG.Next(0, statuses.Count);
 		if (Activator.CreateInstance(statuses[selection], Duration, ApplyChance) is Status status)
 		{
 			status.TryApply(caster, target);
