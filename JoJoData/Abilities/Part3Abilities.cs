@@ -82,7 +82,7 @@ public class RedBind : BuffAttackAbility
 		Name = "Red Bind";
 		Description = "";
 		MpCost = 50;
-		Attack = new BasicAttack(damage: 1.2);
+		Attack = new BasicAttack(damage: 2);
 		Buff = new Haste(duration: 1);
 	}
 }
@@ -107,7 +107,7 @@ public class PurpleWhip : AttackAbility
 		Name = "Whip";
 		Description = "";
 		MpCost = 15;
-		Attack = new BasicAttack(damage: 2.5);
+		Attack = new BasicAttack(damage: 2);
 	}
 }
 
@@ -117,8 +117,8 @@ public class Overdrive : AttackAbility
 	{
 		Name = "Overdrive";
 		Description = "";
-		MpCost = 30;
-		Attack = new CritChanceIncreaseAttack(damage: 3, increase: 0.5);
+		MpCost = 35;
+		Attack = new CritChanceIncreaseAttack(damage: 2.5, increase: 0.5);
 	}
 }
 
@@ -139,7 +139,7 @@ public class HamonHeal : StatChangeAbility
 	{
 		Name = "Hamon";
 		Description = "";
-		MpCost = 40;
+		MpCost = 60;
 		StatChange = new Heal(healPercent: 0.45);
 	}
 }
@@ -172,7 +172,7 @@ public class HierophantBodyTakeover : AttackAbility
 	{
 		Name = "Body Takeover";
 		MpCost = 15;
-		Attack = new TakeoverAttack(damage: 1.5);
+		Attack = new TakeoverAttack(damage: 2);
 	}
 }
 
@@ -180,7 +180,7 @@ public class ReroReroRero : StatChangeAbility
 {
 	public ReroReroRero()
 	{
-		MpCost = 25;
+		MpCost = 40;
 		StatChange = new Heal(healPercent: 0.25);
 	}
 }
@@ -208,14 +208,13 @@ public class HoraRush : AttackAbility
 	}
 }
 
-public class ArmorRemoval : BuffAttackAbility
+public class ArmorRemoval : StatChangeAbility
 {
 	public ArmorRemoval()
 	{
 		Name = "Armor Removal";
 		MpCost = 40;
-		Attack = new BasicAttack(damage: 0.3);
-		Buff = new Haste(duration: 1);
+		StatChange = new Strength(increase: 0.15);
 	}
 }
 
@@ -247,7 +246,7 @@ public class SandConstruct : StatChangeAbility
 	{
 		Name = "Sand Construct";
 		MpCost = 45;
-		StatChange = new Barrier(barrier: 0.5);
+		StatChange = new Barrier(barrier: 0.35);
 	}
 }
 
@@ -258,7 +257,7 @@ public class Sandstorm : StatusAttackAbility
 		Name = "Sandstorm";
 		MpCost = 40;
 		Attack = new MultiHitAttack(damage: 1, minHits: 2, maxHits: 4);
-		Status = new Confusion(duration: 3, applyChance: 0.2);
+		Status = new Confusion(duration: 3, applyChance: 0.3);
 	}
 }
 
@@ -326,7 +325,7 @@ public class AirplaneHijack : BuffAttackAbility
 		Name = "Airplane Hijack";
 		Description = "";
 		MpCost = 20;
-		Attack = new BasicAttack(damage: 0.5);
+		Attack = new BasicAttack(damage: 2.5);
 		Buff = new Haste(duration: 1);
 	}
 }
@@ -461,7 +460,7 @@ public class LightspeedSlash : AttackAbility
 	{
 		Name = "Lightspeed Slash";
 		MpCost = 35;
-		Attack = new CritChanceIncreaseAttack(damage: 3, increase: 0.3);
+		Attack = new CritChanceIncreaseAttack(damage: 2, increase: 0.3);
 	}
 }
 
@@ -565,7 +564,7 @@ public class Grow : StatChangeAbility
 	{
 		Name = "Grow";
 		MpCost = 15;
-		StatChange = new Strength(increase: 0.2);
+		StatChange = new Strength(increase: 0.15);
 	}
 }
 #endregion

@@ -57,10 +57,10 @@ public class BattlePlayer : Player
 	{
 		Client = client;
 		Load();
-		Hp = Stand!.BaseHp + ((int)(Stand.BaseHp * 0.30) * Level - 1);
+		_hp = GetMaxHp(Level);
 		MaxHp = Hp;
-		MinDamage = _minDamage = Stand.BaseMinDamage + ((int)(Stand.BaseMinDamage * 0.15) * Level - 1);
-		MaxDamage = _maxDamage = Stand.BaseMaxDamage + ((int)(Stand.BaseMaxDamage * 0.20) * Level - 1);
+		MinDamage = _minDamage = GetMinDmg(Level);
+		MaxDamage = _maxDamage = GetMaxDmg(Level);
 	}
 
 	// copy constructor

@@ -16,7 +16,11 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 	public readonly DiscordUser User = user;
 	public Stand? Stand { get; protected set; }
 	public int Level { get; protected set; }
+	public int LevelBefore { get; protected set; } = 0;
+	public bool LevelledUp { get; protected set; } = false;
 	public int Experience { get; protected set; }
+	public int ExpNeededForNextLevel => (int)((Math.Pow(Level + 1, 2) + (Level + 1)) / 2 * 10 - (10 * (Level + 1)));
+	public int ExpGain { get; private set; } = 0;
 	public int BattlesWon { get; protected set; }
 	public int BattlesLost { get; protected set; }
 	public Dictionary<string, Item> Inventory { get; protected set; } = [];
@@ -68,7 +72,49 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 	{
 		try
 		{
+			int baseExp = 0;
+			if (this == winner) 
+			{
+				baseExp = BattleConstants.BASE_EXP_GAIN;
+				BattlesWon++;
+			}
+			else 
+			{
+				baseExp = BattleConstants.BASE_EXP_GAIN - 2;
+				BattlesLost--;
+			}
 			
+			if (Level == opponent.Level)
+			{
+				ExpGain = baseExp;
+			}
+			else if (Level < opponent.Level && (opponent.Level - Level) <= 3)
+			{
+				ExpGain = baseExp + (baseExp / 2);
+			}
+			else if (Level < opponent.Level && (opponent.Level - Level) > 3)
+			{
+				ExpGain = baseExp * 2;
+			}
+			else if (Level > opponent.Level && (Level - opponent.Level) <= 3)
+			{
+				ExpGain = baseExp - (baseExp / 2);
+			}
+			else if (Level > opponent.Level && (Level - opponent.Level) > 3)
+			{
+				ExpGain = baseExp / 2;
+			}
+
+			Experience += baseExp;
+			var newLevel = (int)(Math.Sqrt(10 * ((Experience * 2) + 2.5)) + 5) / 10;
+			if (newLevel > Level) 
+			{
+				LevelBefore = Level;
+				Level = newLevel;
+				LevelledUp = true;
+			}
+
+			Save();
 		}
 		catch (Exception ex)
 		{
@@ -104,6 +150,27 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
 		}
+	}
+
+	public int GetMaxHp(int level) => Stand!.BaseHp + ((int)(Stand.BaseHp * 0.3) * level - 1);
+	public int GetMinDmg(int level) => Stand!.BaseMinDamage + ((int)(Stand.BaseMinDamage * 0.4) * (level - 1));
+	public int GetMaxDmg(int level) => Stand!.BaseMaxDamage + ((int)(Stand.BaseMaxDamage * 0.25) * (level - 1));
+	
+	public DiscordMessageBuilder LevelUpMessage() 
+	{
+		var embed = new DiscordEmbedBuilder()
+			.WithTitle(Stand!.CoolName)
+			.WithThumbnail(Stand!.ImageUrl)
+			.WithDescription($"### ⬆️ {User.Mention} levelled up!")
+			.AddField("✨ Level", $"{LevelBefore} ➡️ {Level}", true)
+			.AddField("❤️ HP", $"{GetMaxHp(LevelBefore)} ➡️ {GetMaxHp(Level)}", true)
+			.AddField("⚔️ Damage", $"{GetMinDmg(LevelBefore)}-{GetMaxDmg(LevelBefore)} ➡️ {GetMinDmg(Level)}-{GetMaxDmg(Level)}", true)
+			.WithColor(DiscordColor.Aquamarine);
+
+		return new DiscordMessageBuilder()
+			.WithContent(User.Mention)
+			.WithAllowedMention(new UserMention(User))
+			.AddEmbed(embed);
 	}
 
 	public override bool Equals(object? obj)

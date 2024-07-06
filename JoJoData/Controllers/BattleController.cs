@@ -133,12 +133,23 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 		
 		await Channel.SendMessageAsync(new DiscordEmbedBuilder()
 			.WithAuthor(Winner.User.GlobalName, "", Winner.User.AvatarUrl)
-			.WithDescription($"### 🎉 {Winner.Stand!.CoolName} wins! 🎉")
+			.WithTitle($"🎉 {Winner.Stand!.CoolName} wins! 🎉")
+			.WithDescription($"{Player1.User.Mention}: `+{Player1.ExpGain} EXP`\n{Player2.User.Mention}: `+{Player2.ExpGain} EXP`")
 			.WithThumbnail(Winner.Stand!.ImageUrl)
 			.AddField("Rounds", CurrentRound.ToString(), true)
-			.AddField("Start", BattleStart.ToString("M/d h:m tt"), true)
-			.AddField("End", BattleEnd?.ToString("M/d h:m tt") ?? "never", true)
+			.AddField("Start", BattleStart.ToString("M/d h:mm tt"), true)
+			.AddField("End", BattleEnd?.ToString("M/d h:mm tt") ?? "never", true)
 			.WithColor(DiscordColor.HotPink));
+			
+		if (Player1.LevelledUp) 
+		{
+			await Channel.SendMessageAsync(Player1.LevelUpMessage());
+		}
+		
+		if (Player2.LevelledUp) 
+		{
+			await Channel.SendMessageAsync(Player2.LevelUpMessage());
+		}
 	}
 	#endregion
 

@@ -206,7 +206,7 @@ public class Shock(int duration, double applyChance = 1) : PassiveStatus(duratio
 
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
-			.WithDescription($"⛈️ **{target.Stand!.CoolName} shocks themself for `{caster.DamageReceived * 0.5}` damage!**")
+			.WithDescription($"⛈️ **{target.Stand!.CoolName} shocks themself for `{(int)(caster.DamageReceived * 0.5)}` damage!**")
 			.WithColor(DiscordColor.Yellow)
 			.WithFooter($"❤️ {hpBefore} ➡️ ❤️ {target.Hp}"));
 	}
