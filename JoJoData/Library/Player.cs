@@ -152,9 +152,9 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 		}
 	}
 
-	public int GetMaxHp(int level) => Stand!.BaseHp + ((int)(Stand.BaseHp * 0.3) * level - 1);
-	public int GetMinDmg(int level) => Stand!.BaseMinDamage + ((int)(Stand.BaseMinDamage * 0.4) * (level - 1));
-	public int GetMaxDmg(int level) => Stand!.BaseMaxDamage + ((int)(Stand.BaseMaxDamage * 0.25) * (level - 1));
+	public int GetMaxHp(int level) => Stand!.BaseHp + ((int)(Stand.BaseHp * 0.35) * level - 1);
+	public int GetMinDmg(int level) => Stand!.BaseMinDamage + ((int)(Stand.BaseMinDamage * 0.3) * (level - 1));
+	public int GetMaxDmg(int level) => Stand!.BaseMaxDamage + ((int)(Stand.BaseMaxDamage * 0.3) * (level - 1));
 	
 	public DiscordMessageBuilder LevelUpMessage() 
 	{

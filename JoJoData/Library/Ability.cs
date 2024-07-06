@@ -26,45 +26,45 @@ public abstract class Ability
 		};
 		
 		return new DiscordSelectComponentOption(
-			$"{CoolName} {DiscordEmoji.FromName(s, ":gem:", false)} {MpCost} MP",
+			$"{CoolName} 💎 {MpCost} MP",
 			abilityNum.ToString(),
-			FormatDescription(s),
+			FormatShortDescription(),
 			false,
 			new DiscordComponentEmoji(DiscordEmoji.FromName(s, emoji, false)));
 	}
 
-	protected string FormatDescription(DiscordClient s)
+	protected string FormatShortDescription()
 	{
 		var desc = new StringBuilder();
 		desc.AppendLine(Description);
 
 		if (this is AttackAbility ab)
 		{
-			//desc.Append(ab.Attack.GetDescription(s));
+			desc.Append(ab.Attack.ShortDescription + " ");
 
 			if (this is StatusAttackAbility saa)
 			{
-				desc.Append(saa.Status.GetDescription(s));
+				desc.Append(saa.Status.ShortDescription);
 			}
 			else if (this is BuffAttackAbility baa)
 			{
-				desc.Append(""); // TODO
+				desc.Append(baa.Buff.ShortDescription);
 			}
 		}
 
 		if (this is InflictStatusAbility isa)
 		{
-			desc.Append(isa.Status.GetDescription(s));
+			desc.Append(isa.Status.ShortDescription);
 		}
 
 		if (this is BuffAbility ba)
 		{
-			desc.Append(""); // TODO
+			desc.Append(ba.Buff.ShortDescription);
 		}
 
 		if (this is StatChangeAbility sca)
 		{
-			desc.Append(sca.StatChange.GetDescription(s));
+			desc.Append(sca.StatChange.ShortDescription);
 		}
 
 		return desc.ToString();

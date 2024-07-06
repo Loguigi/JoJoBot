@@ -5,18 +5,16 @@ namespace JoJoData.Library;
 
 public abstract class StatChange 
 {
-	public abstract string GetDescription(DiscordClient s);
+	public abstract string Name { get; }
+	public virtual string ShortDescription => Name;
 	public abstract DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target);
 }
 
 public class Heal(double healPercent) : StatChange 
 {
+	public override string Name => "💖 Heal";
+	public override string ShortDescription => base.ShortDescription + $" {HealPercent * 100}% of Max HP";
 	public readonly double HealPercent = healPercent;
-
-	public override string GetDescription(DiscordClient s)
-	{
-		return $"{DiscordEmoji.FromName(s, ":heart:")} Heal: {HealPercent * 100}% of max HP";
-	}
 	
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
@@ -34,12 +32,9 @@ public class Heal(double healPercent) : StatChange
 
 public class Barrier(double barrier) : StatChange 
 {
+	public override string Name => "💙 Barrier";
+	public override string ShortDescription => base.ShortDescription + $" {BarrierAmount * 100}% of Max HP";
 	public readonly double BarrierAmount = barrier;
-
-	public override string GetDescription(DiscordClient s)
-	{
-		return $"{DiscordEmoji.FromName(s, ":blue_heart:")} Barrier: {BarrierAmount * 100}% of current HP";
-	}
 	
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
@@ -57,13 +52,9 @@ public class Barrier(double barrier) : StatChange
 
 public class Strength(double increase) : StatChange 
 {
+	public override string Name => "💪 Strength";
+	public override string ShortDescription => base.ShortDescription + $" +{DamageIncrease * 100}% DMG";
 	public readonly double DamageIncrease = increase;
-
-	public override string GetDescription(DiscordClient s)
-	{
-		// TODO
-		return string.Empty;
-	}
 
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{
@@ -82,13 +73,9 @@ public class Strength(double increase) : StatChange
 
 public class Regress(double decrease) : StatChange
 {
-	public readonly double DamageDecrease = decrease;
-
-	public override string GetDescription(DiscordClient s)
-	{
-		// TODO
-		return string.Empty;
-	}
+	public override string Name => "⬇️ Regress";
+    public override string ShortDescription => base.ShortDescription + $" -{DamageDecrease * 100}% Enemy DMG";
+    public readonly double DamageDecrease = decrease;
 
 	public override DiscordMessageBuilder Execute(BattlePlayer caster, BattlePlayer target)
 	{

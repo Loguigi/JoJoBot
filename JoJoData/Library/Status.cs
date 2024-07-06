@@ -7,14 +7,12 @@ using JoJoData.Helpers;
 namespace JoJoData.Library;
 
 #region Abstract Status
-public abstract class Status(int duration, double applyChance) {
+public abstract class Status(int duration, double applyChance) 
+{
+	public abstract string Name { get; }
+	public virtual string ShortDescription => $"{Name} {ApplyChance * 100}% chance {Duration} turns";
 	public readonly int Duration = duration;
 	public readonly double ApplyChance = applyChance;
-
-	public abstract string GetName(DiscordClient s);
-	
-	public virtual string GetDescription(DiscordClient s) =>
-		$"{GetName(s)}\n{DiscordEmoji.FromName(s, ":game_die:")} Chance to Apply: {ApplyChance * 100}%\n{DiscordEmoji.FromName(s, ":clock:")} Duration: {Duration} turns\n";
 
 	public virtual DiscordMessageBuilder? TryApply(BattlePlayer caster, BattlePlayer target)
 	{
@@ -26,7 +24,7 @@ public abstract class Status(int duration, double applyChance) {
 		Apply(caster, target);
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
-			.WithDescription($"⬇️ **{GetName(target.Client)} for `{target.StatusDuration}` turns**")
+			.WithDescription($"⬇️ **{Name} for `{target.StatusDuration}` turns**")
 			.WithColor(DiscordColor.Purple));
 	}
 
@@ -43,7 +41,7 @@ public abstract class Status(int duration, double applyChance) {
 			
 			return msg.AddEmbed(new DiscordEmbedBuilder()
 				.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
-				.WithDescription($"**{GetName(target.Client)} has worn off**")
+				.WithDescription($"**{Name} has worn off**")
 				.WithColor(DiscordColor.Green));
 		}
 	}
@@ -73,7 +71,7 @@ public abstract class DamageStatus(int duration, double applyChance) : Status(du
 
 public class Burn(int duration, double applyChance = 1) : DamageStatus(duration, applyChance) 
 {
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":fire:")} Burn";
+	public override string Name => $"🔥 Burn";
 
 	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
@@ -85,14 +83,14 @@ public class Burn(int duration, double applyChance = 1) : DamageStatus(duration,
 
 	protected override void Apply(BattlePlayer caster, BattlePlayer target)
 	{
-		target.DamageOverTime = (int)(caster.MinDamage * 2.5);
+		target.DamageOverTime = (int)(caster.MinDamage * 2);
 		base.Apply(caster, target);
 	}
 }
 
 public class Bleed(int duration, double applyChance = 1) : DamageStatus(duration, applyChance) 
 {
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":drop_of_blood:")} Bleed";
+	public override string Name => $"🩸 Bleed";
 
 	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
@@ -104,14 +102,14 @@ public class Bleed(int duration, double applyChance = 1) : DamageStatus(duration
 
 	protected override void Apply(BattlePlayer caster, BattlePlayer target)
 	{
-		target.DamageOverTime = (int)Math.Ceiling(target.Hp * 0.25);
+		target.DamageOverTime = (int)Math.Ceiling(target.Hp * 0.2);
 		base.Apply(caster, target);
 	}
 }
 
 public class Poison(int duration, double applyChance = 1) : DamageStatus(duration, applyChance) 
 {
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":snake:")} Poison";
+	public override string Name => $"🐍 Poison";
 
 	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
@@ -132,7 +130,7 @@ public class Poison(int duration, double applyChance = 1) : DamageStatus(duratio
 
 public class Doom(int duration, double applyChance = 1) : DamageStatus(duration, applyChance) 
 {
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":skull:")} Doom";
+	public override string Name => $"💀 Doom";
 
 	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
@@ -158,7 +156,7 @@ public abstract class PassiveStatus(int duration, double applyChance) : Status(d
 
 public class Silence(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":mute:")} Silence";
+	public override string Name => $"🔇 Silence";
 
 	public DiscordMessageBuilder SilenceMessage(BattlePlayer target) => new DiscordMessageBuilder().AddEmbed(
 		new DiscordEmbedBuilder()
@@ -170,34 +168,33 @@ public class Silence(int duration, double applyChance = 1) : PassiveStatus(durat
 
 public class Confusion(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":question:")} Confusion";
+	public override string Name => $"❓ Confusion";
 
 	public bool RollConfusion() => DiscordController.RNG.NextDouble() < 0.5;
 }
 
 public class Douse(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":oil:")} Douse";
+	public override string Name => $"🛢️ Douse";
 
 	public DiscordMessageBuilder Ignite(BattlePlayer caster, BattlePlayer target) 
 	{
-		var ignite = new Burn(duration: 3, applyChance: 1);
+		var ignite = new Burn(duration: 4, applyChance: 1);
 		return ignite.TryApply(caster, target)!;
 	}
 }
 
 public class Frail(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance)
 {
+	public override string Name => "☔️ Frail";
 	public readonly double DRReduction = 0.25;
-
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":umbrella:")} Frail";
 
 	public void Weaken(BattlePlayer target) => target.DamageResistance -= DRReduction;
 }
 
 public class Shock(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":zap:")} Shock";
+	public override string Name => $"⚡️ Shock";
 
 	public DiscordMessageBuilder Electrocute(BattlePlayer caster, BattlePlayer target) 
 	{
@@ -221,7 +218,7 @@ public abstract class TurnSkipStatus(int duration, double applyChance) : Status(
 
 public class TimeStop(int duration, double applyChance = 1) : TurnSkipStatus(duration, applyChance) 
 {
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":clock10:")} Time Stop";
+	public override string Name => $"🕚 Time Stop";
 
 	public override DiscordMessageBuilder? TryApply(BattlePlayer caster, BattlePlayer target)
 	{
@@ -250,7 +247,7 @@ public class TimeStop(int duration, double applyChance = 1) : TurnSkipStatus(dur
 
 public class Sleep(int duration, double applyChance = 1) : TurnSkipStatus(duration, applyChance) 
 {
-	public override string GetName(DiscordClient s) => $"{DiscordEmoji.FromName(s, ":zzz:")} Sleep";
+	public override string Name => $"💤 Sleep";
 
 	public DiscordMessageBuilder? RollForWakeUp(BattlePlayer target) {
 		var awake = DiscordController.RNG.NextDouble() < 0.5;
@@ -268,17 +265,23 @@ public class Sleep(int duration, double applyChance = 1) : TurnSkipStatus(durati
 
 	protected override DiscordMessageBuilder Action(BattlePlayer caster, BattlePlayer target)
 	{
+		var hpBefore = target.Hp;
+		var mpBefore = target.Mp;
+		target.GrantMP(10);
+		target.Heal((int)(target.MaxHp * 0.05));
+		
 		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
-			.WithDescription("💤**Asleep...** 💤")
-			.WithColor(DiscordColor.DarkBlue));
+			.WithDescription("💤 **Asleep...** 💤")
+			.WithColor(DiscordColor.DarkBlue)
+			.WithFooter($"❤️ {hpBefore} ➡️ ❤️ {target.Hp}, 💎 {mpBefore} ➡️ 💎 {target.Mp}"));
 	}
 }
 #endregion
 
 public class Random(int duration, double applyChance = 1) : Status(duration, applyChance)
 {
-	public override string GetName(DiscordClient s) => $"🎲 Random";
+	public override string Name => $"🎲 Random";
 
 	protected override DiscordMessageBuilder? Action(BattlePlayer caster, BattlePlayer target) => null;
 

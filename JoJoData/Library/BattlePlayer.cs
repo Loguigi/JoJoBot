@@ -207,10 +207,10 @@ public class BattlePlayer : Player
 		info.Append($"{DiscordEmoji.FromName(s, ":gem:", false)} MP: {Mp} / {BattleConstants.BASE_MP}\n");
 		info.Append($"{DiscordEmoji.FromName(s, ":crossed_swords:", false)} Damage: {MinDamage} - {MaxDamage}\n");
 		if (Buff != null)
-			info.Append($"{DiscordEmoji.FromName(s, ":up_arrow:", false)} Buff: {Buff.GetName(s)} `({BuffDuration})`\n");
+			info.Append($"{DiscordEmoji.FromName(s, ":up_arrow:", false)} Buff: {Buff.Name} `({BuffDuration})`\n");
 
 		if (Status != null)
-			info.Append($"{DiscordEmoji.FromName(s, ":down_arrow:", false)} Status: {Status.GetName(s)} `({StatusDuration})`\n");
+			info.Append($"{DiscordEmoji.FromName(s, ":down_arrow:", false)} Status: {Status.Name} `({StatusDuration})`\n");
 
 		return info.ToString();
 	}
