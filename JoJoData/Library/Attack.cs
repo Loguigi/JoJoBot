@@ -68,7 +68,7 @@ public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(da
 	{
 		int sum = 0;
 		int critCount = 0;
-		var hits = DiscordController.RNG.Next(MinHits, MaxHits);
+		var hits = DiscordController.RNG.Next(MinHits, MaxHits + 1);
 		
 		for (var i = 1; i <= hits; ++i) 
 		{

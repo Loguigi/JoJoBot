@@ -452,6 +452,91 @@ public class MonkeyHug : StatusAttackAbility
 }
 #endregion
 
+#region Yellow Temperance
+public class GooPunch : AttackAbility 
+{
+	public GooPunch() 
+	{
+		Name = "Goo Punch";
+		MpCost = 20;
+		Attack = new BasicAttack(damage: 1.7);
+	}
+}
+
+public class BlobArmor : BuffAbility
+{
+	public BlobArmor()
+	{
+		Name = "Blob Armor";
+		MpCost = 35;
+		Buff = new Protect(duration: 2, dr: 0.35);
+	}
+}
+
+public class FleshEater : StatusAttackAbility 
+{
+	public FleshEater() 
+	{
+		Name = "Flesh Eater";
+		MpCost = 45;
+		Attack = new CritDamageIncreaseAttack(damage: 2.4, increase: 0.5);
+		Status = new Poison(duration: 5, applyChance: 0.35);
+	}
+}
+
+public class Materialization : StatChangeAbility 
+{
+	public Materialization() 
+	{
+		Name = "Materialization";
+		MpCost = 50;
+		StatChange = new Barrier(barrier: 0.25);
+	}
+}
+#endregion
+
+#region Ebony Devil
+public class BiteNSlash : AttackAbility 
+{
+	public BiteNSlash() 
+	{
+		Name = "Bite n' Slash";
+		MpCost = 20;
+		Attack = new MultiHitAttack(damage: 1.5, minHits: 1, maxHits: 2);
+	}
+}
+
+public class DevilRage : StatChangeAbility 
+{
+	public DevilRage() 
+	{
+		Name = "Devil's Rage";
+		MpCost = 15;
+		StatChange = new Strength(increase: 0.1);
+	}
+}
+
+public class TearHisNuts : AttackAbility 
+{
+	public TearHisNuts() 
+	{
+		Name = "I'M GONNA TEAR YOUR NUTS!!";
+		MpCost = 35;
+		Attack = new CritChanceIncreaseAttack(damage: 2.2, increase: 0.3);
+	}
+}
+
+public class DevilMisfortune : InflictStatusAbility 
+{
+	public DevilMisfortune() 
+	{
+		Name = "Devil's Misfortune";
+		MpCost = 45;
+		Status = new Random(duration: 4);
+	}
+}
+#endregion
+
 #region Hanged Man
 public class MirrorSlash : StatusAttackAbility
 {
@@ -623,7 +708,47 @@ public class CableAttack : AttackAbility
 #endregion
 
 #region Justice
-// TODO Justice
+public class GhostBaby : StatusAttackAbility 
+{
+	public GhostBaby() 
+	{
+		Name = "Ghost Baby";
+		MpCost = 25;
+		Attack = new BasicAttack(damage: 1.4);
+		Status = new Bleed(duration: 2, applyChance: 0.75);
+	}
+}
+
+public class HoleAttack : AttackAbility
+{
+	public HoleAttack() 
+	{
+		Name = "Hole Attack";
+		MpCost = 35;
+		Attack = new WeaknessAttack(damage: 2, increase: 2, typeof(Bleed));
+	}
+}
+
+public class FogIllusion : BuffAbility 
+{
+	public FogIllusion() 
+	{
+		Name = "Fog Illusion";
+		MpCost = 45;
+		Buff = new Await();
+	}
+}
+
+public class FogStringPuppetry : StatusAttackAbility 
+{
+	public FogStringPuppetry() 
+	{
+		Name = "Fog String Puppetry";
+		MpCost = 30;
+		Attack = new BasicAttack(damage: 1.8);
+		Status = new Confusion(duration: 2, applyChance: 0.9);
+	}
+}
 #endregion
 
 #region Lovers
@@ -1053,9 +1178,98 @@ public class ShadowReflection : AttackAbility
 #endregion
 
 #region Osiris
-// TODO
+public class DiceRoll : AttackAbility 
+{
+	public DiceRoll() 
+	{
+		Name = "Dice Roll";
+		MpCost = 25;
+		Attack = new CritDamageIncreaseAttack(damage: 0.2, increase: 4);
+	}
+}
+
+public class SleightOfHand : StatusAttackAbility 
+{
+	public SleightOfHand() 
+	{
+		Name = "Sleight of Hand";
+		MpCost = 50;
+		Attack = new CritDamageIncreaseAttack(damage: 0.5, increase: 3);
+		Status = new Random(duration: 5, applyChance: 1);
+	}
+}
+
+public class SoulSiphon : AttackAbility 
+{
+	public SoulSiphon() 
+	{
+		Name = "Soul Siphon";
+		MpCost = 0;
+		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 20, hpLossPercent: 0.3);
+	}
+}
+
+public class IdleDeathGamble : StatusAttackAbility 
+{
+	public IdleDeathGamble() 
+	{
+		Name = "Idle Death Gamble";
+		MpCost = 10;
+		Attack = new BasicAttack(damage: 0.5);
+		Status = new Doom(duration: 1, applyChance: 0.05);
+	}
+}
 #endregion
 
 #region Horus
 
+#endregion
+
+#region Atum
+public class FMega : StatusAttackAbility 
+{
+	public FMega() 
+	{
+		Name = "F-MEGA";
+		MpCost = 25;
+		Attack = new BasicAttack(damage: 1.5);
+		Status = new Shock(duration: 3, applyChance: 0.75);
+	}
+}
+
+public class OhThatsABaseball : AttackAbility 
+{
+	public OhThatsABaseball() 
+	{
+		Name = "OH! THAT'S A BASEBALL";
+		MpCost = 45;
+		Attack = new MultiHitAttack(damage: 0.2, minHits: 2, maxHits: 50);
+	}
+}
+
+public class SoulRead : BuffAbility 
+{
+	public SoulRead() 
+	{
+		Name = "Soul Read";
+		MpCost = 50;
+		Buff = new Await();
+	}
+}
+#endregion
+
+#region Cream
+
+#endregion
+
+#region Holly's Stand
+public class Debilitate : StatChangeAbility 
+{
+	public Debilitate() 
+	{
+		Name = "Debilitate";
+		MpCost = 10;
+		StatChange = new Heal(healPercent: -0.1);
+	}
+}
 #endregion
