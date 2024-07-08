@@ -35,7 +35,7 @@ public class StarFinger : AttackAbility
 		Name = "STAR FINGER!!!";
 		Description = "";
 		MpCost = 25;
-		Attack = new CritChanceIncreaseAttack(damage: 2, increase: 0.3);
+		Attack = new CritChanceIncreaseAttack(damage: 2, increase: 0.4);
 	}
 }
 
@@ -981,7 +981,7 @@ public class WaterBullets : AttackAbility
 	{
 		Name = "Water Bullets";
 		MpCost = 50;
-		Attack = new MultiHitAttack(damage: 1.2, minHits: 3, maxHits: 5);
+		Attack = new MultiHitAttack(damage: 1, minHits: 3, maxHits: 5);
 	}
 }
 
@@ -1222,7 +1222,45 @@ public class IdleDeathGamble : StatusAttackAbility
 #endregion
 
 #region Horus
+public class FreezeAttack : AttackAbility 
+{
+	public FreezeAttack() 
+	{
+		Name = "Freeze";
+		MpCost = 20;
+		Attack = new BypassProtectAttack(damage: 2);
+	}
+}
 
+public class IcicleBarrage : AttackAbility 
+{
+	public IcicleBarrage() 
+	{
+		Name = "Icicle Barrage";
+		MpCost = 35;
+		Attack = new MultiHitAttack(damage: 0.8, minHits: 3, maxHits: 6);
+	}
+}
+
+public class IceWall : BuffAbility 
+{
+	public IceWall()
+	{
+		Name = "Ice Wall";
+		MpCost = 40;
+		Buff = new Protect(duration: 3, dr: 0.4);
+	}
+}
+
+public class IceBlock : AttackAbility 
+{
+	public IceBlock() 
+	{
+		Name = "Ice Block";
+		MpCost = 50;
+		Attack = new CritChanceIncreaseAttack(damage: 2.5, increase: 0.3);
+	}
+}
 #endregion
 
 #region Atum
@@ -1259,7 +1297,45 @@ public class SoulRead : BuffAbility
 #endregion
 
 #region Cream
+public class ThroatChop : AttackAbility 
+{
+	public ThroatChop() 
+	{
+		Name = "Throat Chop";
+		MpCost = 30;
+		Attack = new BasicAttack(damage: 2.5);
+	}
+}
 
+public class Blackhole : AttackAbility 
+{
+	public Blackhole() 
+	{
+		Name = "Blackhole";
+		MpCost = 45;
+		Attack = new CritDamageIncreaseAttack(damage: 3, increase: 1);
+	}
+}
+
+public class DimensionWarp : BuffAbility 
+{
+	public DimensionWarp() 
+	{
+		Name = "Dimension Warp";
+		MpCost = 50;
+		Buff = new Await();
+	}
+}
+
+public class CreamInvisibility : InflictStatusAbility 
+{
+	public CreamInvisibility() 
+	{
+		Name = "Invisibility";
+		MpCost = 25;
+		Status = new Confusion(duration: 2, applyChance: 0.6);
+	}
+}
 #endregion
 
 #region Holly's Stand

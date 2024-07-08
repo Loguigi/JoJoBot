@@ -81,7 +81,7 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 			else if (opponent == winner)
 			{
 				baseExp = BattleConstants.BASE_EXP_GAIN - 4;
-				BattlesLost--;
+				BattlesLost++;
 			}
 			
 			if (Level == opponent.Level)

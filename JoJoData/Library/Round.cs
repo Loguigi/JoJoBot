@@ -81,9 +81,9 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		
 		if (ability is AttackAbility attack)
 		{
-			if (Opponent.Buff is Await await)
+			if (Opponent.Buff is Await awaitt && Opponent.StatusDuration == 2)
 			{
-				battleMsgs.Add(await.Action(caster: Opponent, target: CurrentPlayer, out bool evade));
+				battleMsgs.Add(awaitt.Action(caster: Opponent, target: CurrentPlayer, out bool evade));
 				if (evade) return;
 			}
 			
@@ -138,7 +138,13 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		{
 			battleMsgs.Add(statChange.StatChange.Execute(caster: CurrentPlayer, target: Opponent));
 		}
-		
+
+		if (Opponent.Buff is Await await && Opponent.StatusDuration == 1)
+		{
+			battleMsgs.Add(await.Action(caster: Opponent, target: CurrentPlayer, out bool evade));
+			if (evade) return;
+		}
+
 		if (CurrentPlayer.Buff is Haste) 
 		{
 			RoundRepeat = true;
