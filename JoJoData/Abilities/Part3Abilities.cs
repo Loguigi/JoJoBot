@@ -1204,7 +1204,7 @@ public class SoulSiphon : AttackAbility
 	{
 		Name = "Soul Siphon";
 		MpCost = 0;
-		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 20, hpLossPercent: 0.2);
+		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 20, hpLossPercent: 0.15);
 	}
 }
 
