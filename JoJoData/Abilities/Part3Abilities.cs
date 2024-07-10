@@ -436,18 +436,17 @@ public class EatBanana : StatChangeAbility
 	{
 		Name = "🍌";
 		MpCost = 40;
-		StatChange = new Heal(healPercent: 0.25);
+		StatChange = new Heal(healPercent: 0.2);
 	}
 }
 
-public class MonkeyHug : StatusAttackAbility
+public class MonkeyHug : AttackAbility
 {
 	public MonkeyHug()
 	{
 		Name = "Monkey Hug";
 		MpCost = 0;
-		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 20, hpLossPercent: 0.15);
-		Status = new Confusion(duration: 3, applyChance: 1);
+		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 20, hpLossPercent: 0.3);
 	}
 }
 #endregion
@@ -1184,7 +1183,7 @@ public class DiceRoll : AttackAbility
 	{
 		Name = "Dice Roll";
 		MpCost = 25;
-		Attack = new CritDamageIncreaseAttack(damage: 0.2, increase: 4);
+		Attack = new CritDamageIncreaseAttack(damage: 1, increase: 4);
 	}
 }
 
@@ -1195,7 +1194,7 @@ public class SleightOfHand : StatusAttackAbility
 		Name = "Sleight of Hand";
 		MpCost = 50;
 		Attack = new CritDamageIncreaseAttack(damage: 0.5, increase: 3);
-		Status = new Random(duration: 5, applyChance: 1);
+		Status = new Random(duration: 4, applyChance: 1);
 	}
 }
 
@@ -1205,7 +1204,7 @@ public class SoulSiphon : AttackAbility
 	{
 		Name = "Soul Siphon";
 		MpCost = 0;
-		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 20, hpLossPercent: 0.3);
+		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 20, hpLossPercent: 0.2);
 	}
 }
 
@@ -1216,7 +1215,7 @@ public class IdleDeathGamble : StatusAttackAbility
 		Name = "Idle Death Gamble";
 		MpCost = 10;
 		Attack = new BasicAttack(damage: 0.5);
-		Status = new Doom(duration: 1, applyChance: 0.05);
+		Status = new Doom(duration: 1, applyChance: 0.10);
 	}
 }
 #endregion
@@ -1270,8 +1269,8 @@ public class FMega : StatusAttackAbility
 	{
 		Name = "F-MEGA";
 		MpCost = 25;
-		Attack = new BasicAttack(damage: 1.5);
-		Status = new Shock(duration: 3, applyChance: 0.75);
+		Attack = new BasicAttack(damage: 1.2);
+		Status = new Shock(duration: 3, applyChance: 0.6);
 	}
 }
 
@@ -1280,8 +1279,8 @@ public class OhThatsABaseball : AttackAbility
 	public OhThatsABaseball() 
 	{
 		Name = "OH! THAT'S A BASEBALL";
-		MpCost = 45;
-		Attack = new MultiHitAttack(damage: 0.2, minHits: 2, maxHits: 50);
+		MpCost = 60;
+		Attack = new MultiHitAttack(damage: 0.2, minHits: 1, maxHits: 30);
 	}
 }
 

@@ -155,7 +155,7 @@ public class HPLeechAttack(double damage, double hpStealPercent) : Attack(damage
 
 public class MPStealAttack(double damage, int mpStealAmount, double hpLossPercent) : Attack(damage)
 {
-	public override string ShortDescription => base.ShortDescription + $" -❤️ {HpLossAmount * 100}% HP, Steal 💎 {MpStealAmount} MP";
+	public override string ShortDescription => base.ShortDescription + $" -❤️ {HpLossAmount * 100}% Max HP, Steal 💎 {MpStealAmount} MP";
 	public readonly int MpStealAmount = mpStealAmount;
 	public readonly double HpLossAmount = hpLossPercent;
 
@@ -169,7 +169,7 @@ public class MPStealAttack(double damage, int mpStealAmount, double hpLossPercen
 		
 		attacker.GrantMP(mpSteal, out int mpBefore);
 		defender.UseMP(mpSteal, out _);
-		attacker.ReceiveDamage((int)(HpLossAmount * attacker.Hp), out int hpBefore);
+		attacker.ReceiveDamage((int)(HpLossAmount * attacker.MaxHp), out int hpBefore);
 		
 		return base.Execute(attacker, defender).AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(defender.User.GlobalName, "", defender.User.AvatarUrl)

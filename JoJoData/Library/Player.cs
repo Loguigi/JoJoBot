@@ -143,8 +143,6 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 		try
 		{
 			Stand = stand;
-			Level = 1;
-			Experience = 0;
 			Save();
 		}
 		catch (Exception ex)
