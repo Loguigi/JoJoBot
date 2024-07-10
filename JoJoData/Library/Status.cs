@@ -288,7 +288,7 @@ public class Random(int duration, double applyChance = 1) : Status(duration, app
 			x.IsClass &&
 			x.Namespace != null &&
 			x.Namespace.Contains("JoJoData.Library")).ToList().Where(y =>
-			!y.IsAbstract && (y.BaseType == typeof(PassiveStatus) || y.BaseType == typeof(PassiveStatus) || y.BaseType == typeof(TurnSkipStatus))).ToList();
+			!y.IsAbstract && (y.BaseType == typeof(DamageStatus) || y.BaseType == typeof(PassiveStatus) || y.BaseType == typeof(TurnSkipStatus))).ToList();
 
 		var selection = DiscordController.RNG.Next(0, statuses.Count);
 		if (Activator.CreateInstance(statuses[selection], Duration, ApplyChance) is Status status)
