@@ -81,7 +81,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		
 		if (ability is AttackAbility attack)
 		{
-			if (Opponent.Buff is Await awaitt && Opponent.StatusDuration == 2)
+			if (Opponent.Buff is Await awaitt && Opponent.BuffDuration == 2)
 			{
 				battleMsgs.Add(awaitt.Action(caster: Opponent, target: CurrentPlayer, out bool evade));
 				if (evade) return;
@@ -93,12 +93,37 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				battleMsgs.Add(attack.Attack.Execute(attacker: CurrentPlayer, defender: CurrentPlayer));
 				if (!CurrentPlayer.IsAlive)
 					return;
+
+				if (ability is StatusAttackAbility statusAttk)
+				{
+					battleMsgs.Add(statusAttk.Status.TryApply(caster: CurrentPlayer, target: CurrentPlayer));
+				}
+
+				if (ability is BuffAttackAbility buffAtk)
+				{
+					battleMsgs.Add(buffAtk.Buff.Apply(target: Opponent));
+				}
 			}
 			else 
 			{
 				battleMsgs.Add(attack.Attack.Execute(attacker: CurrentPlayer, defender: Opponent));
 				if (!Opponent.IsAlive)
 					return;
+
+				if (Opponent.Status is Sleep sleep)
+				{
+					battleMsgs.Add(sleep.RollForWakeUp(target: Opponent));
+				}
+
+				if (ability is StatusAttackAbility statusAttk)
+				{
+					battleMsgs.Add(statusAttk.Status.TryApply(caster: CurrentPlayer, target: Opponent));
+				}
+
+				if (ability is BuffAttackAbility buffAtk)
+				{
+					battleMsgs.Add(buffAtk.Buff.Apply(target: CurrentPlayer));
+				}
 			}
 			
 			if (CurrentPlayer.Status is Shock shock) 
@@ -108,20 +133,9 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 					return;
 			}
 
-			if (Opponent.Status is Sleep sleep)
-			{
-				battleMsgs.Add(sleep.RollForWakeUp(target: Opponent));
-			}
-
-			if (ability is StatusAttackAbility statusAttk) 
-			{
-				battleMsgs.Add(statusAttk.Status.TryApply(caster: CurrentPlayer, target: Opponent));
-			}
 			
-			if (ability is BuffAttackAbility buffAtk) 
-			{
-				battleMsgs.Add(buffAtk.Buff.Apply(target: CurrentPlayer));
-			}
+
+			
 		}
 
 		if (ability is InflictStatusAbility status)
@@ -139,7 +153,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			battleMsgs.Add(statChange.StatChange.Execute(caster: CurrentPlayer, target: Opponent));
 		}
 
-		if (Opponent.Buff is Await await && Opponent.StatusDuration == 1)
+		if (Opponent.Buff is Await await && Opponent.BuffDuration == 1)
 		{
 			battleMsgs.Add(await.Action(caster: Opponent, target: CurrentPlayer, out bool evade));
 			if (evade) return;

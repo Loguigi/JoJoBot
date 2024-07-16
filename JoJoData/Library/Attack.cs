@@ -136,20 +136,23 @@ public class WeaknessAttack(double damage, double increase, Type status) : Attac
 
 public class HPLeechAttack(double damage, double hpStealPercent) : Attack(damage)
 {
-	public override string ShortDescription => base.ShortDescription + $" Steal ❤️ {HPStealPercent * 100}% HP";
+	public override string ShortDescription => base.ShortDescription + $" Steal ❤️ HP";
 	public readonly double HPStealPercent = hpStealPercent;
 
 	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
-	{
-		var hpSteal = (int)(HPStealPercent * defender.Hp);
-		defender.ReceiveDamage(hpSteal, out int enemyHpBefore);
-		attacker.Heal(hpSteal, out int attackerHpBefore);
-		
+	{	
 		return base.Execute(attacker, defender).AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(defender.User.GlobalName, "", defender.User.AvatarUrl)
-			.WithDescription($"🔮 **{attacker.Stand!.CoolName} steals `{hpSteal}` HP from {defender.Stand!.CoolName}**")
-			.WithFooter($"❤️ {attackerHpBefore} ➡️ ❤️ {attacker.Hp}", attacker.User.AvatarUrl)
+			.WithDescription($"🔮 **{attacker.Stand!.CoolName} steals `{defender.DamageReceived}` HP from {defender.Stand!.CoolName}**")
 			.WithColor(DiscordColor.Magenta));
+	}
+
+	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
+	{
+		var dmg = base.CalculateDamage(attacker, defender, out crit);
+		attacker.Heal(dmg, out _);
+		
+		return dmg;
 	}
 }
 
