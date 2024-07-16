@@ -134,10 +134,9 @@ public class WeaknessAttack(double damage, double increase, Type status) : Attac
 	}
 }
 
-public class HPLeechAttack(double damage, double hpStealPercent) : Attack(damage)
+public class HPLeechAttack(double damage) : Attack(damage)
 {
 	public override string ShortDescription => base.ShortDescription + $" Steal ❤️ HP";
-	public readonly double HPStealPercent = hpStealPercent;
 
 	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
 	{	

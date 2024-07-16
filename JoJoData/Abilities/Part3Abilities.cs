@@ -181,7 +181,7 @@ public class ReroReroRero : StatChangeAbility
 	public ReroReroRero()
 	{
 		Name = "🍒 Rero Rero Rero Rero 🍒";
-		MpCost = 40;
+		MpCost = 50;
 		StatChange = new Heal(healPercent: 0.25);
 	}
 }
@@ -195,7 +195,7 @@ public class ChariotSlash : StatusAttackAbility
 		Name = "Slash";
 		MpCost = 10;
 		Attack = new BasicAttack(damage: 1.25);
-		Status = new Bleed(duration: 3, applyChance: 0.2);
+		Status = new Bleed(duration: 3, applyChance: 0.4);
 	}
 }
 
@@ -268,7 +268,7 @@ public class DogBite : AttackAbility
 	{
 		Name = "Doggy Bite";
 		MpCost = 0;
-		Attack = new MPStealAttack(damage: 0.25, mpStealAmount: 20, hpLossPercent: 0.1);
+		Attack = new MPStealAttack(damage: 0.25, mpStealAmount: 15, hpLossPercent: 0.1);
 	}
 }
 #endregion
@@ -320,7 +320,7 @@ public class TheWorld : InflictStatusAbility
 #endregion
 
 #region Tower of Gray
-public class AirplaneHijack : BuffAttackAbility
+public class AirplaneHijack : AttackAbility
 {
 	public AirplaneHijack()
 	{
@@ -328,7 +328,7 @@ public class AirplaneHijack : BuffAttackAbility
 		Description = "";
 		MpCost = 20;
 		Attack = new BasicAttack(damage: 2.5);
-		Buff = new Haste(duration: 1);
+		//Buff = new Haste(duration: 1);
 	}
 }
 
@@ -404,7 +404,7 @@ public class Drown : AttackAbility
 	{
 		Name = "Drown";
 		MpCost = 50;
-		Attack = new HPLeechAttack(damage: 3, hpStealPercent: 0.15);
+		Attack = new HPLeechAttack(damage: 3);
 	}
 }
 #endregion
@@ -596,7 +596,7 @@ public class UnloadClip : AttackAbility
 	{
 		Name = "Unload Clip";
 		MpCost = 30;
-		Attack = new MultiHitAttack(damage: 0.75, minHits: 3, maxHits: 8);
+		Attack = new MultiHitAttack(damage: 0.6, minHits: 3, maxHits: 8);
 	}
 }
 
@@ -638,7 +638,7 @@ public class LifeDrain : AttackAbility
 	{
 		Name = "Life Drain";
 		MpCost = 45;
-		Attack = new HPLeechAttack(damage: 0.3, hpStealPercent: 0.25);
+		Attack = new HPLeechAttack(damage: 2);
 	}
 }
 
@@ -861,7 +861,7 @@ public class PoopySoupy : StatChangeAbility
 	public PoopySoupy() 
 	{
 		Name = "💩 Poopy Soupy 💩";
-		MpCost = 10;
+		MpCost = 15;
 		StatChange = new Heal(healPercent: 0.1);
 	}
 }
@@ -1012,7 +1012,7 @@ public class FlailAbout : AttackAbility
 	{
 		Name = "Flail Helplessly";
 		MpCost = 30;
-		Attack = new MultiHitAttack(damage: 0.25, minHits: 8, maxHits: 12);
+		Attack = new MultiHitAttack(damage: 0.2, minHits: 8, maxHits: 12);
 	}
 }
 
@@ -1022,18 +1022,17 @@ public class Smoke4Ciggys : StatChangeAbility
 	{
 		Name = "Smoke 4 Ciggys";
 		MpCost = 50;
-		StatChange = new Heal(healPercent: 0.2);
+		StatChange = new Heal(healPercent: 0.15);
 	}
 }
 
-public class SweatNervously : BuffAttackAbility 
+public class SweatNervously : BuffAbility 
 {
 	public SweatNervously() 
 	{
 		Name = "Sweat Nervously";
 		MpCost = 20;
-		Attack = new BasicAttack(damage: -5);
-		Buff = new Haste(duration: 1);
+		Buff = new Charge(duration: 1);
 	}
 }
 
@@ -1237,7 +1236,7 @@ public class IcicleBarrage : AttackAbility
 	{
 		Name = "Icicle Barrage";
 		MpCost = 35;
-		Attack = new MultiHitAttack(damage: 0.8, minHits: 3, maxHits: 6);
+		Attack = new MultiHitAttack(damage: 0.5, minHits: 3, maxHits: 6);
 	}
 }
 
@@ -1270,7 +1269,7 @@ public class FMega : StatusAttackAbility
 		Name = "F-MEGA";
 		MpCost = 25;
 		Attack = new BasicAttack(damage: 1.2);
-		Status = new Shock(duration: 3, applyChance: 0.6);
+		Status = new Shock(duration: 2, applyChance: 0.6);
 	}
 }
 
@@ -1338,13 +1337,13 @@ public class CreamInvisibility : InflictStatusAbility
 #endregion
 
 #region Holly's Stand
-public class Debilitate : StatChangeAbility 
+public class Debilitate : AttackAbility 
 {
 	public Debilitate() 
 	{
 		Name = "Debilitate";
 		MpCost = 10;
-		StatChange = new Heal(healPercent: -0.1);
+		Attack = new MPStealAttack(damage: 1, mpStealAmount: 5, hpLossPercent: 0.1);
 	}
 }
 #endregion
