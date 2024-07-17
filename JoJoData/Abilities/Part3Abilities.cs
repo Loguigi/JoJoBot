@@ -11,8 +11,8 @@ public class Ora : AttackAbility
 	{
 		Name = "ORA!!";
 		Description = "";
-		MpCost = 15;
-		Attack = new BasicAttack(damage: 2);
+		MpCost = 25;
+		Attack = new BasicAttack(damage: 2.3);
 	}
 }
 
@@ -22,7 +22,7 @@ public class OraOraOraOra : AttackAbility
 	{
 		Name = "ORA ORA ORA ORA";
 		Description = "";
-		MpCost = 35;
+		MpCost = 45;
 		Attack = new MultiHitAttack(damage: 0.75, minHits: 2, maxHits: 5);
 	}
 }
@@ -34,8 +34,8 @@ public class StarFinger : AttackAbility
 	{
 		Name = "STAR FINGER!!!";
 		Description = "";
-		MpCost = 25;
-		Attack = new CritChanceIncreaseAttack(damage: 2, increase: 0.4);
+		MpCost = 45;
+		Attack = new CritChanceIncreaseAttack(damage: 1.2, increase: 0.4);
 	}
 }
 
@@ -45,8 +45,9 @@ public class StarPlatinumTheWorld : InflictStatusAbility
 	{
 		Name = "Star Platinum : ZA WARUDO";
 		Description = "";
-		MpCost = 80;
+		MpCost = 50;
 		Status = new TimeStop(duration: 3);
+		Cooldown = 9;
 	}
 }
 #endregion
@@ -193,7 +194,7 @@ public class ChariotSlash : StatusAttackAbility
 	public ChariotSlash()
 	{
 		Name = "Slash";
-		MpCost = 10;
+		MpCost = 20;
 		Attack = new BasicAttack(damage: 1.25);
 		Status = new Bleed(duration: 3, applyChance: 0.4);
 	}
@@ -204,18 +205,19 @@ public class HoraRush : AttackAbility
 	public HoraRush()
 	{
 		Name = "Hora Rush";
-		MpCost = 35;
+		MpCost = 40;
 		Attack = new MultiHitAttack(damage: 0.25, minHits: 5, maxHits: 15);
 	}
 }
 
-public class ArmorRemoval : StatChangeAbility
+public class ArmorRemoval : BuffAbility
 {
 	public ArmorRemoval()
 	{
 		Name = "Armor Removal";
 		MpCost = 40;
-		StatChange = new Strength(increase: 0.15);
+		Buff = new Haste(duration: 2);
+		Cooldown = 5;
 	}
 }
 
@@ -224,8 +226,9 @@ public class SwordLaunch : AttackAbility
 	public SwordLaunch()
 	{
 		Name = "Sword Launch";
-		MpCost = 75;
+		MpCost = 50;
 		Attack = new CritDamageIncreaseAttack(damage: 2, increase: 5);
+		Cooldown = 3;
 	}
 }
 #endregion
@@ -268,7 +271,7 @@ public class DogBite : AttackAbility
 	{
 		Name = "Doggy Bite";
 		MpCost = 0;
-		Attack = new MPStealAttack(damage: 0.25, mpStealAmount: 15, hpLossPercent: 0.1);
+		Attack = new MPStealAttack(damage: 0.25, mpStealAmount: 15, hpLossPercent: 0.15);
 	}
 }
 #endregion
@@ -280,8 +283,8 @@ public class Muda : AttackAbility
 	{
 		Name = "MUDA";
 		Description = "";
-		MpCost = 15;
-		Attack = new BasicAttack(damage: 2);
+		MpCost = 25;
+		Attack = new BasicAttack(damage: 2.2);
 	}
 }
 
@@ -291,7 +294,7 @@ public class MudaMudaMudaMuda : AttackAbility
 	{
 		Name = "MUDA MUDA MUDA MUDA";
 		Description = "";
-		MpCost = 30;
+		MpCost = 40;
 		Attack = new MultiHitAttack(damage: 0.75, minHits: 1, maxHits: 6);
 	}
 }
@@ -302,7 +305,7 @@ public class RoadRoller : AttackAbility
 	{
 		Name = "ROAD ROLLA DA";
 		Description = "";
-		MpCost = 40;
+		MpCost = 45;
 		Attack = new CritChanceIncreaseAttack(damage: 4, increase: 0);
 	}
 }
@@ -313,14 +316,15 @@ public class TheWorld : InflictStatusAbility
 	{
 		Name = "ZA WARUDO";
 		Description = "";
-		MpCost = 80;
+		MpCost = 50;
 		Status = new TimeStop(duration: 3);
+		Cooldown = 9;
 	}
 }
 #endregion
 
 #region Tower of Gray
-public class AirplaneHijack : AttackAbility
+public class AirplaneHijack : BuffAttackAbility
 {
 	public AirplaneHijack()
 	{
@@ -328,7 +332,8 @@ public class AirplaneHijack : AttackAbility
 		Description = "";
 		MpCost = 20;
 		Attack = new BasicAttack(damage: 2.5);
-		//Buff = new Haste(duration: 1);
+		Buff = new Haste(duration: 1);
+		Cooldown = 4;
 	}
 }
 
@@ -542,7 +547,7 @@ public class MirrorSlash : StatusAttackAbility
 	public MirrorSlash()
 	{
 		Name = "Mirror Slash";
-		MpCost = 15;
+		MpCost = 25;
 		Attack = new BasicAttack(damage: 2.3);
 		Status = new Bleed(duration: 3, applyChance: 0.2);
 	}
@@ -563,7 +568,7 @@ public class MirrorSneak : BuffAbility
 	public MirrorSneak() 
 	{
 		Name = "Mirror Sneak";
-		MpCost = 30;
+		MpCost = 45;
 		Buff = new Charge(duration: 1);
 	}
 }
@@ -606,7 +611,7 @@ public class PrecisionShot : AttackAbility
 	{
 		Name = "Precision Shot";
 		MpCost = 45;
-		Attack = new CritChanceIncreaseAttack(damage: 2.5, increase: 0.4);
+		Attack = new CritChanceIncreaseAttack(damage: 2, increase: 0.4);
 	}
 }
 
