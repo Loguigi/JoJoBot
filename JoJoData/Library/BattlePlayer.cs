@@ -11,6 +11,7 @@ public class BattlePlayer : Player
 	public readonly DiscordClient Client;
 	public bool IsAlive { get; set; } = true;
 	
+	
 	#region Base Stat Properties
 	public int Hp 
 	{

@@ -23,7 +23,7 @@ public class OraOraOraOra : AttackAbility
 		Name = "ORA ORA ORA ORA";
 		Description = "";
 		MpCost = 35;
-		Attack = new MultiHitAttack(damage: 0.9, minHits: 2, maxHits: 5);
+		Attack = new MultiHitAttack(damage: 0.75, minHits: 2, maxHits: 5);
 	}
 }
 
@@ -468,7 +468,7 @@ public class BlobArmor : BuffAbility
 	{
 		Name = "Blob Armor";
 		MpCost = 35;
-		Buff = new Protect(duration: 2, dr: 0.35);
+		Buff = new Protect(duration: 2, dr: 0.4);
 	}
 }
 
@@ -553,7 +553,7 @@ public class LightspeedSlash : AttackAbility
 	public LightspeedSlash()
 	{
 		Name = "Lightspeed Slash";
-		MpCost = 35;
+		MpCost = 40;
 		Attack = new CritChanceIncreaseAttack(damage: 2, increase: 0.3);
 	}
 }
@@ -574,7 +574,7 @@ public class RainBarrier : StatChangeAbility
 	{
 		Name = "Rain Barrier";
 		MpCost = 40;
-		StatChange = new Barrier(barrier: 0.35);
+		StatChange = new Barrier(barrier: 0.3);
 	}
 }
 #endregion
@@ -585,7 +585,7 @@ public class ShootGun : AttackAbility
 	public ShootGun() 
 	{
 		Name = "Shoot";
-		MpCost = 15;
+		MpCost = 20;
 		Attack = new BasicAttack(damage: 2);
 	}
 }
@@ -595,8 +595,8 @@ public class UnloadClip : AttackAbility
 	public UnloadClip() 
 	{
 		Name = "Unload Clip";
-		MpCost = 30;
-		Attack = new MultiHitAttack(damage: 0.6, minHits: 3, maxHits: 8);
+		MpCost = 35;
+		Attack = new MultiHitAttack(damage: 0.45, minHits: 3, maxHits: 8);
 	}
 }
 
@@ -616,7 +616,7 @@ public class HomingBullet : AttackAbility
 	{
 		Name = "Homing Bullet";
 		MpCost = 25;
-		Attack = new BypassProtectAttack(damage: 3);
+		Attack = new BypassProtectAttack(damage: 2);
 	}
 }
 #endregion
@@ -724,7 +724,7 @@ public class HoleAttack : AttackAbility
 	{
 		Name = "Hole Attack";
 		MpCost = 35;
-		Attack = new WeaknessAttack(damage: 2, increase: 2, typeof(Bleed));
+		Attack = new WeaknessAttack(damage: 1.5, increase: 2, typeof(Bleed));
 	}
 }
 
@@ -852,7 +852,7 @@ public class Nightmare : AttackAbility
 	{
 		Name = "Nightmare";
 		MpCost = 35;
-		Attack = new WeaknessAttack(damage: 2.5, increase: 2, typeof(Sleep));
+		Attack = new WeaknessAttack(damage: 1.5, increase: 2, typeof(Sleep));
 	}
 }
 
@@ -1170,7 +1170,7 @@ public class ShadowReflection : AttackAbility
 	{
 		Name = "Shadow Reflection";
 		MpCost = 30;
-		Attack = new WeaknessAttack(damage: 1.2, increase: 3, status: typeof(Frail));
+		Attack = new WeaknessAttack(damage: 1.2, increase: 2, status: typeof(Frail));
 	}
 }
 #endregion
@@ -1235,7 +1235,7 @@ public class IcicleBarrage : AttackAbility
 	public IcicleBarrage() 
 	{
 		Name = "Icicle Barrage";
-		MpCost = 35;
+		MpCost = 40;
 		Attack = new MultiHitAttack(damage: 0.5, minHits: 3, maxHits: 6);
 	}
 }
@@ -1256,7 +1256,7 @@ public class IceBlock : AttackAbility
 	{
 		Name = "Ice Block";
 		MpCost = 50;
-		Attack = new CritChanceIncreaseAttack(damage: 2.5, increase: 0.3);
+		Attack = new CritChanceIncreaseAttack(damage: 2, increase: 0.3);
 	}
 }
 #endregion
@@ -1301,7 +1301,7 @@ public class ThroatChop : AttackAbility
 	{
 		Name = "Throat Chop";
 		MpCost = 30;
-		Attack = new BasicAttack(damage: 2.5);
+		Attack = new BasicAttack(damage: 1.5);
 	}
 }
 
@@ -1310,7 +1310,7 @@ public class Blackhole : AttackAbility
 	public Blackhole() 
 	{
 		Name = "Blackhole";
-		MpCost = 45;
+		MpCost = 55;
 		Attack = new CritDamageIncreaseAttack(damage: 3, increase: 1);
 	}
 }

@@ -12,6 +12,7 @@ public abstract class Ability
 	public string CoolName => $"「{Name}」";
 	public string Description { get; protected set; } = string.Empty;
 	public int MpCost { get; protected set; } = 0;
+	public int Cooldown { get; protected set; } = 0;
 	
 	public DiscordSelectComponentOption CreateSelection(DiscordClient s, int abilityNum) 
 	{
