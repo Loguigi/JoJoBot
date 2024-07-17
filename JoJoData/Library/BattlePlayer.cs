@@ -10,7 +10,7 @@ public class BattlePlayer : Player
 	#region Properties
 	public readonly DiscordClient Client;
 	public bool IsAlive { get; set; } = true;
-	
+	public Dictionary<Ability, int> Cooldowns { get; set; } = [];
 	
 	#region Base Stat Properties
 	public int Hp 
@@ -62,6 +62,14 @@ public class BattlePlayer : Player
 		MaxHp = Hp;
 		MinDamage = _minDamage = GetMinDmg(Level);
 		MaxDamage = _maxDamage = GetMaxDmg(Level);
+		Cooldowns = new Dictionary<Ability, int>()
+		{
+			{Stand!.Ability0, 0},
+			{Stand.Ability1, 0},
+			{Stand.Ability2, 0},
+			{Stand.Ability3, 0},
+			{Stand.Ability4, 0}
+		};
 	}
 
 	// copy constructor
@@ -71,6 +79,7 @@ public class BattlePlayer : Player
 		Stand = player.Stand;
 		Level = player.Level;
 		Experience = player.Experience;
+		Cooldowns = player.Cooldowns;
 		
 		_hp = player._hp;
 		MaxHp = player.MaxHp;

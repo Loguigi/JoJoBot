@@ -19,7 +19,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 	{
 		battleMsgs = [];
 		
-		if (CurrentPlayer.Mp < BattleConstants.LOW_MP_THRESHOLD && CurrentPlayer.Status is not TurnSkipStatus)
+		if (CurrentPlayer.Mp < BattleConstants.LOW_MP_THRESHOLD && CurrentPlayer.Status is not TimeStop)
 		{
 			CurrentPlayer.GrantMP(BattleConstants.LOW_MP_GAIN, out int mpBefore);
 			battleMsgs.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
@@ -66,6 +66,11 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		{
 			frail.Weaken(Opponent);
 		}
+		
+		foreach (var ability in CurrentPlayer.Cooldowns.Where(x => x.Value != 0)) 
+		{
+			CurrentPlayer.Cooldowns[ability.Key]--;
+		}
 	}
 
 	public void Execute(Ability ability, out List<DiscordMessageBuilder?> battleMsgs)
@@ -78,10 +83,11 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				.WithColor(DiscordColor.Gold))
 		];
 		CurrentPlayer.UseMP(ability.MpCost, out _);
+		CurrentPlayer.Cooldowns[ability] = ability.Cooldown;
 		
 		if (ability is AttackAbility attack)
 		{
-			if (Opponent.Buff is Await awaitt && Opponent.BuffDuration == 2)
+			if (Opponent.Buff is Await awaitt && awaitt.IsEvadeTurn(Opponent))
 			{
 				battleMsgs.Add(awaitt.Action(caster: Opponent, target: CurrentPlayer, out bool evade));
 				if (evade) return;
@@ -132,10 +138,6 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				if (!CurrentPlayer.IsAlive)
 					return;
 			}
-
-			
-
-			
 		}
 
 		if (ability is InflictStatusAbility status)
@@ -153,10 +155,9 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			battleMsgs.Add(statChange.StatChange.Execute(caster: CurrentPlayer, target: Opponent));
 		}
 
-		if (Opponent.Buff is Await await && Opponent.BuffDuration == 1)
+		if (Opponent.Buff is Await a && a.IsAttackTurn(Opponent))
 		{
-			battleMsgs.Add(await.Action(caster: Opponent, target: CurrentPlayer, out bool evade));
-			if (evade) return;
+			battleMsgs.Add(a.Action(caster: Opponent, target: CurrentPlayer, out _));
 		}
 
 		if (CurrentPlayer.Buff is Haste) 
@@ -181,6 +182,15 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		if (CurrentPlayer.Status is Silence silence && ability.MpCost > 0)
 		{
 			msg = silence.SilenceMessage(CurrentPlayer);
+			return false;
+		}
+		
+		if (CurrentPlayer.Cooldowns[ability] > 0) 
+		{
+			msg = new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(CurrentPlayer.User.GlobalName, "", CurrentPlayer.User.AvatarUrl)
+				.WithDescription($"{DiscordEmoji.FromName(s, ":x:", false)} On cooldown for `{CurrentPlayer.Cooldowns[ability]}` turns!")
+				.WithColor(DiscordColor.Red));
 			return false;
 		}
 

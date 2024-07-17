@@ -77,6 +77,10 @@ public class Await() : Buff(duration: 2)
 			return new BasicAttack(damage: 3).Execute(attacker: caster, defender: target);
 		}
 	}
+
+	public bool IsEvadeTurn(BattlePlayer caster) => caster.BuffDuration == 2;
+
+	public bool IsAttackTurn(BattlePlayer caster) => caster.BuffDuration == 1;
 }
 
 public class Charge(int duration) : Buff(duration) 
