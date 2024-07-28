@@ -331,7 +331,7 @@ public class AirplaneHijack : BuffAttackAbility
 		Name = "Airplane Hijack";
 		Description = "";
 		MpCost = 20;
-		Attack = new BasicAttack(damage: 2.5);
+		Attack = new BasicAttack(damage: 2);
 		Buff = new Haste(duration: 1);
 		Cooldown = 4;
 	}
@@ -368,6 +368,7 @@ public class TowerFly : BuffAbility
 		Description = "";
 		MpCost = 45;
 		Buff = new Await();
+		Cooldown = 4;
 	}
 }
 #endregion
@@ -600,8 +601,8 @@ public class UnloadClip : AttackAbility
 	public UnloadClip() 
 	{
 		Name = "Unload Clip";
-		MpCost = 35;
-		Attack = new MultiHitAttack(damage: 0.45, minHits: 3, maxHits: 8);
+		MpCost = 45;
+		Attack = new MultiHitAttack(damage: 0.5, minHits: 3, maxHits: 6);
 	}
 }
 
@@ -633,7 +634,7 @@ public class NailStab : AttackAbility
 	{
 		Name = "Stab";
 		MpCost = 15;
-		Attack = new CritDamageIncreaseAttack(damage: 3, increase: 0.5);
+		Attack = new CritDamageIncreaseAttack(damage: 2, increase: 0.5);
 	}
 }
 
@@ -663,7 +664,8 @@ public class Grow : StatChangeAbility
 	{
 		Name = "Grow";
 		MpCost = 15;
-		StatChange = new Strength(increase: 0.15);
+		StatChange = new Strength(increase: 0.25);
+		Cooldown = 3;
 	}
 }
 #endregion
@@ -675,7 +677,7 @@ public class HitAndRun : AttackAbility
 	{
 		Name = "Hit and Run";
 		MpCost = 30;
-		Attack = new BasicAttack(damage: 3.5); 
+		Attack = new BasicAttack(damage: 3); 
 	}
 }
 
@@ -806,6 +808,7 @@ public class HeatWave : StatChangeAbility
 		Name = "Heat Wave";
 		MpCost = 35;
 		StatChange = new Strength(increase: 0.25);
+		Cooldown = 2;
 	}
 }
 
@@ -815,7 +818,7 @@ public class LightRayEnergy : AttackAbility
 	{
 		Name = "Light Ray Energy";
 		MpCost = 25;
-		Attack = new MultiHitAttack(damage: 0.3, minHits: 5, maxHits: 15);
+		Attack = new MultiHitAttack(damage: 0.25, minHits: 5, maxHits: 15);
 	}
 }
 
@@ -825,7 +828,7 @@ public class SolarFlare : InflictStatusAbility
 	{
 		Name = "Solar Flare";
 		MpCost = 50;
-		Status = new Burn(duration: 3, applyChance: 1);
+		Status = new Burn(duration: 3, applyChance: 0.9);
 	}
 }
 
@@ -877,7 +880,7 @@ public class Dreamland : BuffAbility
 	{
 		Name = "Dreamland";
 		MpCost = 40;
-		Buff = new Protect(duration: 4, dr: 0.3);
+		Buff = new Protect(duration: 4, dr: 0.4);
 	}
 }
 #endregion
@@ -1006,6 +1009,7 @@ public class SurpriseAttack : BuffAbility
 		Name = "Surprise Attack";
 		MpCost = 40;
 		Buff = new Charge(duration: 1);
+		Cooldown = 3;
 	}
 }
 #endregion
@@ -1037,7 +1041,8 @@ public class SweatNervously : BuffAbility
 	{
 		Name = "Sweat Nervously";
 		MpCost = 20;
-		Buff = new Charge(duration: 1);
+		Buff = new Haste(duration: 2);
+		Cooldown = 6;
 	}
 }
 
@@ -1071,6 +1076,7 @@ public class CombatDevelopment : StatChangeAbility
 		Name = "Combat Development";
 		MpCost = 45;
 		StatChange = new Strength(increase: 0.25);
+		Cooldown = 2;
 	}
 }
 
@@ -1186,8 +1192,8 @@ public class DiceRoll : AttackAbility
 	public DiceRoll() 
 	{
 		Name = "Dice Roll";
-		MpCost = 25;
-		Attack = new CritDamageIncreaseAttack(damage: 1, increase: 4);
+		MpCost = 35;
+		Attack = new MultiHitAttack(damage: 1, minHits: 1, maxHits: 6);
 	}
 }
 
@@ -1197,8 +1203,9 @@ public class SleightOfHand : StatusAttackAbility
 	{
 		Name = "Sleight of Hand";
 		MpCost = 50;
-		Attack = new CritDamageIncreaseAttack(damage: 0.5, increase: 3);
-		Status = new Random(duration: 4, applyChance: 1);
+		Attack = new CritDamageIncreaseAttack(damage: 1, increase: 3);
+		Status = new Random(duration: 5, applyChance: 1);
+		Cooldown = 4;
 	}
 }
 
@@ -1209,6 +1216,7 @@ public class SoulSiphon : AttackAbility
 		Name = "Soul Siphon";
 		MpCost = 0;
 		Attack = new MPStealAttack(damage: 0.2, mpStealAmount: 20, hpLossPercent: 0.15);
+		Cooldown = 3;
 	}
 }
 
@@ -1251,7 +1259,7 @@ public class IceWall : BuffAbility
 	{
 		Name = "Ice Wall";
 		MpCost = 40;
-		Buff = new Protect(duration: 3, dr: 0.4);
+		Buff = new Protect(duration: 3, dr: 0.5);
 	}
 }
 
@@ -1261,7 +1269,7 @@ public class IceBlock : AttackAbility
 	{
 		Name = "Ice Block";
 		MpCost = 50;
-		Attack = new CritChanceIncreaseAttack(damage: 2, increase: 0.3);
+		Attack = new CritChanceIncreaseAttack(damage: 2.3, increase: 0.3);
 	}
 }
 #endregion
@@ -1284,7 +1292,7 @@ public class OhThatsABaseball : AttackAbility
 	{
 		Name = "OH! THAT'S A BASEBALL";
 		MpCost = 60;
-		Attack = new MultiHitAttack(damage: 0.2, minHits: 1, maxHits: 30);
+		Attack = new MultiHitAttack(damage: 0.1, minHits: 10, maxHits: 60);
 	}
 }
 
@@ -1295,6 +1303,7 @@ public class SoulRead : BuffAbility
 		Name = "Soul Read";
 		MpCost = 50;
 		Buff = new Await();
+		Cooldown = 3;
 	}
 }
 #endregion

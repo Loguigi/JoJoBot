@@ -83,7 +83,7 @@ public class Burn(int duration, double applyChance = 1) : DamageStatus(duration,
 
 	protected override void Apply(BattlePlayer caster, BattlePlayer target)
 	{
-		target.DamageOverTime = (int)(caster.MinDamage * 2);
+		target.DamageOverTime += (int)(caster.MinDamage * 2);
 		base.Apply(caster, target);
 	}
 }
@@ -102,7 +102,7 @@ public class Bleed(int duration, double applyChance = 1) : DamageStatus(duration
 
 	protected override void Apply(BattlePlayer caster, BattlePlayer target)
 	{
-		target.DamageOverTime = (int)Math.Ceiling(target.Hp * 0.2);
+		target.DamageOverTime += (int)Math.Ceiling(target.Hp * 0.2);
 		base.Apply(caster, target);
 	}
 }
@@ -123,7 +123,7 @@ public class Poison(int duration, double applyChance = 1) : DamageStatus(duratio
 
 	protected override void Apply(BattlePlayer caster, BattlePlayer target)
 	{
-		target.DamageOverTime = (int)Math.Ceiling(target.MaxHp * 0.2);
+		target.DamageOverTime += (int)Math.Ceiling(target.MaxHp * 0.2);
 		base.Apply(caster, target);
 	}
 }
@@ -206,6 +206,13 @@ public class Shock(int duration, double applyChance = 1) : PassiveStatus(duratio
 			.WithColor(DiscordColor.Yellow)
 			.WithFooter($"❤️ {hpBefore} ➡️ ❤️ {target.Hp}"));
 	}
+}
+
+public class Charged(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
+{
+	public override string Name => $"💣 Charged";
+
+	public void Detonate(BattlePlayer target) => target.ReduceStatusDuration(remove: true);
 }
 #endregion
 

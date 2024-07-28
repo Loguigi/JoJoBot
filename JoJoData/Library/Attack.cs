@@ -5,6 +5,7 @@ using JoJoData.Helpers;
 
 namespace JoJoData.Library;
 
+#region Base Attack
 public abstract class Attack(double damage)
 {
 	public virtual string ShortDescription => $"⚔️ {DamageMultiplier}x DMG";
@@ -40,7 +41,9 @@ public abstract class Attack(double damage)
 		return critDmg;
 	}
 }
+#endregion
 
+#region Attack Types
 public class BasicAttack(double damage) : Attack(damage) { }
 
 public class BypassProtectAttack(double damage) : Attack(damage)
@@ -206,3 +209,38 @@ public class IgniteAttack(double damage) : Attack(damage)
 		}
 	}
 }
+#endregion
+
+#region Special Attacks
+public class ErasureAttack(double damage, double critDmgIncrease) : CritDamageIncreaseAttack(damage, critDmgIncrease) 
+{
+	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	{
+		return base.Execute(attacker, defender).AddEmbed(new DiscordEmbedBuilder()
+			.WithImageUrl("https://c.tenor.com/4XTIvoIXUngAAAAC/tenor.gif"));
+	}
+}
+
+public class DetonateAttack(double damage) : BypassProtectAttack(damage) 
+{
+	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	{
+		return base.Execute(attacker, defender);
+	}
+	
+	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
+	{
+		// Only perform attack when enemy is charged
+		if (defender.Status is Charged) 
+		{
+			return base.CalculateDamage(attacker, defender, out crit);
+		}
+		else 
+		{
+			crit = false;
+			return 0;
+		}
+		
+	}
+}
+#endregion

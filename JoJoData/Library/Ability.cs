@@ -14,7 +14,7 @@ public abstract class Ability
 	public int MpCost { get; protected set; } = 0;
 	public int Cooldown { get; protected set; } = 0;
 	
-	public DiscordSelectComponentOption CreateSelection(DiscordClient s, int abilityNum) 
+	public DiscordSelectComponentOption CreateSelection(DiscordClient s, int abilityNum, BattlePlayer currentPlayer) 
 	{
 		var emoji = abilityNum switch
 		{
@@ -27,11 +27,23 @@ public abstract class Ability
 		};
 		
 		return new DiscordSelectComponentOption(
-			$"{CoolName} 💎 {MpCost} MP",
+			CreateAbilityTitle(currentPlayer),
 			abilityNum.ToString(),
 			FormatShortDescription(),
 			false,
 			new DiscordComponentEmoji(DiscordEmoji.FromName(s, emoji, false)));
+	}
+	
+	protected string CreateAbilityTitle(BattlePlayer currentPlayer) 
+	{
+		if (currentPlayer.Cooldowns[this] > 0) 
+		{
+			return $"{CoolName} 💎 {MpCost} MP ⏱️ {currentPlayer.Cooldowns[this]} {(currentPlayer.Cooldowns[this] == 1 ? "turn" : "turns")}";
+		}
+		else 
+		{
+			return $"{CoolName} 💎 {MpCost} MP";
+		}
 	}
 
 	protected string FormatShortDescription()
@@ -67,6 +79,11 @@ public abstract class Ability
 		{
 			desc.Append(sca.StatChange.ShortDescription);
 		}
+		
+		if (Cooldown > 0) 
+		{
+			desc.Append($" ⏱️ CD: {Cooldown} turns");
+		}
 
 		return desc.ToString();
 	}
@@ -76,32 +93,32 @@ public abstract class Ability
 #region Ability Subclasses
 public abstract class AttackAbility : Ability 
 {
-	public required Attack Attack { get; set; }
+	public Attack Attack { get; protected set; } = new BasicAttack(damage: 1);
 }
 
 public abstract class StatusAttackAbility : AttackAbility 
 {
-	public required Status Status { get; set; }
+	public Status Status { get; protected set; } = new Random(duration: 1);
 }
 
 public abstract class InflictStatusAbility : Ability 
 {
-	public required Status Status { get; set; }
+	public Status Status { get; protected set; } = new Random(duration: 1);
 }
 
 public abstract class BuffAbility : Ability 
 {
-	public required Buff Buff { get; set; }
+	public Buff Buff { get; protected set; } = new Protect(duration: 1, dr: 0.25);
 }
 
 public abstract class BuffAttackAbility : AttackAbility 
 {
-	public required Buff Buff { get; set; }
+	public Buff Buff { get; protected set; } = new Protect(duration: 1, dr: 0.25);
 }
 
 public abstract class StatChangeAbility : Ability 
 {
-	public required StatChange StatChange { get; set; }
+	public StatChange StatChange { get; protected set; } = new Heal(healPercent: 0.1);
 }
 #endregion
 

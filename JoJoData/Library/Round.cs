@@ -19,6 +19,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 	{
 		battleMsgs = [];
 		
+		// Low MP gain; does not work while time is stopped
 		if (CurrentPlayer.Mp < BattleConstants.LOW_MP_THRESHOLD && CurrentPlayer.Status is not TimeStop)
 		{
 			CurrentPlayer.GrantMP(BattleConstants.LOW_MP_GAIN, out int mpBefore);
@@ -29,6 +30,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				.WithFooter($"💎 {mpBefore} ➡️ 💎 {CurrentPlayer.Mp}")));
 		}
 
+		// Perform negative status action and reduce status duration
 		if (CurrentPlayer.Status is not null)
 		{
 			if (CurrentPlayer.Status is DamageStatus dStatus)
@@ -52,6 +54,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			}
 		}
 		
+		// Activate buff and reduce buff duration
 		if (CurrentPlayer.Buff is not null) 
 		{
 			battleMsgs.Add(CurrentPlayer.Buff.Execute(CurrentPlayer));
@@ -75,6 +78,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 
 	public void Execute(Ability ability, out List<DiscordMessageBuilder?> battleMsgs)
 	{
+		// Send name of ability used
 		battleMsgs =
 		[
 			new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
@@ -82,6 +86,8 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				.WithDescription($"🌟 **{CurrentPlayer.Stand!.CoolName} uses {ability.CoolName}!**")
 				.WithColor(DiscordColor.Gold))
 		];
+		
+		// Deduct ability MP and reset any cooldown
 		CurrentPlayer.UseMP(ability.MpCost, out _);
 		CurrentPlayer.Cooldowns[ability] = ability.Cooldown;
 		
@@ -93,7 +99,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				if (evade) return;
 			}
 			
-			if (CurrentPlayer.Status is Confusion confusion && confusion.RollConfusion()) 
+			if (CurrentPlayer.Status is Confusion confusion && confusion.RollConfusion()) // Confused Attack: damage yourself, apply status to yourself, buff enemy
 			{
 				// use your attack against yourself
 				battleMsgs.Add(attack.Attack.Execute(attacker: CurrentPlayer, defender: CurrentPlayer));
@@ -110,7 +116,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 					battleMsgs.Add(buffAtk.Buff.Apply(target: Opponent));
 				}
 			}
-			else 
+			else // Normal Attack
 			{
 				battleMsgs.Add(attack.Attack.Execute(attacker: CurrentPlayer, defender: Opponent));
 				if (!Opponent.IsAlive)
@@ -132,7 +138,7 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				}
 			}
 			
-			if (CurrentPlayer.Status is Shock shock) 
+			if (CurrentPlayer.Status is Shock shock)
 			{
 				battleMsgs.Add(shock.Electrocute(Opponent, CurrentPlayer));
 				if (!CurrentPlayer.IsAlive)
