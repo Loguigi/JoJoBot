@@ -225,22 +225,8 @@ public class DetonateAttack(double damage) : BypassProtectAttack(damage)
 {
 	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
 	{
+		defender.ReduceStatusDuration(remove: true); // remove Charged status after execution
 		return base.Execute(attacker, defender);
-	}
-	
-	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
-	{
-		// Only perform attack when enemy is charged
-		if (defender.Status is Charged) 
-		{
-			return base.CalculateDamage(attacker, defender, out crit);
-		}
-		else 
-		{
-			crit = false;
-			return 0;
-		}
-		
 	}
 }
 #endregion

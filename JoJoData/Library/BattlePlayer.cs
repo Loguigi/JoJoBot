@@ -36,6 +36,7 @@ public class BattlePlayer : Player
 	public int MaxDamage { get; set; }
 	public double CritChance { get; private set; } = BattleConstants.BASE_CRIT_CHANCE;
 	public double CritDamageMultiplier { get; set; } = BattleConstants.BASE_CRIT_DMG_MULT;
+	public int PassiveTriggers { get; set; } = 0;
 	#endregion
 	
 	#region Status Properties
@@ -89,6 +90,7 @@ public class BattlePlayer : Player
 		MaxDamage = _maxDamage = player._maxDamage;
 		CritChance = player.CritChance;
 		CritDamageMultiplier = player.CritDamageMultiplier;
+		PassiveTriggers = player.PassiveTriggers;
 		Status = player.Status;
 		StatusDuration = player.StatusDuration;
 		DamageOverTime = player.DamageOverTime;

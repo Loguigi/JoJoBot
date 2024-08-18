@@ -199,11 +199,11 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 	{
 		var options = new List<DiscordSelectComponentOption>() 
 		{
-			player.Stand!.Ability0.CreateSelection(Client, 0),
-			player.Stand.Ability1.CreateSelection(Client, 1),
-			player.Stand.Ability2.CreateSelection(Client, 2),
-			player.Stand.Ability3.CreateSelection(Client, 3),
-			player.Stand.Ability4.CreateSelection(Client, 4)
+			player.Stand!.Ability0.CreateSelection(Client, 0, player),
+			player.Stand.Ability1.CreateSelection(Client, 1, player),
+			player.Stand.Ability2.CreateSelection(Client, 2, player),
+			player.Stand.Ability3.CreateSelection(Client, 3, player),
+			player.Stand.Ability4.CreateSelection(Client, 4, player)
 		};
 
 		return new DiscordSelectComponent($"{IDHelper.Battle.ABILITY_SELECT}\\{Id}\\{CurrentPlayer.User.Id}", "Select ability...", options);

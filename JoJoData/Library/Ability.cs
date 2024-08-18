@@ -13,6 +13,7 @@ public abstract class Ability
 	public string Description { get; protected set; } = string.Empty;
 	public int MpCost { get; protected set; } = 0;
 	public int Cooldown { get; protected set; } = 0;
+	public Requirement? Requirement { get; protected set; } = null;
 	
 	public DiscordSelectComponentOption CreateSelection(DiscordClient s, int abilityNum, BattlePlayer currentPlayer) 
 	{

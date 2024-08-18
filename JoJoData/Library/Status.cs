@@ -214,6 +214,16 @@ public class Charged(int duration, double applyChance = 1) : PassiveStatus(durat
 
 	public void Detonate(BattlePlayer target) => target.ReduceStatusDuration(remove: true);
 }
+
+public class Capture(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
+{
+	public override string Name => "📸 Capture";
+
+	public override DiscordMessageBuilder? Execute(BattlePlayer caster, BattlePlayer target)
+	{
+		return base.Execute(caster, target);
+	}
+}
 #endregion
 
 #region Turn Skip Statuses

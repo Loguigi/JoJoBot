@@ -246,6 +246,7 @@ public class PrimaryBomb : StatusAttackAbility
 		MpCost = 40;
 		Attack = new DetonateAttack(damage: 3);
 		Status = new Burn(duration: 3, applyChance: 0.5);
+		Requirement = new StatusRequirement(typeof(Charged));
 	}
 }
 
@@ -276,7 +277,48 @@ public class BitesTheDust : StatChangeAbility
 #endregion
 
 #region Bad Company
+public class CombatKnife : StatusAttackAbility 
+{
+	public CombatKnife() 
+	{
+		Name = "Combat Knife";
+		MpCost = 20;
+		Status = new Bleed(duration: 2, applyChance: 0.35);
+		Attack = new MultiHitAttack(damage: 0.55, minHits: 2, maxHits: 4);
+	}
+}
 
+public class MachineGuns : StatusAttackAbility 
+{
+	public MachineGuns() 
+	{
+		Name = "Machine Guns";
+		MpCost = 45;
+		Status = new Bleed(duration: 2, applyChance: 0.35);
+		Attack = new MultiHitAttack(damage: 0.25, minHits: 10, maxHits: 20);
+	}
+}
+
+public class Missiles : AttackAbility 
+{
+	public Missiles() 
+	{
+		Name = "Missles";
+		MpCost = 50;
+		Attack = new MultiHitAttack(damage: 1.5, minHits: 1, maxHits: 3);
+	}
+}
+
+public class Redeploy : BuffAbility 
+{
+	public Redeploy() 
+	{
+		Name = "Redeploy";
+		MpCost = 30;
+		Buff = new Haste(duration: 2);
+		Cooldown = 6;
+	}
+}
 #endregion
 
 #region Red Hot Chili Pepper
@@ -423,11 +465,92 @@ public class HairGrowth : StatChangeAbility
 #endregion
 
 #region Ratt
+public class DartShot : AttackAbility 
+{
+	public DartShot() 
+	{
+		Name = "Dart Shot";
+		MpCost = 25;
+		Attack = new CritChanceIncreaseAttack(damage: 1.4, increase: 0.3);
+	}
+}
 
+public class FleshMelt : StatusAttackAbility 
+{
+	public FleshMelt()
+	{
+		Name = "Flesh Melt";
+		MpCost = 50;
+		Attack = new CritDamageIncreaseAttack(damage: 1.2, increase: 0.5);
+		Status = new Poison(duration: 3, applyChance: 0.5);
+	}
+}
+
+public class MeatCube : InflictStatusAbility 
+{
+	public MeatCube() 
+	{
+		Name = "Meat Cube";
+		MpCost = 35;
+		Status = new Silence(duration: 2, applyChance: 0.75);
+		Cooldown = 5;
+	}
+}
+
+public class TheresAnotherRat : BuffAbility 
+{
+	public TheresAnotherRat() 
+	{
+		Name = "There's another rat!";
+		MpCost = 40;
+		Buff = new Charge(duration: 1);
+		Cooldown = 8;
+	}
+}
 #endregion
 
 #region Harvest
+public class HeeHee : AttackAbility 
+{
+	public HeeHee() 
+	{
+		Name = "Hee hee!";
+		MpCost = 45;
+		Attack = new MultiHitAttack(damage: 0.02, minHits: 1, maxHits: 500);
+	}
+}
 
+public class FoundIt : AttackAbility 
+{
+	public FoundIt() 
+	{
+		Name = "Found it!";
+		MpCost = 0;
+		Attack = new MPStealAttack(damage: 2, mpStealAmount: 20, hpLossPercent: 0.05);
+		Cooldown = 4;
+	}
+}
+
+public class Stinger : StatusAttackAbility 
+{
+	public Stinger() 
+	{
+		Name = "Stinger";
+		MpCost = 30;
+		Attack = new BasicAttack(damage: 1);
+		Status = new Poison(duration: 4, applyChance: 0.45);
+	}
+}
+
+public class HarvestSuperSpeed : BuffAbility 
+{
+	public HarvestSuperSpeed() 
+	{
+		Name = "Harvest Super Speed";
+		MpCost = 60;
+		Buff = new Await();
+	}
+}
 #endregion
 
 #region Cinderella

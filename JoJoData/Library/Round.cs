@@ -35,8 +35,9 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 		{
 			if (CurrentPlayer.Status is DamageStatus dStatus)
 			{
-				battleMsgs.Add(dStatus.Execute(Opponent, CurrentPlayer));
-				if (!CurrentPlayer.IsAlive)
+				battleMsgs.Add(dStatus.Execute(caster: Opponent, target: CurrentPlayer));
+				battleMsgs.Add(OnDeathCheck(caster: CurrentPlayer, target: Opponent, out var battleEnd));
+				if (battleEnd)
 					return;
 			}
 			else if (CurrentPlayer.Status is PassiveStatus pStatus)
@@ -103,7 +104,8 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			{
 				// use your attack against yourself
 				battleMsgs.Add(attack.Attack.Execute(attacker: CurrentPlayer, defender: CurrentPlayer));
-				if (!CurrentPlayer.IsAlive)
+				battleMsgs.Add(OnDeathCheck(caster: CurrentPlayer, target: CurrentPlayer, out var battleEnd));
+				if (battleEnd)
 					return;
 
 				if (ability is StatusAttackAbility statusAttk)
@@ -119,7 +121,8 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			else // Normal Attack
 			{
 				battleMsgs.Add(attack.Attack.Execute(attacker: CurrentPlayer, defender: Opponent));
-				if (!Opponent.IsAlive)
+				battleMsgs.Add(OnDeathCheck(caster: CurrentPlayer, target: Opponent, out var battleEnd));
+				if (battleEnd)
 					return;
 
 				if (Opponent.Status is Sleep sleep)
@@ -140,8 +143,9 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 			
 			if (CurrentPlayer.Status is Shock shock)
 			{
-				battleMsgs.Add(shock.Electrocute(Opponent, CurrentPlayer));
-				if (!CurrentPlayer.IsAlive)
+				battleMsgs.Add(shock.Electrocute(caster: Opponent, target: CurrentPlayer));
+				battleMsgs.Add(OnDeathCheck(caster: CurrentPlayer, target: Opponent, out var battleEnd));
+				if (battleEnd)
 					return;
 			}
 		}
@@ -199,8 +203,38 @@ public class Round(BattlePlayer currentPlayer, BattlePlayer opponent)
 				.WithColor(DiscordColor.Red));
 			return false;
 		}
+		
+		if (ability.Requirement is not null) 
+		{
+			if (ability.Requirement.Check(CurrentPlayer, Opponent, out var requirementMsg)) 
+			{
+				return true;
+			}
+			else 
+			{
+				msg = requirementMsg!;
+				return false;
+			}
+		}
 
 		return true;
+	}
+	
+	public DiscordMessageBuilder? OnDeathCheck(BattlePlayer caster, BattlePlayer target, out bool battleEnd) 
+	{	
+		if (caster.Stand!.Passive is OnDeathPassive passive) 
+		{
+			var msg = passive.Execute(caster, target, out battleEnd, out var turnSkip, out var roundRepeat);
+			RoundSkipped = turnSkip;
+			RoundRepeat = roundRepeat;
+
+			return msg;
+		}
+		else 
+		{
+			battleEnd = !caster.IsAlive;
+			return null;
+		}
 	}
 	#endregion
 }
