@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using JoJoData.Data;
@@ -10,6 +8,7 @@ using Dapper;
 using JoJoData.Models;
 using System.Data;
 using System.Reflection;
+using DSharpPlus.EventArgs;
 
 namespace JoJoData.Controllers;
 
@@ -19,116 +18,137 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 	public int Id { get; private set; } = 0;
 	public DateTime BattleStart { get; private set; } = DateTime.Now;
 	public DateTime? BattleEnd { get; private set; }
-	public int CurrentRound { get; private set; } = 0;
+	public int CurrentTurn { get; private set; } = 0;
 	public BattlePlayer Player1 { get; private set; } = new(client, guild, player1);
 	public BattlePlayer Player2 { get; private set; } = new(client, guild, player2);
-	public BattlePlayer CurrentPlayer => Rounds[CurrentRound].CurrentPlayer;
-	public BattlePlayer Opponent => Rounds[CurrentRound].Opponent;
+	public BattlePlayer CurrentPlayer => Turns[CurrentTurn].CurrentPlayer;
+	public BattlePlayer Opponent => Turns[CurrentTurn].Opponent;
 	public Player? Winner { get; private set; }
-	public Dictionary<int, Round> Rounds { get; private set; } = [];
+	public Dictionary<int, Turn> Turns { get; private set; } = [];
 	public readonly DiscordClient Client = client;
 	public readonly DiscordGuild Guild = guild;
 	public readonly DiscordChannel Channel = channel;
 	#endregion
 
-	#region Battle Control Methods
-	public async void StartBattle() 
+	#region Public Battle Control Methods
+	public async void StartBattle()
 	{
 		try
 		{
 			Id = SaveBattleInfo();
-			CurrentRound++;
+			CurrentTurn++;
 
-			if (Player1.Stand!.Speed > Player2.Stand!.Speed)
-				Rounds.Add(CurrentRound, new Round(Player1, Player2));
-			else
-				Rounds.Add(CurrentRound, new Round(Player2, Player1));
+			Turns.Add(CurrentTurn,
+				Player1.Stand!.Speed > Player2.Stand!.Speed ? new Turn(Player1, Player2) : new Turn(Player2, Player1));
 
-			Rounds[CurrentRound].PreCheck(out var msgs);
-			await SendBattleMessages(msgs);
+			Turns[CurrentTurn].PreCheck();
 			await CreateBattleInterface();
+			StartNextRound();
+		}
+		catch (OnDeathException ex)
+		{
+			DeathFlagEventArgs deathFlag = new(ex.DeadPlayer, Turns[CurrentTurn]);
+			Turns[CurrentTurn].OnDeathFlag(deathFlag);
+			if (deathFlag.IsDead)
+			{
+				EndBattle();
+			}
+			else
+			{
+				StartNextRound();
+			}
 		}
 		catch (Exception ex)
 		{
 			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
 		}
+		finally
+		{
+			await SendBattleMessages(Turns[CurrentTurn].BattleLog);
+		}
 	}
 
-	public async void ContinueBattle(Ability ability) 
+	public async void ContinueBattle(Ability ability, ComponentInteractionCreatedEventArgs e) 
 	{
 		try
 		{
-			Rounds[CurrentRound].Execute(ability, out var msgs);
+			AbilityCastEventArgs abilityCast = new(CurrentPlayer, Turns[CurrentTurn], ability);
+			Turns[CurrentTurn].OnAbilityCast(abilityCast);
+			if (abilityCast is { IsValidCast: false, OutputMessage: not null })
+			{
+				await e.Interaction.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(abilityCast.OutputMessage).AsEphemeral());
+				return;
+			}
 
-			await SendBattleMessages(msgs);
-
-			if (!CurrentPlayer.IsAlive)
-			{
-				EndBattle(winner: Opponent);
-			}
-			else if (!Opponent.IsAlive)
-			{
-				EndBattle(winner: CurrentPlayer);
-			}
-			else
-			{
-				// not dead
-				StartNextRound();
-			}
+			await e.Message.DeleteAsync();
+			Turns[CurrentTurn].Execute(ability);
+			await SendBattleMessages(Turns[CurrentTurn].BattleLog);
+		}
+		catch (OnDeathException ex)
+		{
+			PerformAutopsy(ex);
 		}
 		catch (Exception ex)
 		{
 			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
 		}
+		finally
+		{
+			await SendBattleMessages(Turns[CurrentTurn].BattleLog);
+		}
 	}
-
-	public async void StartNextRound() 
+	#endregion
+	
+	#region Private Battle Methods
+	private async void StartNextRound() 
 	{
-		BattlePlayer nextPlayer;
-		BattlePlayer opponent;
-		
-		if (Rounds[CurrentRound].RoundRepeat) 
+		try
 		{
-			nextPlayer = new BattlePlayer(CurrentPlayer);
-			opponent = new BattlePlayer(Opponent);
-		} 
-		else
-		{
-			nextPlayer = new BattlePlayer(Opponent);
-			opponent = new BattlePlayer(CurrentPlayer);
-		}
+			BattlePlayer nextPlayer;
+			BattlePlayer opponent;
 
-		CurrentRound++;
-		Rounds.Add(CurrentRound, new Round(nextPlayer, opponent));
-
-		Rounds[CurrentRound].PreCheck(out var msgs);
-		await SendBattleMessages(msgs);
-
-		if (!CurrentPlayer.IsAlive)
-		{
-			EndBattle(winner: Opponent);
-		}
-		else if (!Opponent.IsAlive)
-		{
-			EndBattle(winner: CurrentPlayer);
-		}
-		else
-		{
-			// not dead
-			if (Rounds[CurrentRound].RoundSkipped)
-				StartNextRound();
+			if (Turns[CurrentTurn].RoundRepeat)
+			{
+				nextPlayer = new BattlePlayer(CurrentPlayer);
+				opponent = new BattlePlayer(Opponent);
+			}
 			else
-				await CreateBattleInterface();
+			{
+				nextPlayer = new BattlePlayer(Opponent);
+				opponent = new BattlePlayer(CurrentPlayer);
+			}
+
+			CurrentTurn++;
+			Turns.Add(CurrentTurn, new Turn(nextPlayer, opponent));
+			Turns[CurrentTurn].PreCheck();
+			await SendBattleMessages(Turns[CurrentTurn].BattleLog);
+		}
+		catch (TurnSkipException)
+		{
+			StartNextRound();
+		}
+		catch (OnDeathException ex)
+		{
+			PerformAutopsy(ex);
+		}
+		catch (Exception ex)
+		{
+			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
+			throw;
+		}
+		finally
+		{
+			await SendBattleMessages(Turns[CurrentTurn].BattleLog);	
 		}
 	}
 
-	public async void EndBattle(BattlePlayer winner)
+	private async void EndBattle()
 	{
-		DiscordController.Battles.Remove(Id);
+		JoJo.Battles.Remove(Id);
 		BattleEnd = DateTime.Now;
-		Winner = winner;
+		Winner = GetWinner();
 		if (Winner == Player1) 
 		{
 			Player1.GrantExp(opponent: Player2, winner: Player1);
@@ -147,7 +167,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			.WithTitle($"🎉 {Winner.Stand!.CoolName} wins! 🎉")
 			.WithDescription($"{Player1.User.Mention}: `+{Player1.ExpGain} EXP`\n{Player2.User.Mention}: `+{Player2.ExpGain} EXP`")
 			.WithThumbnail(Winner.Stand!.ImageUrl)
-			.AddField("Rounds", CurrentRound.ToString(), true)
+			.AddField("Rounds", CurrentTurn.ToString(), true)
 			.AddField("Start", BattleStart.ToString("M/d h:mm tt"), true)
 			.AddField("End", BattleEnd?.ToString("M/d h:mm tt") ?? "never", true)
 			.WithColor(DiscordColor.HotPink));
@@ -162,17 +182,33 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			await Channel.SendMessageAsync(Player2.LevelUpMessage());
 		}
 	}
+
+	private void PerformAutopsy(OnDeathException ex)
+	{
+		DeathFlagEventArgs deathFlag = new(ex.DeadPlayer, Turns[CurrentTurn]);
+		Turns[CurrentTurn].OnDeathFlag(deathFlag);
+		if (deathFlag.IsDead)
+		{
+			EndBattle();
+		}
+		else
+		{
+			StartNextRound();
+		}
+	}
+
+	private BattlePlayer GetWinner() => !CurrentPlayer.IsAlive ? Opponent : !Opponent.IsAlive ? CurrentPlayer : throw new Exception("Both players are alive");
 	#endregion
 
 	#region Discord Output Control
-	public async Task CreateBattleInterface() 
+	private async Task CreateBattleInterface() 
 	{
 		var embed = new DiscordEmbedBuilder()
 			.WithAuthor($"{CurrentPlayer.User.GlobalName}'s turn", "", CurrentPlayer.User.AvatarUrl)
 			.WithTitle($"{CurrentPlayer.Stand!.CoolName}")
 			.WithThumbnail(CurrentPlayer.Stand.ImageUrl)
 			.WithColor(DiscordColor.Aquamarine)
-			.WithFooter($"Round {CurrentRound}");
+			.WithFooter($"Round {CurrentTurn}");
 
 		embed.AddField($"{CurrentPlayer.User.GlobalName} (Level: {CurrentPlayer.Level})", CurrentPlayer.FormatBattleInfo(Client), true);
 		embed.AddField($"{Opponent.User.GlobalName} (Level: {Opponent.Level})", Opponent.FormatBattleInfo(Client), true);
@@ -185,28 +221,28 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 
 		await Channel!.SendMessageAsync(msg);
 	}
-	
-	public async Task SendBattleMessages(List<DiscordMessageBuilder?> msgs) 
+
+	private async Task SendBattleMessages(List<DiscordMessageBuilder?> msgs) 
 	{
 		foreach (var msg in msgs.Where(x => x is not null)) 
 		{
 			await Channel.SendMessageAsync(msg!);
-			await Task.Delay(1000);
+			await Task.Delay(750);
 		}
 	}
 
-	public DiscordSelectComponent CreateAbilityDropdown(BattlePlayer player) 
+	private DiscordSelectComponent CreateAbilityDropdown(BattlePlayer player) 
 	{
-		var options = new List<DiscordSelectComponentOption>() 
-		{
-			player.Stand!.Ability0.CreateSelection(Client, 0, player),
+		List<DiscordSelectComponentOption> options =
+        [
+            player.Stand!.Ability0.CreateSelection(Client, 0, player),
 			player.Stand.Ability1.CreateSelection(Client, 1, player),
 			player.Stand.Ability2.CreateSelection(Client, 2, player),
 			player.Stand.Ability3.CreateSelection(Client, 3, player),
 			player.Stand.Ability4.CreateSelection(Client, 4, player)
-		};
+		];
 
-		return new DiscordSelectComponent($"{IDHelper.Battle.ABILITY_SELECT}\\{Id}\\{CurrentPlayer.User.Id}", "Select ability...", options);
+		return new DiscordSelectComponent($@"{IDHelper.Battle.ABILITY_SELECT}\{Id}\{CurrentPlayer.User.Id}", "Select ability...", options);
 	}
 	#endregion
 	
@@ -215,7 +251,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 	{
 		try 
 		{
-			var param = new DynamicParameters(new BattleModel(this));
+			DynamicParameters param = new(new BattleModel(this));
 			param.Add("@Id", Id, DbType.Int32, ParameterDirection.InputOutput);
 			var result = SaveData(StoredProcedures.SAVE_BATTLE_DATA, param);
 			if (result.Status != StatusCodes.SUCCESS) throw new Exception(result.Message);

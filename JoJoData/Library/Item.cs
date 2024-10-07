@@ -18,8 +18,8 @@ public abstract class Arrow(int count) : Item(count)
 	public override DiscordMessageBuilder Use(Player player)
 	{
 		player.UseItem(this);
-		var stand = RollStand(RollRarity());
-		var stars = new StringBuilder();
+		Stand stand = RollStand(RollRarity());
+		StringBuilder stars = new();
 		for (var i = 1; i <= stand.Stars; ++i) 
 		{
 			stars.Append("⭐️");
@@ -46,7 +46,7 @@ public abstract class Arrow(int count) : Item(count)
 		return msg;
 	}
 
-	protected int RollRarity() => DiscordController.RNG.NextDouble() switch
+	protected int RollRarity() => JoJo.RNG.NextDouble() switch
 	{
 		double i when i >= 0 && i < Rarities[1] => 1,
 		double i when i >= Rarities[1] && i < Rarities[2] => 2,
@@ -58,8 +58,8 @@ public abstract class Arrow(int count) : Item(count)
 	
 	protected Stand RollStand(int rarity) 
 	{
-		var stands = StandLoader.Stands.Values.Where(x => x.Stars == rarity).ToList();
-		return stands[DiscordController.RNG.Next(0, stands.Count)];
+		List<Stand> stands = StandLoader.Stands.Values.Where(x => x.Stars == rarity).ToList();
+		return stands[JoJo.RNG.Next(0, stands.Count)];
 	}
 }
 

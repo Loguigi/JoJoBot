@@ -5,6 +5,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using JoJoData.Controllers;
 using JoJoData.Helpers;
+using JoJoData.Library;
 
 namespace JoJoBot.Handlers;
 
@@ -18,8 +19,8 @@ public static class BattleHandler
 			return;
 		}
 
-		var player1 = await s.GetUserAsync(ulong.Parse(IDHelper.GetID(e.Id, PLAYER1_INDEX)));
-		var player2 = await s.GetUserAsync(ulong.Parse(IDHelper.GetID(e.Id, PLAYER2_INDEX)));
+		DiscordUser player1 = await s.GetUserAsync(ulong.Parse(IDHelper.GetID(e.Id, PLAYER1_INDEX)));
+		DiscordUser player2 = await s.GetUserAsync(ulong.Parse(IDHelper.GetID(e.Id, PLAYER2_INDEX)));
 
 		var embed = new DiscordEmbedBuilder()
 			.WithDescription($"{DiscordEmoji.FromName(s, ":x:", false)} {player2.Mention} has declined the battle")
@@ -42,13 +43,13 @@ public static class BattleHandler
 			return;
 		}
 
-		var player1 = await DiscordController.Client!.GetUserAsync(ulong.Parse(IDHelper.GetID(e.Id, PLAYER1_INDEX)));
-		var player2 = e.User;
+		DiscordUser player1 = await JoJo.Client!.GetUserAsync(ulong.Parse(IDHelper.GetID(e.Id, PLAYER1_INDEX)));
+		DiscordUser player2 = e.User;
 
 		await e.Message.DeleteAsync();
-		var battle = new BattleController(s, e.Guild, e.Channel, player1, player2);
+		BattleController battle = new(s, e.Guild, e.Channel, player1, player2);
 		battle.StartBattle();
-		DiscordController.Battles.Add(battle.Id, battle);
+		JoJo.Battles.Add(battle.Id, battle);
 	}
 	
 	public static async Task HandleAbilitySelect(DiscordClient s, ComponentInteractionCreatedEventArgs e) 
@@ -65,8 +66,8 @@ public static class BattleHandler
 			return;
 		}
 
-		var battle = DiscordController.Battles[int.Parse(IDHelper.GetID(e.Id, BATTLE_ID_INDEX))];
-		var ability = int.Parse(e.Values.First()) switch
+		BattleController battle = JoJo.Battles[int.Parse(IDHelper.GetID(e.Id, BATTLE_ID_INDEX))];
+		Ability ability = int.Parse(e.Values.First()) switch
 		{
 			0 => battle.CurrentPlayer.Stand!.Ability0,
 			1 => battle.CurrentPlayer.Stand!.Ability1,
@@ -75,20 +76,8 @@ public static class BattleHandler
 			4 => battle.CurrentPlayer.Stand!.Ability4,
 			_ => throw new Exception("Major issue")
 		};
-		
-		if (!battle.Rounds[battle.CurrentRound].AbilitySelectCheck(ability, DiscordController.Client!, out var msg)) 
-		{
-			await e.Interaction.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(msg).AsEphemeral());
-			return;
-		}
 
-		await e.Message.DeleteAsync();
-		battle.ContinueBattle(ability);
-		
-		if (battle.Winner is not null) 
-		{
-			DiscordController.Battles.Remove(battle.Id);
-		}
+		battle.ContinueBattle(ability, e);
 	}
 
 	private const int BATTLE_ID_INDEX = 1;

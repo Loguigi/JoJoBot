@@ -14,7 +14,7 @@ public class Bot
 
 	public static async Task Main() 
 	{
-		var builder = DiscordClientBuilder.CreateDefault(Config.Token, DiscordIntents.All);
+		DiscordClientBuilder builder = DiscordClientBuilder.CreateDefault(Config.Token, DiscordIntents.All);
 		builder.ConfigureEventHandlers
 		(
 			b => b.HandleComponentInteractionCreated(BattleHandler.HandleAcceptChallenge)
@@ -23,9 +23,9 @@ public class Bot
 				.HandleComponentInteractionCreated(ItemHandler.HandleArrowStandAccept)
 				.HandleComponentInteractionCreated(ItemHandler.HandleArrowStandDecline)
 		);
-		var client = builder.Build();
+		DiscordClient client = builder.Build();
 
-		var commands = client.UseCommands(new CommandsConfiguration()
+		CommandsExtension commands = client.UseCommands(new CommandsConfiguration()
 		{
 			DebugGuildId = 0,
 			RegisterDefaultCommandProcessors = true
@@ -38,7 +38,7 @@ public class Bot
 		var slash = new SlashCommandProcessor();
 		await commands.AddProcessorsAsync(text, slash);
 
-		DiscordController.Create(client);
+		JoJo.Create(client);
 		StandLoader.Load();
 
 		await client.ConnectAsync();

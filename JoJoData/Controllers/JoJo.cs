@@ -2,7 +2,7 @@ using DSharpPlus;
 
 namespace JoJoData.Controllers;
 
-public static class DiscordController 
+public static class JoJo 
 {
 	public static DiscordClient? Client { get; private set; } = null;
 	public static Dictionary<int, BattleController> Battles { get; private set; } = [];

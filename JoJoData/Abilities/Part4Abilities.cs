@@ -78,7 +78,7 @@ public class AttackErasure : BuffAttackAbility
 		Name = "Attack Erasure";
 		MpCost = 60;
 		Attack = new BypassProtectAttack(damage: 1);
-		Buff = new Await();
+		Buff = new Await(2);
 	}
 }
 
@@ -162,7 +162,7 @@ public class Scout : BuffAbility
 	{
 		Name = "Scout";
 		MpCost = 30;
-		Buff = new Await();
+		Buff = new Await(2);
 		Cooldown = 6;
 	}
 }
@@ -322,11 +322,11 @@ public class Redeploy : BuffAbility
 #endregion
 
 #region Red Hot Chili Pepper
-public class ElectricityAbsorbtion : StatChangeAbility
+public class ElectricityAbsorption : StatChangeAbility
 {
-	public ElectricityAbsorbtion() 
+	public ElectricityAbsorption() 
 	{
-		Name = "Electricity Absorbtion";
+		Name = "Electricity Absorption";
 		MpCost = 30;
 		StatChange = new Strength(increase: 0.25);
 		Cooldown = 3;
@@ -481,8 +481,8 @@ public class FleshMelt : StatusAttackAbility
 	{
 		Name = "Flesh Melt";
 		MpCost = 50;
-		Attack = new CritDamageIncreaseAttack(damage: 1.2, increase: 0.5);
-		Status = new Poison(duration: 3, applyChance: 0.5);
+		Attack = new CritDamageIncreaseAttack(1.2, 0.5);
+		Status = new Poison(3, 0.5);
 	}
 }
 
@@ -548,7 +548,7 @@ public class HarvestSuperSpeed : BuffAbility
 	{
 		Name = "Harvest Super Speed";
 		MpCost = 60;
-		Buff = new Await();
+		Buff = new Await(2);
 	}
 }
 #endregion
@@ -562,7 +562,49 @@ public class HarvestSuperSpeed : BuffAbility
 #endregion
 
 #region Boy II Man
+public class Rock : StatusAttackAbility 
+{
+	public Rock() 
+	{
+		Name = "ROCK";
+		MpCost = 35;
+		Attack = new WeaknessAttack(damage: 2.5, increase: 1.2, typeof(Bleed));
+		Status = new Confusion(duration: 3, applyChance: 0.25);
+	}
+}
 
+public class Scissors : StatusAttackAbility 
+{
+	public Scissors() 
+	{
+		Name = "SCISSORS";
+		MpCost = 35;
+		Attack = new WeaknessAttack(damage: 2, increase: 2, typeof(Frail));
+		Status = new Bleed(duration: 3, applyChance: 0.5);
+	}
+}
+
+public class Paper : StatusAttackAbility 
+{
+	public Paper() 
+	{
+		Name = "PAPER";
+		MpCost = 35;
+		Attack = new WeaknessAttack(damage: 1.2, increase: 3, typeof(Confusion));
+		Status = new Frail(duration: 3, applyChance: 0.75);
+	}
+}
+
+public class EnergyTheft : AttackAbility 
+{
+	public EnergyTheft() 
+	{
+		Name = "Energy Theft";
+		MpCost = 35;
+		Attack = new RPSAttack(damage: 3, mpStealAmount: 30, hpLossPercent: 0);
+		Cooldown = 3;
+	}
+}
 #endregion
 
 #region Earth Wind and Fire

@@ -19,7 +19,7 @@ public class ProfileCommands
 				return;
 			}
 
-			var player = new Player(ctx.Guild!, user! != null! ? user : ctx.User);
+			Player player = new(ctx.Guild!, user! != null! ? user : ctx.User);
 			player.Load();
 			
 			if (player.Stand == null) 

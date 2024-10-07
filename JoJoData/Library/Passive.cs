@@ -4,70 +4,67 @@ using JoJoData.Controllers;
 
 namespace JoJoData.Library;
 
-public abstract class Passive 
+public abstract class Passive() : BattleEffect(-1, 1)
 {
-	public string Name { get; protected set; } = string.Empty;
+	public abstract override string Name { get; }
+	public abstract override string ShortDescription { get; }
 	public string Description { get; protected set; } = string.Empty;
 	public abstract int MaxTriggers { get; }
 
-	public virtual DiscordMessageBuilder? Execute(BattlePlayer caster, BattlePlayer target, out bool battleEnd, out bool turnSkip, out bool roundRepeat) 
-	{
-		if (caster.PassiveTriggers == MaxTriggers || MaxTriggers == -1) 
-		{
-			caster.PassiveTriggers++;
-			return Action(caster, target, out battleEnd, out turnSkip, out roundRepeat);
-		}
-		else 
-		{
-			battleEnd = true;
-			turnSkip = false;
-			roundRepeat = false;
+	public sealed override void Apply(Turn turn, BattlePlayer caster, BattlePlayer target) { }
 
-			return null;
-		}
+	protected override void ReduceDuration(Turn turn, BattlePlayer player, bool remove = false)
+	{
+		// Since triggers don't have a duration, this call will increase the trigger count
+		if (MaxTriggers == -1) return;
+		player.PassiveTriggers++;
 	}
 
-	protected abstract DiscordMessageBuilder? Action(BattlePlayer caster, BattlePlayer target, out bool battleEnd, out bool turnSkip, out bool roundRepeat);
+	protected override bool CheckEffectOwner(BattlePlayer player) => player.Stand!.Passive == this;
+
+	protected bool CanTriggerPassive(BattlePlayer caster) => caster.PassiveTriggers == MaxTriggers || MaxTriggers == -1;
 }
 
 #region On Death Passives
-public abstract class OnDeathPassive : Passive { }
+public abstract class OnDeathPassive : Passive
+{
+	protected override void DeathFlag(object? s, DeathFlagEventArgs e) => ReduceDuration(e.Turn, e.Player);
+}
 
 public class GamblersDream : OnDeathPassive 
 {
+	public override string Name { get; }
+	public override string ShortDescription { get; }
 	public override int MaxTriggers => -1;
-	
-	protected override DiscordMessageBuilder? Action(BattlePlayer caster, BattlePlayer target, out bool battleEnd, out bool turnSkip, out bool roundRepeat)
+
+	protected override void DeathFlag(object? s, DeathFlagEventArgs e)
 	{
-		turnSkip = false;
-		roundRepeat = false;
-		
-		if (DiscordController.RNG.NextDouble() < 0.02) 
+		if (!CheckEffectOwner(e.Player) || !CanTriggerPassive(e.Player)) return;
+		if (JoJo.RNG.NextDouble() < 0.02)
 		{
-			battleEnd = false;
-			var heal = new Heal(healPercent: 1);
-			return heal.Execute(caster, target);
+			Heal heal = new(1);
+			heal.Execute(e.Turn, e.Player, e.Player);
 		}
-		else 
+		else
 		{
-			battleEnd = true;
-			return null;
+			e.IsDead = true;
 		}
 	}
 }
 
 public class StrayCatReincarnation : OnDeathPassive 
 {
+	public override string Name { get; }
+	public override string ShortDescription { get; }
 	public override int MaxTriggers => 1;
-	protected override DiscordMessageBuilder? Action(BattlePlayer caster, BattlePlayer target, out bool battleEnd, out bool turnSkip, out bool roundRepeat)
-	{
-		battleEnd = false;
-		turnSkip = false;
-		roundRepeat = false;
-		
-		var heal = new Heal(healPercent: 0.4);
 
-		return heal.Execute(caster: caster, target: target);
+	protected override void DeathFlag(object? s, DeathFlagEventArgs e)
+	{
+		if (!CheckEffectOwner(e.Player) || !CanTriggerPassive(e.Player)) return;
+		Heal heal = new(0.4);
+		heal.Execute(e.Turn, e.Player, e.Player);
+		e.IsDead = false;
+		base.DeathFlag(s, e);
 	}
 }
 #endregion

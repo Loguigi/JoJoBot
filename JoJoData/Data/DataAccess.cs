@@ -45,7 +45,7 @@ public class DataAccess
 				throw new Exception("Connection string is null or empty");
 			}
 
-			using var cnn = Connection;
+			using SqlConnection cnn = Connection;
 			param.Add("@Status", null, DbType.Int32, ParameterDirection.Output);
 			param.Add("@Message", null, DbType.String, ParameterDirection.Output, 500);
 			data = cnn.QueryMultiple(sp, param, commandType: CommandType.StoredProcedure);
@@ -68,7 +68,7 @@ public class DataAccess
 				throw new Exception("Connection string is null or empty");
 			}
 			
-			using var cnn = Connection;
+			using SqlConnection cnn = Connection;
 			param.Add("@Status", null, DbType.Int32, ParameterDirection.Output);
 			param.Add("@Message", null, DbType.String, ParameterDirection.Output, 500);
 			cnn.Execute(sp, param, commandType: CommandType.StoredProcedure);

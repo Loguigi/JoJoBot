@@ -23,8 +23,8 @@ public class BattleCommand
 				await ctx.RespondAsync("https://tenor.com/view/jotaro-jojo-jojo-bizarre-adventure-bike-jojo-bike-gif-4228712888990777929");
 				return;
 			}
-			var player1 = new Player(ctx.Guild!, ctx.User);
-			var player2 = new Player(ctx.Guild!, player);
+			Player player1 = new(ctx.Guild!, ctx.User);
+			Player player2 = new(ctx.Guild!, player);
 			player1.Load();
 			player2.Load();
 			

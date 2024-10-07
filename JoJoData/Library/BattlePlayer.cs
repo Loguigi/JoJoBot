@@ -42,7 +42,7 @@ public class BattlePlayer : Player
 	#region Status Properties
 	public Status? Status { get; private set; } = null;
 	public int StatusDuration { get; set; } = 0;
-	public int DamageOverTime { get; set; } = 0;
+	public int DamageOverTime { get; set; }
 	#endregion
 	
 	#region Buff Properties
@@ -101,65 +101,65 @@ public class BattlePlayer : Player
 
 	#region Player Control Methods
 
-	public void ReceiveDamage(int damage, out int hpBefore) 
+	public void ReceiveDamage(Turn turn, int damage, out int hpBefore) 
 	{
 		hpBefore = Hp;
-		if (_barrier > 0 && damage < _barrier) 
+		switch (_barrier)
 		{
-			_barrier -= damage;
+			case > 0 when damage < _barrier:
+				_barrier -= damage;
+				break;
+			case > 0 when damage > _barrier:
+				damage -= _barrier;
+				_barrier = 0;
+				_hp -= damage;
+				break;
+			default:
+				_hp -= damage;
+				break;
 		}
-		else if (_barrier > 0 && damage > _barrier) 
+		DamageReceived = damage;
+
+		if (Hp > 0) return;
+		
+		IsAlive = false;
+		_hp = 0;
+		throw new OnDeathException(turn, this);
+	}
+
+	public void AddStatus(Status status) => Status = status;
+	
+	public bool ReduceStatusDuration(bool remove)
+	{
+		StatusDuration--;
+		if (!remove && StatusDuration != 0) return true;
+		
+		Status = null;
+		DamageOverTime = 0;
+		return false;
+	}
+	
+	public void AddDamageOverTime(int dot, Status status) 
+	{
+		if (Status is not null && Status.GetType() == status.GetType()) // check for stacking DOT
 		{
-			damage -= _barrier;
-			_barrier = 0;
-			_hp -= damage;
+			DamageOverTime += dot;
 		}
 		else 
 		{
-			_hp -= damage;
+			DamageOverTime = dot;
 		}
-		
-		if (Hp <= 0) 
-		{
-			IsAlive = false;
-			_hp = 0;
-		}
-		
-		DamageReceived = damage;
 	}
 
-	public void AddStatus(Status status) 
-	{
-		Status = status;
-	}
+	public void AddBuff(Buff buff) => Buff = buff;
 	
-	public bool ReduceStatusDuration(bool remove = false)
-	{
-		StatusDuration--;
-		if (remove || StatusDuration == 0) 
-		{
-			Status = null;
-			return false;
-		}
-
-		return true;
-	}
-	
-	public void AddBuff(Buff buff) 
-	{
-		Buff = buff;
-	}
-	
-	public bool ReduceBuffDuration() 
+	public bool ReduceBuffDuration(bool remove) 
 	{
 		BuffDuration--;
-		if (BuffDuration == 0) 
-		{
-			Buff = null;
-			return false;
-		}
-
-		return true;
+		if (!remove && BuffDuration != 0) return true;
+		
+		Buff = null;
+		return false;
 	}
 
 	public void Heal(int hp, out int hpBefore) 

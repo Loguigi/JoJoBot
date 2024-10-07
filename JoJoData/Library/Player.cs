@@ -35,13 +35,13 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 	{
 		try
 		{
-			var param = new DynamicParameters();
+			DynamicParameters param = new();
 			param.Add("@GuildId", (long)Guild.Id, DbType.Int64, ParameterDirection.Input);
 			param.Add("@PlayerId", (long)User.Id, DbType.Int64, ParameterDirection.Input);
-			var result = GetData<PlayerModel>(StoredProcedures.GET_PLAYER_DATA, param, out var data);
+			ResultArgs result = GetData<PlayerModel>(StoredProcedures.GET_PLAYER_DATA, param, out List<PlayerModel> data);
 			if (result.Status != StatusCodes.SUCCESS) throw new Exception(result.Message);
 
-			var player = data.First();
+			PlayerModel player = data.First();
 			Stand = player.StandId != null ? StandLoader.Stands[player.StandId ?? 0] : null;
 			Level = player.Level;
 			Experience = player.Experience;
@@ -51,10 +51,10 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 			param = new DynamicParameters();
 			param.Add("@GuildId", (long)Guild.Id, DbType.Int64, ParameterDirection.Input);
 			param.Add("@PlayerId", (long)User.Id, DbType.Int64, ParameterDirection.Input);
-			result = GetData<InventoryModel>(StoredProcedures.GET_PLAYER_INVENTORY, param, out var items);
-			foreach (var i in items) 
+			result = GetData<InventoryModel>(StoredProcedures.GET_PLAYER_INVENTORY, param, out List<InventoryModel> items);
+			foreach (InventoryModel i in items) 
 			{
-				var itemType = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.Name == i.ItemId).FirstOrDefault();
+				Type? itemType = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.Name == i.ItemId).FirstOrDefault();
 				if (itemType is not null && Activator.CreateInstance(itemType, i.Count) is Item item) 
 				{
 					Inventory.Add(i.ItemId, item);
@@ -106,7 +106,7 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 			}
 
 			Experience += ExpGain;
-			var newLevel = (int)(Math.Sqrt(10 * ((Experience * 2) + 2.5)) + 5) / 10;
+			int newLevel = (int)(Math.Sqrt(10 * ((Experience * 2) + 2.5)) + 5) / 10;
 			if (newLevel > Level) 
 			{
 				LevelBefore = Level;
@@ -128,7 +128,7 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 		item.Count--;
 		try
 		{
-			var result = SaveData(StoredProcedures.INVENTORY_SAVE, new DynamicParameters(new InventoryModel(this, item)));
+			ResultArgs result = SaveData(StoredProcedures.INVENTORY_SAVE, new DynamicParameters(new InventoryModel(this, item)));
 			if (result.Status != StatusCodes.SUCCESS) throw new Exception(result.Message);
 		}
 		catch (Exception ex)
@@ -180,7 +180,7 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 			return true;
 		}
 
-		if (ReferenceEquals(obj, null))
+		if (obj is null)
 		{
 			return false;
 		}
@@ -199,7 +199,7 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 	{
 		try
 		{
-			var result = SaveData(StoredProcedures.SAVE_PLAYER_DATA, new DynamicParameters(new PlayerModel(this)));
+			ResultArgs result = SaveData(StoredProcedures.SAVE_PLAYER_DATA, new DynamicParameters(new PlayerModel(this)));
 			if (result.Status != StatusCodes.SUCCESS) throw new Exception(result.Message);
 		}
 		catch (Exception ex)

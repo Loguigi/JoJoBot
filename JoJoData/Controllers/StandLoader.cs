@@ -9,21 +9,21 @@ namespace JoJoData.Controllers;
 
 public static class StandLoader
 {
-	public readonly static Dictionary<int, Stand> Stands = [];
-	public readonly static Dictionary<string, Ability> Abilities = [];
+	public static readonly Dictionary<int, Stand> Stands = [];
+	private static readonly Dictionary<string, Ability> Abilities = [];
 	public static void Load() 
 	{
 		try 
 		{
-			var abilities = Assembly.GetExecutingAssembly().GetTypes().Where(x => 
+			List<Type> abilities = Assembly.GetExecutingAssembly().GetTypes().Where(x => 
 				x.IsClass &&
 				x.Namespace != null &&
 				x.Namespace.Contains("JoJoData.Abilities")).ToList().Where(y => 
 				!y.IsAbstract).ToList();
 
-			var result = new ResultArgs((int)StatusCodes.UNKNOWN, "Unknown");
+			ResultArgs result = new((int)StatusCodes.UNKNOWN, "Unknown");
 			
-			foreach (var type in abilities) 
+			foreach (Type type in abilities) 
 			{
 				if (Activator.CreateInstance(type) is Ability ability) 
 				{
@@ -41,7 +41,7 @@ public static class StandLoader
 			result = db.GetData<StandModel>(StoredProcedures.GET_STANDS_DATA, new DynamicParameters(), out var stands);
 			if (result.Status != StatusCodes.SUCCESS) throw new Exception(result.Message);
 
-			foreach (var stand in stands) 
+			foreach (StandModel stand in stands) 
 			{
 				Stands.Add(stand.Id, new Stand(
 					stand,
@@ -70,5 +70,5 @@ public static class StandLoader
 		stand = Stands[id];
 		return true;
 	}
-	private static DataAccess db = new();
+	private static readonly DataAccess db = new();
 }

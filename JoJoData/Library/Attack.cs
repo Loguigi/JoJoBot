@@ -6,21 +6,45 @@ using JoJoData.Helpers;
 namespace JoJoData.Library;
 
 #region Base Attack
-public abstract class Attack(double damage)
+public abstract class Attack(double damage) : BattleAction
 {
 	public virtual string ShortDescription => $"⚔️ {DamageMultiplier}x DMG";
 	public double DamageMultiplier { get; private set; } = damage;
 	
-	public virtual DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender) 
+	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
-		var dmg = CalculateDamage(attacker, defender, out bool crit);
-		defender.ReceiveDamage(dmg, out int hpBefore);
+		int dmg = 0;
+		int hpBefore = 0;
+		bool crit = false;
+		
+		try
+		{
+			turn.Caster = caster;
+			turn.Target = target;
+			BeforeAttackedEventArgs beforeAttacked = new(target, turn, this, caster);
+			turn.OnBeforeAttacked(beforeAttacked);
+			if (beforeAttacked.EvadeAttack) return;
 
-		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithAuthor(attacker.User.GlobalName, "", attacker.User.AvatarUrl)
-			.WithDescription($"{DiscordEmoji.FromName(attacker.Client, ":crossed_swords:")} **{attacker.Stand!.CoolName} attacks {(crit ? $"with a {DiscordEmoji.FromName(attacker.Client, ":sparkles:")} CRIT" : "")} for `{dmg}` damage**")
-			.WithFooter($"{DiscordEmoji.FromName(attacker.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(attacker.Client, ":arrow_right:")} {DiscordEmoji.FromName(attacker.Client, ":heart:")} {defender.Hp}", defender.User.AvatarUrl)
-			.WithColor(DiscordColor.Red));
+			dmg = CalculateDamage(turn.Caster, turn.Target, out crit);
+			turn.Target.ReceiveDamage(turn, dmg, out hpBefore);
+			turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(turn.Caster.User.GlobalName, "", turn.Caster.User.AvatarUrl)
+				.WithDescription($"{DiscordEmoji.FromName(caster.Client, ":crossed_swords:")} **{turn.Caster.Stand!.CoolName} attacks {(crit ? $"with a {DiscordEmoji.FromName(caster.Client, ":sparkles:")} CRIT" : "")} for `{dmg}` damage**")
+				.WithFooter($"{DiscordEmoji.FromName(caster.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(caster.Client, ":arrow_right:")} {DiscordEmoji.FromName(caster.Client, ":heart:")} {turn.Target.Hp}", turn.Target.User.AvatarUrl)
+				.WithColor(DiscordColor.Red)));
+
+			AfterAttackedEventArgs afterAttacked = new(turn.Target, turn, this, turn.Caster, dmg);
+			turn.OnAfterAttacked(afterAttacked);
+		}
+		catch (OnDeathException)
+		{
+			turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(turn.Caster.User.GlobalName, "", turn.Caster.User.AvatarUrl)
+				.WithDescription($"{DiscordEmoji.FromName(caster.Client, ":crossed_swords:")} **{turn.Caster.Stand!.CoolName} attacks {(crit ? $"with a {DiscordEmoji.FromName(caster.Client, ":sparkles:")} CRIT" : "")} for `{dmg}` damage**")
+				.WithFooter($"{DiscordEmoji.FromName(caster.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(caster.Client, ":arrow_right:")} {DiscordEmoji.FromName(caster.Client, ":heart:")} {turn.Target.Hp}", turn.Target.User.AvatarUrl)
+				.WithColor(DiscordColor.Red)));
+			throw;
+		}
 	}
 
 	protected virtual int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
@@ -32,11 +56,11 @@ public abstract class Attack(double damage)
 			(1 - defender.DamageResistance));
 	}
 
-	protected static int RollDamage(int min, int max) => DiscordController.RNG.Next(min, max + 1);
+	protected static int RollDamage(int min, int max) => JoJo.RNG.Next(min, max + 1);
 
 	protected static double RollCrit(double critChance, double critDamage, out bool crit)
 	{
-		var critDmg = DiscordController.RNG.NextDouble() < critChance ? critDamage : 1;
+		double critDmg = JoJo.RNG.NextDouble() < critChance ? critDamage : 1;
 		crit = critDmg > 1;
 		return critDmg;
 	}
@@ -67,24 +91,46 @@ public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(da
 	public readonly int MinHits = minHits;
 	public readonly int MaxHits = maxHits;
 	
-	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
-		int sum = 0;
+		int dmg = 0;
+		int hpBefore = 0;
 		int critCount = 0;
-		var hits = DiscordController.RNG.Next(MinHits, MaxHits + 1);
+		int hits = JoJo.RNG.Next(MinHits, MaxHits + 1);
 		
-		for (var i = 1; i <= hits; ++i) 
+		try
 		{
-			sum += CalculateDamage(attacker, defender, out bool crit);
-			if (crit) critCount++;
-		}
-		defender.ReceiveDamage(sum, out int hpBefore);
+			turn.Caster = caster;
+			turn.Target = target;
+			BeforeAttackedEventArgs beforeAttacked = new(target, turn, this, caster);
+			turn.OnBeforeAttacked(beforeAttacked);
+			if (beforeAttacked.EvadeAttack) return;
 
-		return new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
-			.WithAuthor(attacker.User.GlobalName, "", attacker.User.AvatarUrl)
-			.WithDescription($"{DiscordEmoji.FromName(attacker.Client, ":crossed_swords:")} **{attacker.Stand!.CoolName} attacks {hits} times {(critCount > 0 ? $"with {DiscordEmoji.FromName(attacker.Client, ":sparkles:")} CRIT (x{critCount})" : "")} for `{sum}` damage**")
-			.WithFooter($"{DiscordEmoji.FromName(attacker.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(attacker.Client, ":arrow_right:")} {DiscordEmoji.FromName(attacker.Client, ":heart:")} {defender.Hp}", defender.User.AvatarUrl)
-			.WithColor(DiscordColor.Red));
+			for (var i = 1; i <= hits; ++i) 
+			{
+				dmg += CalculateDamage(turn.Caster, turn.Target, out bool crit);
+				if (crit) critCount++;
+			}
+			
+			turn.Target.ReceiveDamage(turn, dmg, out hpBefore);
+			turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(turn.Caster.User.GlobalName, "", turn.Caster.User.AvatarUrl)
+				.WithDescription($"{DiscordEmoji.FromName(caster.Client, ":crossed_swords:")} **{turn.Caster.Stand!.CoolName} attacks {hits} times {(critCount > 0 ? $"with {DiscordEmoji.FromName(caster.Client, ":sparkles:")} CRIT (x{critCount})" : "")} for `{dmg}` damage**")
+				.WithFooter($"{DiscordEmoji.FromName(caster.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(caster.Client, ":arrow_right:")} {DiscordEmoji.FromName(caster.Client, ":heart:")} {turn.Target.Hp}", turn.Target.User.AvatarUrl)
+				.WithColor(DiscordColor.Red)));
+
+			AfterAttackedEventArgs afterAttacked = new(turn.Target, turn, this, turn.Caster, dmg);
+			turn.OnAfterAttacked(afterAttacked);
+		}
+		catch (OnDeathException)
+		{
+			turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(turn.Caster.User.GlobalName, "", turn.Caster.User.AvatarUrl)
+				.WithDescription($"{DiscordEmoji.FromName(caster.Client, ":crossed_swords:")} **{turn.Caster.Stand!.CoolName} attacks {hits} times {(critCount > 0 ? $"with {DiscordEmoji.FromName(caster.Client, ":sparkles:")} CRIT (x{critCount})" : "")} for `{dmg}` damage**")
+				.WithFooter($"{DiscordEmoji.FromName(caster.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(caster.Client, ":arrow_right:")} {DiscordEmoji.FromName(caster.Client, ":heart:")} {turn.Target.Hp}", turn.Target.User.AvatarUrl)
+				.WithColor(DiscordColor.Red)));
+			throw;
+		}
 	}
 }
 
@@ -141,17 +187,18 @@ public class HPLeechAttack(double damage) : Attack(damage)
 {
 	public override string ShortDescription => base.ShortDescription + $" Steal ❤️ HP";
 
-	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
-	{	
-		return base.Execute(attacker, defender).AddEmbed(new DiscordEmbedBuilder()
-			.WithAuthor(defender.User.GlobalName, "", defender.User.AvatarUrl)
-			.WithDescription($"🔮 **{attacker.Stand!.CoolName} steals `{defender.DamageReceived}` HP from {defender.Stand!.CoolName}**")
-			.WithColor(DiscordColor.Magenta));
+	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
+	{
+		base.Execute(turn, caster, target);
+		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription($"🔮 **{caster.Stand!.CoolName} steals `{target.DamageReceived}` HP from {target.Stand!.CoolName}**")
+			.WithColor(DiscordColor.Magenta)));
 	}
 
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{
-		var dmg = base.CalculateDamage(attacker, defender, out crit);
+		int dmg = base.CalculateDamage(attacker, defender, out crit);
 		attacker.Heal(dmg, out _);
 		
 		return dmg;
@@ -164,23 +211,25 @@ public class MPStealAttack(double damage, int mpStealAmount, double hpLossPercen
 	public readonly int MpStealAmount = mpStealAmount;
 	public readonly double HpLossAmount = hpLossPercent;
 
-	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
-		var mpSteal = MpStealAmount;
-		if (defender.Mp < MpStealAmount) 
+		base.Execute(turn, caster, target);
+		
+		int mpSteal = MpStealAmount;
+		if (target.Mp < MpStealAmount) 
 		{
-			mpSteal = defender.Mp;
+			mpSteal = target.Mp;
 		}
 		
-		attacker.GrantMP(mpSteal, out int mpBefore);
-		defender.UseMP(mpSteal, out _);
-		attacker.ReceiveDamage((int)(HpLossAmount * attacker.MaxHp), out int hpBefore);
+		caster.GrantMP(mpSteal, out int mpBefore);
+		target.UseMP(mpSteal, out _);
+		caster.ReceiveDamage(turn, (int)(HpLossAmount * caster.MaxHp), out int hpBefore);
 		
-		return base.Execute(attacker, defender).AddEmbed(new DiscordEmbedBuilder()
-			.WithAuthor(defender.User.GlobalName, "", defender.User.AvatarUrl)
-			.WithDescription($"🔮 **{attacker.Stand!.CoolName} steals `{MpStealAmount}` MP from {defender.Stand!.CoolName}**")
-			.WithFooter($"💎 {mpBefore} ➡️ 💎 {attacker.Mp}, ❤️ {hpBefore} ➡️ ❤️ {attacker.Hp}", attacker.User.AvatarUrl)
-			.WithColor(DiscordColor.Purple));
+		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
+			.WithDescription($"🔮 **{caster.Stand!.CoolName} steals `{MpStealAmount}` MP from {target.Stand!.CoolName}**")
+			.WithFooter($"💎 {mpBefore} ➡️ 💎 {caster.Mp}, ❤️ {hpBefore} ➡️ ❤️ {caster.Hp}", caster.User.AvatarUrl)
+			.WithColor(DiscordColor.Purple)));
 	}
 }
 
@@ -197,15 +246,12 @@ public class TakeoverAttack(double damage) : Attack(damage)
 public class IgniteAttack(double damage) : Attack(damage) 
 {
 	public override string ShortDescription => base.ShortDescription + " 100% Burn when Doused";
-	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
-		if (defender.Status is Douse douse) 
+		base.Execute(turn, caster, target);
+		if (target.Status is Douse douse) 
 		{
-			return base.Execute(attacker, defender).AddEmbed(douse.Ignite(attacker, defender).Embeds[0]);
-		}
-		else 
-		{
-			return base.Execute(attacker, defender);
+			douse.Ignite(turn, caster, target);
 		}
 	}
 }
@@ -214,19 +260,24 @@ public class IgniteAttack(double damage) : Attack(damage)
 #region Special Attacks
 public class ErasureAttack(double damage, double critDmgIncrease) : CritDamageIncreaseAttack(damage, critDmgIncrease) 
 {
-	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
-		return base.Execute(attacker, defender).AddEmbed(new DiscordEmbedBuilder()
-			.WithImageUrl("https://c.tenor.com/4XTIvoIXUngAAAAC/tenor.gif"));
+		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder().WithImageUrl("https://c.tenor.com/4XTIvoIXUngAAAAC/tenor.gif")));
+		base.Execute(turn, caster, target);
 	}
 }
 
 public class DetonateAttack(double damage) : BypassProtectAttack(damage) 
 {
-	public override DiscordMessageBuilder Execute(BattlePlayer attacker, BattlePlayer defender)
+	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
-		defender.ReduceStatusDuration(remove: true); // remove Charged status after execution
-		return base.Execute(attacker, defender);
+		target.ReduceStatusDuration(remove: true); // remove Charged status after execution
+		base.Execute(turn, caster, target);
 	}
+}
+
+public class RPSAttack(double damage, int mpStealAmount = 30, double hpLossPercent = 0) : MPStealAttack(damage, mpStealAmount, hpLossPercent) 
+{
+	
 }
 #endregion

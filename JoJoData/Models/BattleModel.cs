@@ -6,9 +6,9 @@ public class BattleModel {
 	public long GuildId { get; set; }
 	public long Player1Id { get; set; }
 	public long Player2Id { get; set; }
-	public int RoundCount { get; set; } = 0;
+	public int TurnCount { get; set; }
 	public DateTime BattleStart { get; set; }
-	public DateTime? BattleEnd { get; set; } = null;
+	public DateTime? BattleEnd { get; set; }
 
 	public BattleModel() { }
 	
@@ -17,7 +17,7 @@ public class BattleModel {
 		GuildId = (long)battle.Guild.Id;
 		Player1Id = (long)battle.Player1.User.Id;
 		Player2Id = (long)battle.Player2.User.Id;
-		RoundCount = battle.CurrentRound;
+		TurnCount = battle.CurrentTurn;
 		BattleStart = battle.BattleStart;
 		BattleEnd = battle.BattleEnd;
 	}

@@ -15,9 +15,9 @@ public class ItemCommands
 	{
 		try
 		{
-			var player = new Player(ctx.Guild!, ctx.User);
+			Player player = new(ctx.Guild!, ctx.User);
 			player.Load();
-			var arrow = player.Inventory["StandArrow"];
+			Item arrow = player.Inventory["StandArrow"];
 			
 			if (arrow.Count < 1) 
 			{

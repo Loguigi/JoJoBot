@@ -14,10 +14,12 @@ public abstract class Ability
 	public int MpCost { get; protected set; } = 0;
 	public int Cooldown { get; protected set; } = 0;
 	public Requirement? Requirement { get; protected set; } = null;
+
+	public abstract void Use(Turn turn);
 	
 	public DiscordSelectComponentOption CreateSelection(DiscordClient s, int abilityNum, BattlePlayer currentPlayer) 
 	{
-		var emoji = abilityNum switch
+		string emoji = abilityNum switch
 		{
 			0 => ":punch:",
 			1 => ":one:",
@@ -34,22 +36,20 @@ public abstract class Ability
 			false,
 			new DiscordComponentEmoji(DiscordEmoji.FromName(s, emoji, false)));
 	}
-	
-	protected string CreateAbilityTitle(BattlePlayer currentPlayer) 
+
+	private string CreateAbilityTitle(BattlePlayer currentPlayer) 
 	{
 		if (currentPlayer.Cooldowns[this] > 0) 
 		{
 			return $"{CoolName} 💎 {MpCost} MP ⏱️ {currentPlayer.Cooldowns[this]} {(currentPlayer.Cooldowns[this] == 1 ? "turn" : "turns")}";
 		}
-		else 
-		{
-			return $"{CoolName} 💎 {MpCost} MP";
-		}
+		
+		return $"{CoolName} 💎 {MpCost} MP";
 	}
 
-	protected string FormatShortDescription()
+	private string FormatShortDescription()
 	{
-		var desc = new StringBuilder();
+		StringBuilder desc = new();
 		desc.AppendLine(Description);
 
 		if (this is AttackAbility ab)
@@ -83,7 +83,7 @@ public abstract class Ability
 		
 		if (Cooldown > 0) 
 		{
-			desc.Append($" ⏱️ CD: {Cooldown} turns");
+			desc.Append($"⏱️ CD: {Cooldown} turns");
 		}
 
 		return desc.ToString();
@@ -95,31 +95,63 @@ public abstract class Ability
 public abstract class AttackAbility : Ability 
 {
 	public Attack Attack { get; protected set; } = new BasicAttack(damage: 1);
+
+	public override void Use(Turn turn)
+	{
+		Attack.Execute(turn, turn.Caster, turn.Target);
+	}
 }
 
 public abstract class StatusAttackAbility : AttackAbility 
 {
 	public Status Status { get; protected set; } = new Random(duration: 1);
+
+	public override void Use(Turn turn)
+	{
+		base.Use(turn);
+		Status.Apply(turn, turn.Caster, turn.Target);
+	}
 }
 
 public abstract class InflictStatusAbility : Ability 
 {
 	public Status Status { get; protected set; } = new Random(duration: 1);
+
+	public override void Use(Turn turn)
+	{
+		Status.Apply(turn, turn.Caster, turn.Target);
+	}
 }
 
 public abstract class BuffAbility : Ability 
 {
 	public Buff Buff { get; protected set; } = new Protect(duration: 1, dr: 0.25);
+
+	public override void Use(Turn turn)
+	{
+		Buff.Apply(turn, turn.Caster, turn.Caster);
+	}
 }
 
 public abstract class BuffAttackAbility : AttackAbility 
 {
 	public Buff Buff { get; protected set; } = new Protect(duration: 1, dr: 0.25);
+
+	public override void Use(Turn turn)
+	{
+		base.Use(turn);
+		Buff.Apply(turn, turn.Caster, turn.Caster);
+	}
 }
 
 public abstract class StatChangeAbility : Ability 
 {
 	public StatChange StatChange { get; protected set; } = new Heal(healPercent: 0.1);
+
+    public override void Use(Turn turn)
+    {
+		StatChange.Execute(turn, turn.Caster, turn.Target);
+    }
 }
 #endregion
 

@@ -20,8 +20,8 @@ public static class ItemHandler
 				return;
 			}
 
-			var player = new Player(e.Guild, e.User);
-			var stand = StandLoader.Stands[int.Parse(IDHelper.GetID(e.Id, STAND_ID_INDEX))];
+			Player player = new(e.Guild, e.User);
+			Stand stand = StandLoader.Stands[int.Parse(IDHelper.GetID(e.Id, STAND_ID_INDEX))];
 			player.Load();
 			player.ChangeStand(stand);
 
@@ -50,7 +50,7 @@ public static class ItemHandler
 				return;
 			}
 
-			var stand = StandLoader.Stands[int.Parse(IDHelper.GetID(e.Id, STAND_ID_INDEX))];
+			Stand stand = StandLoader.Stands[int.Parse(IDHelper.GetID(e.Id, STAND_ID_INDEX))];
 
 			var msg = new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 				.WithAuthor(e.User.GlobalName, "", e.User.AvatarUrl)
