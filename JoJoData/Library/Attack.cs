@@ -21,7 +21,7 @@ public abstract class Attack(double damage) : BattleAction
 		{
 			turn.Caster = caster;
 			turn.Target = target;
-			BeforeAttackedEventArgs beforeAttacked = new(target, turn, this, caster);
+			BeforeAttackedEventArgs beforeAttacked = new(target, turn, turn.Ability!, caster);
 			turn.OnBeforeAttacked(beforeAttacked);
 			if (beforeAttacked.EvadeAttack) return;
 
@@ -33,7 +33,7 @@ public abstract class Attack(double damage) : BattleAction
 				.WithFooter($"{DiscordEmoji.FromName(caster.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(caster.Client, ":arrow_right:")} {DiscordEmoji.FromName(caster.Client, ":heart:")} {turn.Target.Hp}", turn.Target.User.AvatarUrl)
 				.WithColor(DiscordColor.Red)));
 
-			AfterAttackedEventArgs afterAttacked = new(turn.Target, turn, this, turn.Caster, dmg);
+			AfterAttackedEventArgs afterAttacked = new(turn.Target, turn, turn.Ability!, turn.Caster, dmg);
 			turn.OnAfterAttacked(afterAttacked);
 		}
 		catch (OnDeathException)
@@ -102,7 +102,7 @@ public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(da
 		{
 			turn.Caster = caster;
 			turn.Target = target;
-			BeforeAttackedEventArgs beforeAttacked = new(target, turn, this, caster);
+			BeforeAttackedEventArgs beforeAttacked = new(target, turn, turn.Ability!, caster);
 			turn.OnBeforeAttacked(beforeAttacked);
 			if (beforeAttacked.EvadeAttack) return;
 
@@ -119,7 +119,7 @@ public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(da
 				.WithFooter($"{DiscordEmoji.FromName(caster.Client, ":heart:")} {hpBefore} {DiscordEmoji.FromName(caster.Client, ":arrow_right:")} {DiscordEmoji.FromName(caster.Client, ":heart:")} {turn.Target.Hp}", turn.Target.User.AvatarUrl)
 				.WithColor(DiscordColor.Red)));
 
-			AfterAttackedEventArgs afterAttacked = new(turn.Target, turn, this, turn.Caster, dmg);
+			AfterAttackedEventArgs afterAttacked = new(turn.Target, turn, turn.Ability!, turn.Caster, dmg);
 			turn.OnAfterAttacked(afterAttacked);
 		}
 		catch (OnDeathException)
@@ -166,15 +166,13 @@ public class CritDamageIncreaseAttack(double damage, double increase) : Attack(d
 
 public class WeaknessAttack(double damage, double increase, Type status) : Attack(damage)
 {
-	public override string ShortDescription => base.ShortDescription + $" x{WeaknessDamageIncrease} against {StatusType.Name}";
-	public readonly double WeaknessDamageIncrease = increase;
-	public readonly Type StatusType = status;
+	public override string ShortDescription => base.ShortDescription + $" x{increase} against {status.Name}";
 
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{
-		if (defender.Status is not null && defender.Status.GetType() == StatusType)
+		if (defender.Status is not null && defender.Status.GetType() == status)
 		{
-			return (int)Math.Ceiling(base.CalculateDamage(attacker, defender, out crit) * WeaknessDamageIncrease);
+			return (int)Math.Ceiling(base.CalculateDamage(attacker, defender, out crit) * increase);
 		}
 		else
 		{

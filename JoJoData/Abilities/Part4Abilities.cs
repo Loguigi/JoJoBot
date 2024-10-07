@@ -641,10 +641,94 @@ public class HarvestSuperSpeed : BuffAbility
 
 #region Cinderella
 
+public class PlasticSurgery : StatChangeAbility
+{
+	public PlasticSurgery()
+	{
+		Name = "Plastic Surgery";
+		MpCost = 30;
+		StatChange = new Strength(0.2);
+		Cooldown = 4;
+	}
+}
+
+public class EyeThief : StatusAttackAbility
+{
+	public EyeThief()
+	{
+		Name = "Eye Thief";
+		MpCost = 40;
+		Attack = new WeaknessAttack(1.6, 1.5, typeof(Blind));
+		Status = new Blind(3, 0.45);
+	}
+}
+
+public class MouthThief : StatusAttackAbility
+{
+	public MouthThief()
+	{
+		Name = "Mouth Thief";
+		MpCost = 60;
+		Attack = new WeaknessAttack(1.6, 1.5, typeof(Silence));
+		Status = new Silence(3, 0.45);
+	}
+}
+
+public class BodyReplacement : StatChangeAbility
+{
+	public BodyReplacement()
+	{
+		Name = "Body Replacement";
+		MpCost = 25;
+		StatChange = new Regress(0.1);
+	}
+}
 #endregion
 
 #region Atom Heart Father
+public class PhotoCapture : InflictStatusAbility
+{
+	public PhotoCapture()
+	{
+		Name = "Photo Capture";
+		MpCost = 20;
+		Status = new Capture(2);
+	}
+}
 
+public class PhotoTear : AttackAbility
+{
+	public PhotoTear()
+	{
+		Name = "Photo Tear";
+		MpCost = 35;
+		Attack = new BasicAttack(2.4);
+		Requirement = new StatusRequirement(typeof(Capture));
+	}
+}
+
+public class PhotoJump : BuffAbility
+{
+	public PhotoJump()
+	{
+		Name = "Photo Jump";
+		MpCost = 50;
+		Buff = new Haste(2);
+		Requirement = new StatusRequirement(typeof(Capture));
+	}
+}
+
+public class PhotoImmolation : AttackAbility
+{
+	public PhotoImmolation()
+	{
+		Name = "Photo Immolation";
+		MpCost = 50;
+		Attack = new CritDamageIncreaseAttack(3, 1);
+		Requirement = new StatusRequirement(typeof(Capture));
+		Cooldown = 5;
+	}
+}
 #endregion
 
 #region Boy II Man
@@ -695,6 +779,48 @@ public class EnergyTheft : AttackAbility
 
 #region Earth Wind and Fire
 
+public class DiceMorph : InflictStatusAbility
+{
+	public DiceMorph()
+	{
+		Name = "Dice Morph";
+		MpCost = 25;
+		Status = new Random(2);
+		Cooldown = 5;
+	}
+}
+
+public class SwordMorph : StatusAttackAbility
+{
+	public SwordMorph()
+	{
+		Name = "Sword Morph";
+		MpCost = 45;
+		Attack = new BasicAttack(1.3);
+		Status = new Bleed(4, 0.5);
+	}
+}
+
+public class SneakerMorph : BuffAbility
+{
+	public SneakerMorph()
+	{
+		Name = "Sneaker Morph";
+		MpCost = 50;
+		Buff = new Await(2, 2);
+		Cooldown = 3;
+	}
+}
+
+public class SirenMeltdown : InflictStatusAbility
+{
+	public SirenMeltdown()
+	{
+		Name = "Siren Meltdown";
+		MpCost = 25;
+		Status = new Silence(2, 0.3);
+	}
+}
 #endregion
 
 #region Highway Star

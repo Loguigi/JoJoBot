@@ -282,8 +282,42 @@ public class Shock(int duration, double applyChance = 1) : PassiveStatus(duratio
 public class Charged(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
 	public override string Name => "💣 Charged";
+}
+
+public class Capture(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance)
+{
+	public override string Name => "📸 Capture";
+
+	protected override void AfterAttacked(object? s, AfterAttackedEventArgs e)
+	{
+		if (!CheckEffectOwner(e.Player) || !CheckCaptureRequirement(e.Ability)) return;
+		ReduceDuration(e.Turn, e.Player, true);
+	}
+
+	private bool CheckCaptureRequirement(Ability ability)
+	{
+		var requirement = ability.Requirement as StatusRequirement;
+		return requirement?.StatusType == typeof(Capture);
+	}
+}
+
+public class Blind(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance)
+{
+	public override string Name => "🕶️ Blind";
+
+	protected override void BeforeAttacked(object? s, BeforeAttackedEventArgs e)
+	{
+		if (!CheckEffectOwner(e.Attacker)) return;
+		if (!RollBlind()) return;
+
+		e.EvadeAttack = true;
+		e.Turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			.WithAuthor(e.Attacker.User.GlobalName, "", e.Attacker.User.AvatarUrl)
+			.WithDescription($"🍃 **{e.Attacker.Stand!.CoolName} misses!**")
+			.WithColor(DiscordColor.DarkGray)));
+	}
 	
-	public void Detonate(BattlePlayer target) => target.ReduceStatusDuration(true);
+	private bool RollBlind() => JoJo.RNG.NextDouble() < 0.5;
 }
 #endregion
 

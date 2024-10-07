@@ -102,7 +102,7 @@ public abstract class AttackAbility : Ability
 	}
 }
 
-public abstract class StatusAttackAbility : AttackAbility 
+public abstract class StatusAttackAbility : AttackAbility
 {
 	public Status Status { get; protected set; } = new Random(duration: 1);
 

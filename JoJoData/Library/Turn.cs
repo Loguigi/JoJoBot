@@ -13,6 +13,7 @@ public class Turn
 	public BattlePlayer Opponent { get; }
 	public BattlePlayer Caster { get; set; }
 	public BattlePlayer Target { get; set; }
+	public Ability? Ability { get; private set; }
 	public bool RoundRepeat { get; set; }
 	#endregion
 	
@@ -40,8 +41,9 @@ public class Turn
 		Opponent.Stand!.Passive.RegisterEvents(this);
 	}
 
-	public void OnAbilityCast(AbilityCastEventArgs e) 
+	public void OnAbilityCast(AbilityCastEventArgs e)
 	{
+		Ability = e.Ability;
 		// Check MP
 		if (CurrentPlayer.Mp < e.Ability.MpCost)
 		{
