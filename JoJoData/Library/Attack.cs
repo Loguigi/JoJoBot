@@ -272,12 +272,26 @@ public class DetonateAttack(double damage) : BypassProtectAttack(damage)
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
 		target.ReduceStatusDuration(remove: true); // remove Charged status after execution
+		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			.WithImageUrl("https://c.tenor.com/uJnjIY78VQoAAAAC/tenor.gif")));
 		base.Execute(turn, caster, target);
 	}
 }
 
 public class RPSAttack(double damage, int mpStealAmount = 30, double hpLossPercent = 0) : MPStealAttack(damage, mpStealAmount, hpLossPercent) 
 {
-	
+	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
+	{
+		if (RPSGame())
+		{
+			base.Execute(turn, caster, target);
+		}
+		else
+		{
+			BasicAttack loser = new(1);
+		}
+	}
+
+	private bool RPSGame() => JoJo.RNG.NextDouble() <= 0.3333f;
 }
 #endregion

@@ -14,4 +14,5 @@ public class StandModel {
 	public string Ability4 { get; set; } = string.Empty;
 	public int Stars { get; set; }
 	public string ImageUrl { get; set; } = string.Empty;
+	public string? Passive { get; set; }
 }

@@ -3,7 +3,8 @@ using JoJoData.Models;
 
 namespace JoJoData.Library;
 
-public class Stand(StandModel model, Passive psv, Ability a1, Ability a2, Ability a3, Ability a4) {
+public class Stand(StandModel model, Passive psv, Ability a1, Ability a2, Ability a3, Ability a4) 
+{
 	#region Properties
 	public int Id { get; private set; } = model.Id;
 	public string Name { get; private set; } = model.Name;

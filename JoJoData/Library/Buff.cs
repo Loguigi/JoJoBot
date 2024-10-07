@@ -40,7 +40,6 @@ public abstract class Buff(int duration) : BattleEffect(duration, applyChance: 1
 public class Protect(int duration, double dr) : Buff(duration) 
 {
 	public override string Name => "🛡️ Protect";
-	public readonly double DamageResistance = dr;
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
@@ -56,7 +55,7 @@ public class Protect(int duration, double dr) : Buff(duration)
 
 	private void GrantProtect(BattlePlayer target)
 	{
-		target.DamageResistance += DamageResistance;
+		target.DamageResistance += dr;
 	}
 }
 
@@ -71,16 +70,16 @@ public class Haste(int duration) : Buff(duration)
 	}
 }
 
-public class Await(int duration) : Buff(duration)
+public class Await(int duration, double damage) : Buff(duration)
 {
-	public override string Name => $"🗡️ Await";
+	public override string Name => "🗡️ Await";
 
 	protected override void BeforeAttacked(object? s, BeforeAttackedEventArgs e)
 	{
 		if (!CheckEffectOwner(e.Player)) return;
 		
 		e.EvadeAttack = true;
-		BasicAttack counter = new(2);
+		BasicAttack counter = new(damage);
 		e.Turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(e.Player.User.GlobalName, "", e.Player.User.AvatarUrl)
 			.WithDescription($"🍃 **{e.Player.Stand!.CoolName} evades the attack!**")
@@ -102,8 +101,32 @@ public class Charge(int duration) : Buff(duration)
 	}
 }
 
-public class Thorns(int duration) : Buff(duration) 
+public class Thorns(int duration, double reflectPercent) : Buff(duration) 
 {
 	public override string Name => "🌵 Thorns";
-	
+
+	protected override void AfterAttacked(object? s, AfterAttackedEventArgs e)
+	{
+		int thornsDamage = (int)(e.Damage * reflectPercent);
+		int hpBefore = 0;
+		
+		try
+		{
+			if (!CheckEffectOwner(e.Player)) return;
+			e.Turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(e.Attacker.User.GlobalName, "", e.Attacker.User.AvatarUrl)
+				.WithDescription($"🌵 **{e.Attacker.Stand!.CoolName} takes `{thornsDamage}` damage!**")
+				.WithColor(DiscordColor.DarkGreen)
+				.WithFooter($"❤️ {hpBefore} ➡️ ❤️ {e.Attacker.Hp}")));
+		}
+		catch (OnDeathException)
+		{
+			e.Turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+				.WithAuthor(e.Attacker.User.GlobalName, "", e.Attacker.User.AvatarUrl)
+				.WithDescription($"🌵 **{e.Attacker.Stand!.CoolName} takes `{thornsDamage}` damage!**")
+				.WithColor(DiscordColor.DarkGreen)
+				.WithFooter($"❤️ {hpBefore} ➡️ ❤️ {e.Attacker.Hp}")));
+			throw;
+		}
+	}
 }

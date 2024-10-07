@@ -14,4 +14,6 @@ public static class JoJo
 		RNG = new();
 		RNG.Next();
 	}
+
+	public static double ConvertToPercent(double value) => value * 100;
 }

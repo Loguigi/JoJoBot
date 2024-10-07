@@ -367,7 +367,7 @@ public class TowerFly : BuffAbility
 		Name = "Tower Fly";
 		Description = "";
 		MpCost = 45;
-		Buff = new Await(2);
+		Buff = new Await(2, 2);
 		Cooldown = 4;
 	}
 }
@@ -741,7 +741,8 @@ public class FogIllusion : BuffAbility
 	{
 		Name = "Fog Illusion";
 		MpCost = 45;
-		Buff = new Await(2);
+		Buff = new Await(2, 1);
+		Cooldown = 3;
 	}
 }
 
@@ -965,7 +966,7 @@ public class Assimilate : BuffAbility
 	{
 		Name = "Assimilate";
 		MpCost = 50;
-		Buff = new Await(2);
+		Buff = new Await(2, 2);
 		Cooldown = 5;
 	}
 }
@@ -1303,7 +1304,7 @@ public class SoulRead : BuffAbility
 	{
 		Name = "Soul Read";
 		MpCost = 50;
-		Buff = new Await(2);
+		Buff = new Await(2, 2);
 		Cooldown = 3;
 	}
 }
@@ -1336,8 +1337,8 @@ public class DimensionWarp : BuffAbility
 	{
 		Name = "Dimension Warp";
 		MpCost = 50;
-		Buff = new Await(2);
-		Cooldown = 3;
+		Buff = new Await(2, 3);
+		Cooldown = 5;
 	}
 }
 

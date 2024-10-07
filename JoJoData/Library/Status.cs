@@ -262,7 +262,7 @@ public class Shock(int duration, double applyChance = 1) : PassiveStatus(duratio
 			
 			e.Turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 				.WithAuthor(e.Attacker.User.GlobalName, "", e.Attacker.User.AvatarUrl)
-				.WithDescription($"⛈️ **{e.Attacker.Stand!.CoolName} shocks themself for `{(int)(e.Damage * 0.5)}` damage!**")
+				.WithDescription($"⛈️ **{e.Attacker.Stand!.CoolName} shocks themself for `{shockDamage}` damage!**")
 				.WithColor(DiscordColor.Yellow)
 				.WithFooter($"❤️ {hpBefore} ➡️ ❤️ {e.Attacker.Hp}")));
 			base.AfterAttacked(s, e);
@@ -271,7 +271,7 @@ public class Shock(int duration, double applyChance = 1) : PassiveStatus(duratio
 		{
 			e.Turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 				.WithAuthor(e.Attacker.User.GlobalName, "", e.Attacker.User.AvatarUrl)
-				.WithDescription($"⛈️ **{e.Attacker.Stand!.CoolName} shocks themself for `{(int)(e.Damage * 0.5)}` damage!**")
+				.WithDescription($"⛈️ **{e.Attacker.Stand!.CoolName} shocks themself for `{shockDamage}` damage!**")
 				.WithColor(DiscordColor.Yellow)
 				.WithFooter($"❤️ {hpBefore} ➡️ ❤️ {e.Attacker.Hp}")));
 			throw;

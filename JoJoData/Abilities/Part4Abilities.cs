@@ -78,7 +78,8 @@ public class AttackErasure : BuffAttackAbility
 		Name = "Attack Erasure";
 		MpCost = 60;
 		Attack = new BypassProtectAttack(damage: 1);
-		Buff = new Await(2);
+		Buff = new Await(2, 3);
+		Cooldown = 3;
 	}
 }
 
@@ -162,7 +163,7 @@ public class Scout : BuffAbility
 	{
 		Name = "Scout";
 		MpCost = 30;
-		Buff = new Await(2);
+		Buff = new Await(3, 1.5);
 		Cooldown = 6;
 	}
 }
@@ -221,6 +222,48 @@ public class Boing
 
 #region Echoes Act 3
 
+public class ThreeFreeze : BuffAttackAbility
+{
+	public ThreeFreeze()
+	{
+		Name = "THREE FREEZE";
+		MpCost = 50;
+		Attack = new BypassProtectAttack(3);
+		Buff = new Haste(2);
+		Cooldown = 10;
+	}
+}
+
+public class KillDaHo : AttackAbility
+{
+	public KillDaHo()
+	{
+		Name = "KILL DA HO!!!!";
+		MpCost = 40;
+		Attack = new CritChanceIncreaseAttack(2, 0.25);
+	}
+}
+
+public class Bitch : StatusAttackAbility
+{
+	public Bitch()
+	{
+		Name = "BEEEEEECH";
+		MpCost = 20;
+		Attack = new BasicAttack(1.3);
+		Status = new Confusion(4, 0.25);
+	}
+}
+
+public class ReliableGuy : BuffAbility
+{
+	public ReliableGuy()
+	{
+		Name = "RELIABLE GUY";
+		MpCost = 60;
+		Buff = new Protect(4, 0.3);
+	}
+}
 #endregion
 
 #region Heaven's Door
@@ -234,7 +277,7 @@ public class BombCharge : InflictStatusAbility
 	{
 		Name = "Bomb Charge";
 		MpCost = 25;
-		Status = new Charged(duration: 3);
+		Status = new Charged(3);
 	}
 }
 
@@ -244,8 +287,8 @@ public class PrimaryBomb : StatusAttackAbility
 	{
 		Name = "Primary Bomb";
 		MpCost = 40;
-		Attack = new DetonateAttack(damage: 3);
-		Status = new Burn(duration: 3, applyChance: 0.5);
+		Attack = new DetonateAttack(3);
+		Status = new Burn(3, 0.5);
 		Requirement = new StatusRequirement(typeof(Charged));
 	}
 }
@@ -256,7 +299,7 @@ public class SheerHeartAttack : AttackAbility
 	{
 		Name = "Sheer Heart Attack";
 		MpCost = 40;
-		Attack = new WeaknessAttack(damage: 0.2, increase: 5, typeof(Burn));
+		Attack = new WeaknessAttack(0.2, 5, typeof(Burn));
 	}
 }
 
@@ -266,7 +309,7 @@ public class BitesTheDust : StatChangeAbility
 	{
 		Name = "Bites the Dust";
 		MpCost = 45;
-		StatChange = new Heal(healPercent: 0.6);
+		StatChange = new BitesZaDusto(0.6);
 		Cooldown = 10;
 	}
 }
@@ -315,7 +358,7 @@ public class Redeploy : BuffAbility
 	{
 		Name = "Redeploy";
 		MpCost = 30;
-		Buff = new Haste(duration: 2);
+		Buff = new Haste(2);
 		Cooldown = 6;
 	}
 }
@@ -361,6 +404,7 @@ public class Electrocution : AttackAbility
 		Name = "Electrocution";
 		MpCost = 50;
 		Attack = new WeaknessAttack(damage: 0.75, increase: 4, typeof(Shock));
+		Cooldown = 5;
 	}
 }
 #endregion
@@ -450,8 +494,8 @@ public class HairGrowth : StatChangeAbility
 	{
 		Name = "Hair Growth";
 		MpCost = 35;
-		StatChange = new Barrier(barrier: 0.4);
-		Cooldown = 5;
+		StatChange = new Barrier(barrier: 0.45);
+		Cooldown = 3;
 	}
 }
 #endregion
@@ -462,6 +506,47 @@ public class HairGrowth : StatChangeAbility
 
 #region Achtung Baby
 
+public class Nibble : AttackAbility
+{
+	public Nibble()
+	{
+		Name = "Nibble";
+		MpCost = 20;
+		Attack = new MultiHitAttack(0.05, 2, 10);
+	}
+}
+
+public class CrawlAway : BuffAbility
+{
+	public CrawlAway()
+	{
+		Name = "Crawl Away";
+		MpCost = 20;
+		Buff = new Haste(2);
+		Cooldown = 5;
+	}
+}
+
+public class InvisibleDemonBaby : BuffAbility
+{
+	public InvisibleDemonBaby()
+	{
+		Name = "Invisible Demon Baby";
+		MpCost = 60;
+		Buff = new Await(3, 5);
+		Cooldown = 15;
+	}
+}
+
+public class Cry : StatChangeAbility
+{
+	public Cry()
+	{
+		Name = "Cry";
+		MpCost = 20;
+		StatChange = new Heal(0.1);
+	}
+}
 #endregion
 
 #region Ratt
@@ -548,7 +633,8 @@ public class HarvestSuperSpeed : BuffAbility
 	{
 		Name = "Harvest Super Speed";
 		MpCost = 60;
-		Buff = new Await(2);
+		Buff = new Await(2, 2);
+		Cooldown = 4;
 	}
 }
 #endregion
@@ -617,10 +703,90 @@ public class EnergyTheft : AttackAbility
 
 #region Stray Cat
 
+public class PlantCamo : AttackAbility
+{
+	public PlantCamo()
+	{
+		Name = "Plant Camo";
+		MpCost = 35;
+		Attack = new CritChanceIncreaseAttack(1.2, 0.5);
+	}
+}
+
+public class AirBullet : AttackAbility
+{
+	public AirBullet()
+	{
+		Name = "Air Bullet";
+		MpCost = 50;
+		Attack = new CritDamageIncreaseAttack(2, 1);
+	}
+}
+
+public class AirBarrage : AttackAbility
+{
+	public AirBarrage()
+	{
+		Name = "Air Barrage";
+		MpCost = 40;
+		Attack = new MultiHitAttack(0.6, 3, 5);
+	}
+}
+
+public class AirShield : BuffAbility
+{
+	public AirShield()
+	{
+		Name = "Air Shield";
+		MpCost = 60;
+		Buff = new Protect(2, 0.6);
+	}
+}
 #endregion
 
 #region Super Fly
+public class FiveGWaves : StatusAttackAbility
+{
+	public FiveGWaves()
+	{
+		Name = "5G Waves";
+		MpCost = 45;
+		Attack = new BypassProtectAttack(1.4);
+		Status = new Poison(2, 0.75);
+	}
+}
 
+public class RadioWaves : AttackAbility
+{
+	public RadioWaves()
+	{
+		Name = "Radio Waves";
+		MpCost = 30;
+		Attack = new BypassProtectAttack(3);
+	}
+}
+
+public class BigBolts : AttackAbility
+{
+	public BigBolts()
+	{
+		Name = "Big Bolts";
+		MpCost = 60;
+		Attack = new MultiHitAttack(2, 1, 2);
+	}
+}
+
+public class TheSuperFly : BuffAttackAbility
+{
+	public TheSuperFly()
+	{
+		Name = "The Super Fly...so epic";
+		MpCost = 30;
+		Attack = new CritChanceIncreaseAttack(1.2, 0.1);
+		Buff = new Thorns(1, 1.5);
+		Cooldown = 3;
+	}
+}
 #endregion
 
 #region Enigma

@@ -1,5 +1,6 @@
 using DSharpPlus;
 using DSharpPlus.Entities;
+using JoJoData.Controllers;
 
 namespace JoJoData.Library;
 
@@ -72,7 +73,7 @@ public class Strength(double increase) : StatChange
 public class Regress(double decrease) : StatChange
 {
 	public override string Name => "⬇️ Regress";
-    public override string ShortDescription => base.ShortDescription + $" -{DamageDecrease * 100}% Enemy DMG";
+    public override string ShortDescription => base.ShortDescription + $" -{JoJo.ConvertToPercent(DamageDecrease)}% Enemy DMG";
     public readonly double DamageDecrease = decrease;
 
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
@@ -87,5 +88,15 @@ public class Regress(double decrease) : StatChange
 			.WithDescription($"💪 **Strength decreased**")
 			.WithColor(DiscordColor.Red)
 			.WithFooter($"🗡️ {minDamageBefore}-{maxDamageBefore} ➡️ {target.MinDamage}-{target.MaxDamage}", target.User.AvatarUrl)));
+	}
+}
+
+public class BitesZaDusto(double healPercent) : Heal(healPercent)
+{
+	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
+	{
+		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			.WithImageUrl("https://c.tenor.com/oTklJ8haKowAAAAC/tenor.gif")));
+		base.Execute(turn, caster, target);
 	}
 }
