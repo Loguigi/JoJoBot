@@ -56,7 +56,7 @@ public static class StandLoader
 				
 				Stands.Add(stand.Id, new Stand(
 					stand,
-					Passives.First(x => x.GetType().Name == stand.Passive),
+					string.IsNullOrEmpty(stand.Passive) ? null : Passives.First(x => x.GetType().Name == stand.Passive),
 					Abilities[stand.Ability1],
 					Abilities[stand.Ability2],
 					Abilities[stand.Ability3],

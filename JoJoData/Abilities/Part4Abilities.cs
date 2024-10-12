@@ -211,11 +211,13 @@ public class BoomSound : AttackAbility
 	}
 }
 
-public class Boing 
+public class Boing : BuffAbility
 {
 	public Boing() 
 	{
-		// TODO boing
+		Name = "Boing";
+		MpCost = 60;
+		Buff = new Thorns(4, 0.75);
 	}
 }
 #endregion
@@ -261,13 +263,56 @@ public class ReliableGuy : BuffAbility
 	{
 		Name = "RELIABLE GUY";
 		MpCost = 60;
-		Buff = new Protect(4, 0.3);
+		Buff = new Protect(4, 0.45);
 	}
 }
 #endregion
 
 #region Heaven's Door
 
+public class BookUnravel : InflictStatusAbility
+{
+	public BookUnravel()
+	{
+		Name = "Unravel";
+		MpCost = 20;
+		Status = new Unravel(3);
+		Cooldown = 3;
+	}
+}
+
+public class SafetyLock : BuffAbility
+{
+	public SafetyLock()
+	{
+		Name = "Safety Lock";
+		MpCost = 45;
+		Buff = new Await(3, 3);
+		Requirement = new StatusRequirement(typeof(Unravel));
+	}
+}
+
+public class FlyBackwards : AttackAbility
+{
+	public FlyBackwards()
+	{
+		Name = "Fly Backwards";
+		MpCost = 40;
+		Attack = new BasicAttack(5);
+		Requirement = new StatusRequirement(typeof(Unravel));
+	}
+}
+
+public class MemoryRemoval : StatChangeAbility
+{
+	public MemoryRemoval()
+	{
+		Name = "Memory Removal";
+		MpCost = 65;
+		StatChange = new Regress(0.4);
+		Requirement = new StatusRequirement(typeof(Unravel));
+	}
+}
 #endregion
 
 #region Killer Queen
@@ -317,6 +362,47 @@ public class BitesTheDust : StatChangeAbility
 
 #region Aqua Necklace
 
+public class BodyInvasion : StatusAttackAbility
+{
+	public BodyInvasion()
+	{
+		Name = "Body Invasion";
+		MpCost = 30;
+		Attack = new BasicAttack(1.4);
+		Status = new Poison(2, 0.6);
+	}
+}
+
+public class Waterlog : StatusAttackAbility
+{
+	public Waterlog()
+	{
+		Name = "Waterlog";
+		MpCost = 55;
+		Attack = new BasicAttack(1.7);
+		Status = new Drown(3, 0.7);
+	}
+}
+
+public class OrganFlooding : AttackAbility
+{
+	public OrganFlooding()
+	{
+		Name = "Organ Flooding";
+		MpCost = 45;
+		Attack = new CritChanceIncreaseAttack(2, 0.3);
+	}
+}
+
+public class YoAngelo : StatChangeAbility
+{
+	public YoAngelo()
+	{
+		Name = "Yo, Angelo!";
+		MpCost = 70;
+		StatChange = new Barrier(0.5);
+	}
+}
 #endregion
 
 #region Bad Company
@@ -494,7 +580,7 @@ public class HairGrowth : StatChangeAbility
 	{
 		Name = "Hair Growth";
 		MpCost = 35;
-		StatChange = new Barrier(barrier: 0.45);
+		StatChange = new Barrier(barrierAmount: 0.3);
 		Cooldown = 3;
 	}
 }
@@ -825,6 +911,47 @@ public class SirenMeltdown : InflictStatusAbility
 
 #region Highway Star
 
+public class HighwayRush : AttackAbility
+{
+	public HighwayRush()
+	{
+		Name = "Highway Rush";
+		MpCost = 45;
+		Attack = new MultiHitAttack(0.6, 3, 8);
+	}
+}
+
+public class IllusionRoom : InflictStatusAbility
+{
+	public IllusionRoom()
+	{
+		Name = "Illusion Room";
+		MpCost = 30;
+		Status = new Confusion(4, 0.25);
+	}
+}
+
+public class LifeforceSiphon : AttackAbility
+{
+	public LifeforceSiphon()
+	{
+		Name = "Lifeforce Siphon";
+		MpCost = 35;
+		Attack = new HPLeechAttack(2);
+		Cooldown = 4;
+	}
+}
+
+public class BodySplit : BuffAbility
+{
+	public BodySplit()
+	{
+		Name = "Body Split";
+		MpCost = 70;
+		Buff = new Haste(2);
+		Cooldown = 6;
+	}
+}
 #endregion
 
 #region Stray Cat
@@ -917,6 +1044,49 @@ public class TheSuperFly : BuffAttackAbility
 
 #region Enigma
 
+public class UnfoldGun : AttackAbility
+{
+	public UnfoldGun()
+	{
+		Name = "Unfold Gun";
+		MpCost = 25;
+		Attack = new CritChanceIncreaseAttack(1.4, 0.6);
+		Cooldown = 2;
+	}
+}
+
+public class UnfoldFlames : InflictStatusAbility
+{
+	public UnfoldFlames()
+	{
+		Name = "Unfold Flames";
+		MpCost = 25;
+		Status = new Burn(4, 0.9);
+		Cooldown = 2;
+	}
+}
+
+public class UnfoldFreshNoodles : StatChangeAbility
+{
+	public UnfoldFreshNoodles()
+	{
+		Name = "Unfold Fresh Noodles";
+		MpCost = 50;
+		StatChange = new Heal(0.25);
+		Cooldown = 2;
+	}
+}
+
+public class FearTrap : InflictStatusAbility
+{
+	public FearTrap()
+	{
+		Name = "Fear Trap";
+		MpCost = 25;
+		Status = new Doom(7, 0.66);
+		Cooldown = 8;
+	}
+}
 #endregion
 
 #region Cheap Trick

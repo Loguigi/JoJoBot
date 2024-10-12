@@ -242,7 +242,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			player.Stand.Ability4.CreateSelection(Client, 4, player)
 		];
 
-		return new DiscordSelectComponent($@"{IDHelper.Battle.ABILITY_SELECT}\{Id}\{CurrentPlayer.User.Id}", "Select ability...", options);
+		return new DiscordSelectComponent($@"{IDHelper.Battle.AbilitySelect}\{Id}\{CurrentPlayer.User.Id}", "Select ability...", options);
 	}
 	#endregion
 	

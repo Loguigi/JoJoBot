@@ -1,5 +1,7 @@
+using System.Text;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using JoJoData.Controllers;
 
 namespace JoJoData.Library;
 
@@ -7,6 +9,8 @@ public abstract class Buff(int duration) : BattleEffect(duration, applyChance: 1
 {
 	public abstract override string Name { get; }
 	public override string ShortDescription => $"{Name} {Duration} turns";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => new($"* {Name} for `{Duration}` turns: ");
 
 	public override void Apply(Turn turn, BattlePlayer caster, BattlePlayer target) 
 	{
@@ -40,6 +44,8 @@ public abstract class Buff(int duration) : BattleEffect(duration, applyChance: 1
 public class Protect(int duration, double dr) : Buff(duration) 
 {
 	public override string Name => "🛡️ Protect";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"`+{JoJo.ConvertToPercent(dr)}%` damage resistance");
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
@@ -62,6 +68,8 @@ public class Protect(int duration, double dr) : Buff(duration)
 public class Haste(int duration) : Buff(duration) 
 {
 	public override string Name => $"💨 Haste";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"gain {Duration} extra {(Duration == 1 ? "turn" : "turns")}");
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
@@ -73,6 +81,9 @@ public class Haste(int duration) : Buff(duration)
 public class Await(int duration, double damage) : Buff(duration)
 {
 	public override string Name => "🗡️ Await";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"dodge next attack, then counter with a `x{damage}` attack`");
+
 
 	protected override void BeforeAttacked(object? s, BeforeAttackedEventArgs e)
 	{
@@ -92,6 +103,8 @@ public class Await(int duration, double damage) : Buff(duration)
 public class Charge(int duration) : Buff(duration) 
 {
 	public override string Name => "💪 Charge";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append("gain `2x` damage");
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
@@ -104,6 +117,8 @@ public class Charge(int duration) : Buff(duration)
 public class Thorns(int duration, double reflectPercent) : Buff(duration) 
 {
 	public override string Name => "🌵 Thorns";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"reflect `{JoJo.ConvertToPercent(reflectPercent)}%` damage to attacker");
 
 	protected override void AfterAttacked(object? s, AfterAttackedEventArgs e)
 	{

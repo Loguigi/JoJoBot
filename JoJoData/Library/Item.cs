@@ -34,8 +34,8 @@ public abstract class Arrow(int count) : Item(count)
 			.WithColor(DiscordColor.Gold)
 			.WithFooter($"Remaining stand arrows: {Count}");
 
-		var acceptBtn = new DiscordButtonComponent(DiscordButtonStyle.Success, $"{IDHelper.Inventory.ARROW_STAND_ACCEPT}\\{player.User.Id}\\{stand.Id}", "✅");
-		var declineBtn = new DiscordButtonComponent(DiscordButtonStyle.Danger, $"{IDHelper.Inventory.ARROW_STAND_DECLINE}\\{player.User.Id}\\{stand.Id}", "❌");
+		var acceptBtn = new DiscordButtonComponent(DiscordButtonStyle.Success, $"{IDHelper.Inventory.ArrowStandAccept}\\{player.User.Id}\\{stand.Id}", "✅");
+		var declineBtn = new DiscordButtonComponent(DiscordButtonStyle.Danger, $"{IDHelper.Inventory.ArrowStandDecline}\\{player.User.Id}\\{stand.Id}", "❌");
 
 		var msg = new DiscordMessageBuilder()
 			.WithContent(player.User.Mention)

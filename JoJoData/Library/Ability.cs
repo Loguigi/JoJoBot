@@ -37,6 +37,42 @@ public abstract class Ability
 			new DiscordComponentEmoji(DiscordEmoji.FromName(s, emoji, false)));
 	}
 
+	public string FormatLongDescription(Stand stand, BattlePlayer? player = null)
+	{
+		StringBuilder desc = new();
+
+		if (this is AttackAbility ab)
+		{
+			desc.Append(ab.Attack.GetLongDescription(stand, player));
+
+			if (this is StatusAttackAbility saa)
+			{
+				desc.Append(saa.Status.GetLongDescription(stand, player));
+			}
+			else if (this is BuffAttackAbility baa)
+			{
+				desc.Append(baa.Buff.GetLongDescription(stand, player));
+			}
+		}
+
+		if (this is InflictStatusAbility isa)
+		{
+			desc.Append(isa.Status.GetLongDescription(stand, player));
+		}
+
+		if (this is BuffAbility ba)
+		{
+			desc.Append(ba.Buff.GetLongDescription(stand, player));
+		}
+
+		if (this is StatChangeAbility sca)
+		{
+			desc.Append(sca.StatChange.GetLongDescription(stand, player));
+		}
+		
+		return desc.ToString();
+	}
+
 	private string CreateAbilityTitle(BattlePlayer currentPlayer) 
 	{
 		if (currentPlayer.Cooldowns[this] > 0) 
@@ -50,7 +86,6 @@ public abstract class Ability
 	private string FormatShortDescription()
 	{
 		StringBuilder desc = new();
-		desc.AppendLine(Description);
 
 		if (this is AttackAbility ab)
 		{

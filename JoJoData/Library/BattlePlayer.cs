@@ -1,6 +1,7 @@
 using System.Text;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using JoJoData.Controllers;
 using JoJoData.Data;
 
 namespace JoJoData.Library;
@@ -230,6 +231,34 @@ public class BattlePlayer : Player
 			info.Append($"{DiscordEmoji.FromName(s, ":down_arrow:", false)} Status: {Status.Name} `({StatusDuration})`\n");
 
 		return info.ToString();
+	}
+
+	public string FormatBattleDetails()
+	{
+		if (Stand is null) return string.Empty;
+		StringBuilder description = new();
+		
+		description.AppendLine($"### {User.Mention} (Level `{Level}`)`");
+		description.AppendLine($"### {(Barrier > 0 ? "💙" : "❤️")} HP: `{Hp}` / `{MaxHp}`");
+		description.AppendLine($"### 💎 MP: `{Mp}` / `{BattleConstants.BASE_MP}`");
+		description.AppendLine($"### ⚔️ Damage: `{MinDamage}` - `{MinDamage}`");
+		if (DamageResistance != 0) description.AppendLine($"### 🛡️ Damage Resistance: `{JoJo.ConvertToPercent(DamageResistance)}%`");
+		if (Status is not null)
+		{
+			description.AppendLine("### ⬇️ Status");
+			description.AppendLine($"* `{Status.Name}`");
+			description.AppendLine($"* Duration: `{StatusDuration}` turns");
+			if (DamageOverTime != 0) description.AppendLine($"* Damage Over Time: `{DamageOverTime}`");
+		}
+		
+		if (Buff is not null)
+		{
+			description.AppendLine("### ⬆️ Buff");
+			description.AppendLine($"* `{Buff.Name}`");
+			description.AppendLine($"* Duration: `{BuffDuration}` turns");
+		}
+
+		return description.ToString();
 	}
 	#endregion
 

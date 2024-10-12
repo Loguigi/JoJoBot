@@ -13,7 +13,7 @@ public static class BattleHandler
 {
 	public static async Task HandleDeclineChallenge(DiscordClient s, ComponentInteractionCreatedEventArgs e) 
 	{
-		if (!e.Id.Contains(IDHelper.Battle.PLAYER_CHALLENGE_DECLINE) || e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, PLAYER2_INDEX))) 
+		if (!e.Id.Contains(IDHelper.Battle.PlayerChallengeDecline) || e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, PLAYER2_INDEX))) 
 		{
 			await Task.CompletedTask;
 			return;
@@ -37,7 +37,7 @@ public static class BattleHandler
 	
 	public static async Task HandleAcceptChallenge(DiscordClient s, ComponentInteractionCreatedEventArgs e) 
 	{
-		if (!e.Id.Contains(IDHelper.Battle.PLAYER_CHALLENGE_ACCEPT) || e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, PLAYER2_INDEX)))
+		if (!e.Id.Contains(IDHelper.Battle.PlayerChallengeAccept) || e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, PLAYER2_INDEX)))
 		{
 			await Task.CompletedTask;
 			return;
@@ -54,7 +54,7 @@ public static class BattleHandler
 	
 	public static async Task HandleAbilitySelect(DiscordClient s, ComponentInteractionCreatedEventArgs e) 
 	{
-		if (!e.Id.Contains(IDHelper.Battle.ABILITY_SELECT)) 
+		if (!e.Id.Contains(IDHelper.Battle.AbilitySelect)) 
 		{
 			await Task.CompletedTask;
 			return;
@@ -78,6 +78,17 @@ public static class BattleHandler
 		};
 
 		battle.ContinueBattle(ability, e);
+	}
+
+	public static async Task HandleAbilityView(DiscordClient s, ComponentInteractionCreatedEventArgs e)
+	{
+		if (!e.Id.Contains(IDHelper.Battle.AbilityView))
+		{
+			await Task.CompletedTask;
+			return;
+		}
+		
+		
 	}
 
 	private const int BATTLE_ID_INDEX = 1;

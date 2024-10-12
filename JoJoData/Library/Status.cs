@@ -1,5 +1,6 @@
 using System.Formats.Asn1;
 using System.Reflection;
+using System.Text;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using JoJoData.Controllers;
@@ -11,7 +12,7 @@ namespace JoJoData.Library;
 public abstract class Status(int duration, double applyChance) : BattleEffect(duration, applyChance)
 {
 	public abstract override string Name { get; }
-	public override string ShortDescription => $"{Name} {ApplyChance * 100}% chance {Duration} turns";
+	public override string ShortDescription => $"{Name} {JoJo.ConvertToPercent(ApplyChance)}% chance {Duration} turns";
 
 	public override void Apply(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
@@ -27,6 +28,8 @@ public abstract class Status(int duration, double applyChance) : BattleEffect(du
 			.WithColor(DiscordColor.Purple)));
 	}
 
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => new($"* Inflicts {Name} (`{JoJo.ConvertToPercent(ApplyChance)}`) for `{Duration}` turns: ");
+	
 	protected virtual void OnApplied(Turn turn, BattlePlayer caster, BattlePlayer target) 
 	{
 		target.AddStatus(this);
@@ -77,6 +80,8 @@ public class Burn(int duration, double applyChance = 1) : DamageStatus(duration,
 {
 	public override string Name => $"🔥 Burn";
 	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"deals `{(player?.MinDamage ?? stand.BaseMinDamage) * 2}` damage per turn");
+	
 	protected override int SetDamageOverTime(BattlePlayer caster, BattlePlayer target) => caster.MinDamage * 2;
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
@@ -93,8 +98,10 @@ public class Burn(int duration, double applyChance = 1) : DamageStatus(duration,
 public class Bleed(int duration, double applyChance = 1) : DamageStatus(duration, applyChance) 
 {
 	public override string Name => $"🩸 Bleed";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"deals `20%` of enemy HP per turn");
 
-	protected override int SetDamageOverTime(BattlePlayer caster, BattlePlayer target) => (int)Math.Ceiling(target.Hp * 0.2);
+	protected override int SetDamageOverTime(BattlePlayer caster, BattlePlayer target) => JoJo.Calculate(target.Hp * 0.2);
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
@@ -110,8 +117,10 @@ public class Bleed(int duration, double applyChance = 1) : DamageStatus(duration
 public class Poison(int duration, double applyChance = 1) : DamageStatus(duration, applyChance) 
 {
 	public override string Name => $"🐍 Poison";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"deals `20%` of enemy's max HP as damage, then lowers by `5%` per turn");
 
-	protected override int SetDamageOverTime(BattlePlayer caster, BattlePlayer target) => (int)Math.Ceiling(target.MaxHp * 0.2);
+	protected override int SetDamageOverTime(BattlePlayer caster, BattlePlayer target) => JoJo.Calculate(target.MaxHp * 0.2);
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
@@ -120,7 +129,8 @@ public class Poison(int duration, double applyChance = 1) : DamageStatus(duratio
 			.WithAuthor(e.Player.User.GlobalName, "", e.Player.User.AvatarUrl)
 			.WithDescription($"💀 **{e.Player.Stand!.CoolName} suffers poison for `{e.Player.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.Purple)));
-		e.Player.DamageOverTime -= (int)Math.Ceiling(e.Player.MaxHp * 0.05);
+		e.Player.DamageOverTime -= JoJo.Calculate(e.Player.MaxHp * 0.05);
+		if (e.Player.DamageOverTime < 0) e.Player.DamageOverTime = JoJo.Calculate(e.Player.MaxHp * 0.05);
 		base.PreCurrentTurn(s, e);
 	}
 }
@@ -130,6 +140,8 @@ public class Doom(int duration, double applyChance = 1) : DamageStatus(duration,
 	public override string Name => $"💀 Doom";
 
 	protected override int SetDamageOverTime(BattlePlayer caster, BattlePlayer target) => 0;
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"instantly die after {Duration} turns");
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
@@ -153,15 +165,18 @@ public class Drown(int duration, double applyChance = 1) : DamageStatus(duration
 {
 	public override string Name => "🌊 Drown";
 
-	protected override int SetDamageOverTime(BattlePlayer caster, BattlePlayer target) => (int)Math.Ceiling(target.MaxHp * 0.1);
+	protected override int SetDamageOverTime(BattlePlayer caster, BattlePlayer target) => JoJo.Calculate(target.MaxHp * 0.1);
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"deals `10%` of enemy's max HP and increases by `4%` per turn");
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
 		if (!CheckEffectOwner(e.Player)) return;
 		e.Turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(e.Player.User.GlobalName, "", e.Player.User.AvatarUrl)
-			.WithDescription($"🌊 **{e.Player.Stand!.CoolName} drowns `{e.Player.DamageOverTime}` damage**")
+			.WithDescription($"🌊 **{e.Player.Stand!.CoolName} drowns, taking `{e.Player.DamageOverTime}` damage**")
 			.WithColor(DiscordColor.DarkBlue)));
+		e.Player.AddDamageOverTime(JoJo.Calculate(e.Player.MaxHp * 0.04), this);
 		base.PreCurrentTurn(s, e);
 	}
 }
@@ -173,6 +188,8 @@ public abstract class PassiveStatus(int duration, double applyChance) : Status(d
 public class Silence(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
 	public override string Name => $"🔇 Silence";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append("prevents enemy from using abilities that cost 💎 MP");
 
 	protected override void AbilityCast(object? s, AbilityCastEventArgs e)
 	{
@@ -196,6 +213,8 @@ public class Silence(int duration, double applyChance = 1) : PassiveStatus(durat
 public class Confusion(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
 	public override string Name => "❓ Confusion";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append("enemy has a `50%` chance to attack themselves");
 
 	protected override void BeforeAttacked(object? s, BeforeAttackedEventArgs e)
 	{
@@ -215,6 +234,8 @@ public class Confusion(int duration, double applyChance = 1) : PassiveStatus(dur
 public class Douse(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
 	public override string Name => "🛢️ Douse";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append("when ignited, inflict 🔥 Burn for 4 turns");
 
 	public void Ignite(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
@@ -226,8 +247,9 @@ public class Douse(int duration, double applyChance = 1) : PassiveStatus(duratio
 public class Frail(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance)
 {
 	public override string Name => "☔️ Frail";
-	// TODO add -dr to short description
-	public readonly double DrReduction = 0.25;
+	private const double DrReduction = 0.25;
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"reduce enemy's defense by `{JoJo.ConvertToPercent(DrReduction)}%`");
 
 	protected override void PreEnemyTurn(object? s, PreEnemyTurnEventArgs e)
 	{
@@ -249,6 +271,8 @@ public class Frail(int duration, double applyChance = 1) : PassiveStatus(duratio
 public class Shock(int duration, double applyChance = 1) : PassiveStatus(duration, applyChance) 
 {
 	public override string Name => "⚡️ Shock";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"enemy shocks themself for `50%` of their attack damage when attacking");
 
 	protected override void AfterAttacked(object? s, AfterAttackedEventArgs e)
 	{
@@ -319,6 +343,31 @@ public class Blind(int duration, double applyChance = 1) : PassiveStatus(duratio
 	
 	private bool RollBlind() => JoJo.RNG.NextDouble() < 0.5;
 }
+
+public class Unravel(int duration, double applyChance = 1) : Frail(duration, applyChance)
+{
+	public override string Name => "📖 Unravel";
+
+	public override void Apply(Turn turn, BattlePlayer caster, BattlePlayer target)
+	{
+		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+			.WithImageUrl("https://c.tenor.com/SmsuahBMMQgAAAAC/tenor.gif")));
+		base.Apply(turn, caster, target);
+	}
+
+	protected override void AfterAttacked(object? s, AfterAttackedEventArgs e)
+	{
+		if (!CheckEffectOwner(e.Player) || !CheckUnravelRequirement(e.Ability)) return;
+		ReduceDuration(e.Turn, e.Player, true);
+		base.AfterAttacked(s, e);
+	}
+	
+	private bool CheckUnravelRequirement(Ability ability)
+	{
+		var requirement = ability.Requirement as StatusRequirement;
+		return requirement?.StatusType == typeof(Unravel);
+	}
+}
 #endregion
 
 #region Turn Skip Statuses
@@ -359,6 +408,8 @@ public class TimeStop(int duration, double applyChance = 1) : TurnSkipStatus(dur
 public class Sleep(int duration, double applyChance = 1) : TurnSkipStatus(duration, applyChance) 
 {
 	public override string Name => $"💤 Sleep";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"puts the enemy to sleep. `50%` to wake them up when attacking");
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
@@ -395,6 +446,8 @@ public class Sleep(int duration, double applyChance = 1) : TurnSkipStatus(durati
 public class Random(int duration, double applyChance = 1) : Status(duration, applyChance)
 {
 	public override string Name => $"🎲 Random";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"inflict a random status");
 
 	public override void Apply(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{

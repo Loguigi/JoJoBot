@@ -1,3 +1,4 @@
+using System.Text;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using JoJoData.Controllers;
@@ -6,20 +7,22 @@ namespace JoJoData.Library;
 
 public abstract class StatChange  : BattleAction
 {
-	public abstract string Name { get; }
-	public virtual string ShortDescription => Name;
+	public abstract override string Name { get; }
+	public override string ShortDescription => Name;
+
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => new(ShortDescription);
+	
 	public abstract override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target);
 }
 
 public class Heal(double healPercent) : StatChange 
 {
 	public override string Name => "💖 Heal";
-	public override string ShortDescription => base.ShortDescription + $" {HealPercent * 100}% of Max HP";
-	public readonly double HealPercent = healPercent;
-	
+	public override string ShortDescription => base.ShortDescription + $" {JoJo.ConvertToPercent(healPercent)}% of Max HP";
+
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
-		var heal = (int)Math.Ceiling(caster.MaxHp * HealPercent);
+		var heal = (int)Math.Ceiling(caster.MaxHp * healPercent);
 		caster.Heal(heal, out var hpBefore);
 
 		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
@@ -30,15 +33,14 @@ public class Heal(double healPercent) : StatChange
 	}
 }
 
-public class Barrier(double barrier) : StatChange 
+public class Barrier(double barrierAmount) : StatChange 
 {
 	public override string Name => "💙 Barrier";
-	public override string ShortDescription => base.ShortDescription + $" {BarrierAmount * 100}% of Max HP";
-	public readonly double BarrierAmount = barrier;
-	
+	public override string ShortDescription => base.ShortDescription + $" {barrierAmount * 100}% of Max HP";
+
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
-		var barrier = (int)Math.Ceiling(caster.Hp * BarrierAmount);
+		var barrier = (int)Math.Ceiling(caster.Hp * barrierAmount);
 		caster.GrantBarrier(barrier, out int barrierBefore);
 
 		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
@@ -52,15 +54,14 @@ public class Barrier(double barrier) : StatChange
 public class Strength(double increase) : StatChange 
 {
 	public override string Name => "💪 Strength";
-	public override string ShortDescription => base.ShortDescription + $" +{DamageIncrease * 100}% DMG";
-	public readonly double DamageIncrease = increase;
+	public override string ShortDescription => base.ShortDescription + $" +{increase * 100}% DMG";
 
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
 		var minDamageBefore = caster.MinDamage;
 		var maxDamageBefore = caster.MaxDamage;
 		
-		caster.IncreaseAttack((int)Math.Ceiling(caster.MinDamage * DamageIncrease), (int)Math.Ceiling(caster.MaxDamage * DamageIncrease));
+		caster.IncreaseAttack(JoJo.Calculate(caster.MinDamage * increase), JoJo.Calculate(caster.MaxDamage * increase));
 
 		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(caster.User.GlobalName, "", caster.User.AvatarUrl)

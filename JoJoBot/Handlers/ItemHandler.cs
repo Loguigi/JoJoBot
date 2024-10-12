@@ -14,7 +14,7 @@ public static class ItemHandler
 	{
 		try
 		{
-			if (!e.Id.Contains(IDHelper.Inventory.ARROW_STAND_ACCEPT) || e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, PLAYER_ID_INDEX))) 
+			if (!e.Id.Contains(IDHelper.Inventory.ArrowStandAccept) || e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, PLAYER_ID_INDEX))) 
 			{
 				await Task.CompletedTask;
 				return;
@@ -44,7 +44,7 @@ public static class ItemHandler
 	{
 		try
 		{
-			if (!e.Id.Contains(IDHelper.Inventory.ARROW_STAND_DECLINE) || e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, PLAYER_ID_INDEX)))
+			if (!e.Id.Contains(IDHelper.Inventory.ArrowStandDecline) || e.User.Id != ulong.Parse(IDHelper.GetID(e.Id, PLAYER_ID_INDEX)))
 			{
 				await Task.CompletedTask;
 				return;

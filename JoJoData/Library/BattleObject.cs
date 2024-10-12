@@ -1,11 +1,17 @@
+using System.Text;
 using DSharpPlus.Entities;
 
 namespace JoJoData.Library;
 
-public abstract class BattleEffect(int duration, double applyChance)
+public abstract class BattleObject
 {
 	public abstract string Name { get; }
 	public abstract string ShortDescription { get; }
+	public abstract StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null);
+}
+
+public abstract class BattleEffect(int duration, double applyChance) : BattleObject
+{
 	protected int Duration { get; } = duration;
 	protected double ApplyChance { get; } = applyChance;
 
@@ -33,7 +39,7 @@ public abstract class BattleEffect(int duration, double applyChance)
 	protected virtual void DeathFlag(object? s, DeathFlagEventArgs e) { }
 }
 
-public abstract class BattleAction 
+public abstract class BattleAction : BattleObject
 {
 	public abstract void Execute(Turn turn, BattlePlayer caster, BattlePlayer target);
 }

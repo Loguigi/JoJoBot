@@ -250,7 +250,7 @@ public class SandConstruct : StatChangeAbility
 	{
 		Name = "Sand Construct";
 		MpCost = 45;
-		StatChange = new Barrier(barrier: 0.35);
+		StatChange = new Barrier(barrierAmount: 0.35);
 	}
 }
 
@@ -404,13 +404,14 @@ public class Barnacles : InflictStatusAbility
 	}
 }
 
-public class Drown : AttackAbility
+public class BlueMoonDrown : InflictStatusAbility
 {
-	public Drown()
+	public BlueMoonDrown()
 	{
 		Name = "Drown";
-		MpCost = 50;
-		Attack = new HPLeechAttack(damage: 3);
+		MpCost = 40;
+		Status = new Drown(5, 0.9);
+		Cooldown = 10;
 	}
 }
 #endregion
@@ -495,7 +496,7 @@ public class Materialization : StatChangeAbility
 	{
 		Name = "Materialization";
 		MpCost = 50;
-		StatChange = new Barrier(barrier: 0.25);
+		StatChange = new Barrier(barrierAmount: 0.25);
 	}
 }
 #endregion
@@ -580,7 +581,7 @@ public class RainBarrier : StatChangeAbility
 	{
 		Name = "Rain Barrier";
 		MpCost = 40;
-		StatChange = new Barrier(barrier: 0.3);
+		StatChange = new Barrier(barrierAmount: 0.3);
 	}
 }
 #endregion

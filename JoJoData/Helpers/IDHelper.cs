@@ -6,14 +6,15 @@ public static class IDHelper
 
 	public static class Battle 
 	{
-		public const string ABILITY_SELECT = "BattleAbilitySelect";
-		public const string PLAYER_CHALLENGE_ACCEPT = "BattlePlayerChallengeAccept";
-		public const string PLAYER_CHALLENGE_DECLINE = "BattlePlayerChallengeDecline";
+		public const string AbilitySelect = "BattleAbilitySelect";
+		public const string AbilityView = "BattleAbilityView";
+		public const string PlayerChallengeAccept = "BattlePlayerChallengeAccept";
+		public const string PlayerChallengeDecline = "BattlePlayerChallengeDecline";
 	}
 	
 	public static class Inventory 
 	{
-		public const string ARROW_STAND_ACCEPT = "ArrowStandAccept";
-		public const string ARROW_STAND_DECLINE = "ArrowStandDecline";
+		public const string ArrowStandAccept = "ArrowStandAccept";
+		public const string ArrowStandDecline = "ArrowStandDecline";
 	}
 }

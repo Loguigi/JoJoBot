@@ -1,3 +1,4 @@
+using System.Text;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using JoJoData.Controllers;
@@ -8,7 +9,9 @@ namespace JoJoData.Library;
 #region Base Attack
 public abstract class Attack(double damage) : BattleAction
 {
-	public virtual string ShortDescription => $"⚔️ {DamageMultiplier}x DMG";
+	public override string Name { get; } = string.Empty;
+	public override string ShortDescription => $"⚔️ {DamageMultiplier}x DMG";
+	
 	public double DamageMultiplier { get; private set; } = damage;
 	
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
@@ -47,6 +50,8 @@ public abstract class Attack(double damage) : BattleAction
 		}
 	}
 
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => player is null ? new StringBuilder($"{(int)(stand.BaseMinDamage * DamageMultiplier)}` - `{(int)(stand.BaseMaxDamage * DamageMultiplier)}` damage\n") : new StringBuilder($"* 🗡️ Deals `{(int)(player.MinDamage * DamageMultiplier)}` - `{(int)(player.MaxDamage * DamageMultiplier)}` damage\n");
+
 	protected virtual int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{
 		return (int)Math.Ceiling(
@@ -73,6 +78,8 @@ public class BasicAttack(double damage) : Attack(damage) { }
 public class BypassProtectAttack(double damage) : Attack(damage)
 {
 	public override string ShortDescription => base.ShortDescription + " Pierce Protect";
+
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).AppendLine("* Bypasses damage resistance");
 	
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{
@@ -136,30 +143,32 @@ public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(da
 
 public class CritChanceIncreaseAttack(double damage, double increase) : Attack(damage)
 {
-	public override string ShortDescription => base.ShortDescription + $" +{CritChanceIncrease * 100}% Crit Chance";
-	public readonly double CritChanceIncrease = increase;
+	public override string ShortDescription => base.ShortDescription + $" +{JoJo.ConvertToPercent(increase)}% Crit Chance";
 	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).AppendLine($"* ✨ Increases crit chance by `{JoJo.ConvertToPercent(increase)}%`");
+
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{
 		return (int)Math.Ceiling(
 			RollDamage(attacker.MinDamage, attacker.MaxDamage) *
 			DamageMultiplier *
-			RollCrit(CritChanceIncrease == 0 ? 0 : attacker.CritChance + CritChanceIncrease, attacker.CritDamageMultiplier, out crit) *
+			RollCrit(increase == 0 ? 0 : attacker.CritChance + increase, attacker.CritDamageMultiplier, out crit) *
 			(1 - defender.DamageResistance));
 	}
 }
 
 public class CritDamageIncreaseAttack(double damage, double increase) : Attack(damage)
 {
-	public override string ShortDescription => base.ShortDescription + $" +{CritDamageIncrease * 100}% Crit DMG";
-	public readonly double CritDamageIncrease = increase;
+	public override string ShortDescription => base.ShortDescription + $" +{JoJo.ConvertToPercent(increase)}% Crit DMG";
+
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).AppendLine($"* ⚡️ Increases crit damage by `{JoJo.ConvertToPercent(increase)}%`");
 	
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{
 		return (int)Math.Ceiling(
 			RollDamage(attacker.MinDamage, attacker.MaxDamage) *
 			DamageMultiplier *
-			RollCrit(attacker.CritChance, attacker.CritDamageMultiplier + CritDamageIncrease, out crit) *
+			RollCrit(attacker.CritChance, attacker.CritDamageMultiplier + increase, out crit) *
 			(1 - defender.DamageResistance));
 	}
 }
@@ -167,6 +176,8 @@ public class CritDamageIncreaseAttack(double damage, double increase) : Attack(d
 public class WeaknessAttack(double damage, double increase, Type status) : Attack(damage)
 {
 	public override string ShortDescription => base.ShortDescription + $" x{increase} against {status.Name}";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).AppendLine($"* 🗡️ `{increase}x` damage against targets with {status.Name}");
 
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{
@@ -184,20 +195,22 @@ public class WeaknessAttack(double damage, double increase, Type status) : Attac
 public class HPLeechAttack(double damage) : Attack(damage)
 {
 	public override string ShortDescription => base.ShortDescription + $" Steal ❤️ HP";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).AppendLine("* ❤️‍🩹 Heals `50%` of damage dealt to target");
 
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
 		base.Execute(turn, caster, target);
 		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
-			.WithDescription($"🔮 **{caster.Stand!.CoolName} steals `{target.DamageReceived}` HP from {target.Stand!.CoolName}**")
+			.WithDescription($"🔮 **{caster.Stand!.CoolName} steals `{(int)(target.DamageReceived * 0.5)}` HP from {target.Stand!.CoolName}**")
 			.WithColor(DiscordColor.Magenta)));
 	}
 
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{
 		int dmg = base.CalculateDamage(attacker, defender, out crit);
-		attacker.Heal(dmg, out _);
+		attacker.Heal((int)(dmg * 0.5), out _);
 		
 		return dmg;
 	}
@@ -205,27 +218,27 @@ public class HPLeechAttack(double damage) : Attack(damage)
 
 public class MPStealAttack(double damage, int mpStealAmount, double hpLossPercent) : Attack(damage)
 {
-	public override string ShortDescription => base.ShortDescription + $" -❤️ {HpLossAmount * 100}% Max HP, Steal 💎 {MpStealAmount} MP";
-	public readonly int MpStealAmount = mpStealAmount;
-	public readonly double HpLossAmount = hpLossPercent;
+	public override string ShortDescription => base.ShortDescription + $" -❤️ {JoJo.ConvertToPercent(hpLossPercent)}% Max HP, Steal 💎 {mpStealAmount} MP";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => player is null ? base.GetLongDescription(stand, player).AppendLine($"* 🔮 Sacrifice ❤️ `{(int)(hpLossPercent * stand.BaseHp)} HP` to gain 💎 `{mpStealAmount} MP`") : base.GetLongDescription(stand, player).AppendLine($"* 🔮 Sacrifice ❤️ `{(int)(hpLossPercent * player.MaxHp)} HP` to gain 💎 `{mpStealAmount} MP`");
 
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
 		base.Execute(turn, caster, target);
 		
-		int mpSteal = MpStealAmount;
-		if (target.Mp < MpStealAmount) 
+		int mpSteal = mpStealAmount;
+		if (target.Mp < mpStealAmount) 
 		{
 			mpSteal = target.Mp;
 		}
 		
 		caster.GrantMP(mpSteal, out int mpBefore);
 		target.UseMP(mpSteal, out _);
-		caster.ReceiveDamage(turn, (int)(HpLossAmount * caster.MaxHp), out int hpBefore);
+		caster.ReceiveDamage(turn, (int)(hpLossPercent * caster.MaxHp), out int hpBefore);
 		
 		turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 			.WithAuthor(target.User.GlobalName, "", target.User.AvatarUrl)
-			.WithDescription($"🔮 **{caster.Stand!.CoolName} steals `{MpStealAmount}` MP from {target.Stand!.CoolName}**")
+			.WithDescription($"🔮 **{caster.Stand!.CoolName} steals `{mpStealAmount}` MP from {target.Stand!.CoolName}**")
 			.WithFooter($"💎 {mpBefore} ➡️ 💎 {caster.Mp}, ❤️ {hpBefore} ➡️ ❤️ {caster.Hp}", caster.User.AvatarUrl)
 			.WithColor(DiscordColor.Purple)));
 	}
@@ -234,6 +247,7 @@ public class MPStealAttack(double damage, int mpStealAmount, double hpLossPercen
 public class TakeoverAttack(double damage) : Attack(damage)
 {
 	public override string ShortDescription => base.ShortDescription + " Uses Enemy DMG";
+
 	
 	protected override int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{
@@ -244,6 +258,9 @@ public class TakeoverAttack(double damage) : Attack(damage)
 public class IgniteAttack(double damage) : Attack(damage) 
 {
 	public override string ShortDescription => base.ShortDescription + " 100% Burn when Doused";
+	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).AppendLine("* 🔥 `100%` chance to inflict 🔥 Burn when enemy has 🛢️ Douse");
+	
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
 		base.Execute(turn, caster, target);
@@ -278,6 +295,8 @@ public class DetonateAttack(double damage) : BypassProtectAttack(damage)
 
 public class RPSAttack(double damage, int mpStealAmount = 30, double hpLossPercent = 0) : MPStealAttack(damage, mpStealAmount, hpLossPercent) 
 {
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).AppendLine("* 🎲 1/3 chance to activate");
+
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
 		if (RPSGame())
