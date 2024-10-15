@@ -16,5 +16,6 @@ public static class IDHelper
 	{
 		public const string ArrowStandAccept = "ArrowStandAccept";
 		public const string ArrowStandDecline = "ArrowStandDecline";
+		public const string StandDetails = "InventoryStandDetails";
 	}
 }

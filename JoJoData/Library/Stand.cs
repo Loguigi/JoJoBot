@@ -52,16 +52,16 @@ public class Stand(StandModel model, Passive? psv, Ability a1, Ability a2, Abili
 		}
 
 		description.AppendLine("\n## Abilities");
-		description.AppendLine($"### 1️⃣ {Ability1.CoolName}");
+		description.AppendLine($"### 1️⃣ {Ability1.CoolName} 💎 {Ability1.MpCost} MP");
 		description.Append(Ability1.FormatLongDescription(this, player));
 		description.AppendLine();
-		description.AppendLine($"### 2️⃣ {Ability2.CoolName}");
+		description.AppendLine($"### 2️⃣ {Ability2.CoolName} 💎 {Ability2.MpCost} MP");
 		description.Append(Ability2.FormatLongDescription(this, player));
 		description.AppendLine();
-		description.AppendLine($"### 3️⃣ {Ability3.CoolName}");
+		description.AppendLine($"### 3️⃣ {Ability3.CoolName} 💎 {Ability3.MpCost} MP");
 		description.Append(Ability3.FormatLongDescription(this, player));
 		description.AppendLine();
-		description.AppendLine($"### 4️⃣ {Ability4.CoolName}");
+		description.AppendLine($"### 4️⃣ {Ability4.CoolName} 💎 {Ability4.MpCost} MP");
 		description.Append(Ability4.FormatLongDescription(this, player));
 		string stars = string.Empty;
 

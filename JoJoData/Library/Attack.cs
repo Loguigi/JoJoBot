@@ -48,7 +48,7 @@ public abstract class Attack(double damage) : BattleAction
 		}
 	}
 
-	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => player is null ? new StringBuilder($"{(int)(stand.BaseMinDamage * DamageMultiplier)}` - `{(int)(stand.BaseMaxDamage * DamageMultiplier)}` damage\n") : new StringBuilder($"* 🗡️ Deals `{(int)(player.MinDamage * DamageMultiplier)}` - `{(int)(player.MaxDamage * DamageMultiplier)}` damage\n");
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => player is null ? new StringBuilder($"* 🗡️ Deals `{(int)(stand.BaseMinDamage * DamageMultiplier)}` - `{(int)(stand.BaseMaxDamage * DamageMultiplier)}` damage\n") : new StringBuilder($"* 🗡️ Deals `{(int)(player.MinDamage * DamageMultiplier)}` - `{(int)(player.MaxDamage * DamageMultiplier)}` damage\n");
 
 	protected virtual int CalculateDamage(BattlePlayer attacker, BattlePlayer defender, out bool crit)
 	{

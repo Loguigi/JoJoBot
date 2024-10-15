@@ -36,12 +36,13 @@ public abstract class Arrow(int count) : Item(count)
 
 		var acceptBtn = new DiscordButtonComponent(DiscordButtonStyle.Success, $@"{IDHelper.Inventory.ArrowStandAccept}\{player.User.Id}\{stand.Id}", "✅");
 		var declineBtn = new DiscordButtonComponent(DiscordButtonStyle.Danger, $@"{IDHelper.Inventory.ArrowStandDecline}\{player.User.Id}\{stand.Id}", "❌");
+		var detailsBtn = new DiscordButtonComponent(DiscordButtonStyle.Primary, $@"{IDHelper.Inventory.StandDetails}\{player.User.Id}\{stand.Id}", $"{stand.CoolName} details");
 
 		var msg = new DiscordMessageBuilder()
 			.WithContent(player.User.Mention)
 			.AddMention(new UserMention(player.User))
 			.AddEmbed(embed)
-			.AddComponents(acceptBtn, declineBtn);
+			.AddComponents(acceptBtn, declineBtn, detailsBtn);
 
 		return msg;
 	}

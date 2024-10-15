@@ -66,6 +66,18 @@ public static class ItemHandler
 			throw;
 		}
 	}
+	
+	public static async Task HandleAbilityView(DiscordClient s, ComponentInteractionCreatedEventArgs e)
+	{
+		if (!e.Id.Contains(IDHelper.Inventory.StandDetails))
+		{
+			await Task.CompletedTask;
+			return;
+		}
+		
+		Stand stand = StandLoader.Stands[int.Parse(IDHelper.GetID(e.Id, STAND_ID_INDEX))];
+		await e.Interaction.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(stand.FormatDescription()).AsEphemeral());
+	}
 
 	private const int PLAYER_ID_INDEX = 1;
 	private const int STAND_ID_INDEX = 2;
