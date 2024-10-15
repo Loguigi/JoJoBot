@@ -48,14 +48,14 @@ public class BattleCommand
 				.WithColor(DiscordColor.Gold)
 				.WithFooter("Do you accept?", player2.User.AvatarUrl);
 
-			var acceptBtn = new DiscordButtonComponent(DiscordButtonStyle.Success, $"{IDHelper.Battle.PlayerChallengeAccept}\\{player1.User.Id}\\{player2.User.Id}", "Accept");
-			var declineBtn = new DiscordButtonComponent(DiscordButtonStyle.Danger, $"{IDHelper.Battle.PlayerChallengeDecline}\\{player1.User.Id}\\{player2.User.Id}", "Decline");
+			var acceptBtn = new DiscordButtonComponent(DiscordButtonStyle.Success, $@"{IDHelper.Battle.PlayerChallengeAccept}\{player1.User.Id}\{player2.User.Id}", "Accept");
+			var declineBtn = new DiscordButtonComponent(DiscordButtonStyle.Danger, $@"{IDHelper.Battle.PlayerChallengeDecline}\{player1.User.Id}\{player2.User.Id}", "Decline");
 
 			var msg = new DiscordMessageBuilder()
 				.WithContent(player2.User.Mention)
 				.AddMention(new UserMention(player2.User))
 				.AddEmbed(embed)
-				.AddComponents(new DiscordComponent[] {acceptBtn, declineBtn});
+				.AddComponents(acceptBtn, declineBtn);
 
 			await ctx.RespondAsync(msg);
 		}

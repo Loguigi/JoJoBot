@@ -1,3 +1,4 @@
+using System.Text;
 using DSharpPlus.Entities;
 
 namespace JoJoData.Library;
@@ -5,6 +6,8 @@ namespace JoJoData.Library;
 public abstract class Requirement 
 {
 	public abstract bool Check(BattlePlayer caster, BattlePlayer target, out DiscordMessageBuilder? msg);
+
+	public abstract StringBuilder GetLongDescription();
 }
 
 public class StatusRequirement(Type statusType) : Requirement 
@@ -28,4 +31,6 @@ public class StatusRequirement(Type statusType) : Requirement
 			return false;
 		}
 	}
+	
+	public override StringBuilder GetLongDescription() => new($"* 🔒 Requires enemy to have status **{StatusType.Name}**");
 }

@@ -88,7 +88,9 @@ public static class BattleHandler
 			return;
 		}
 		
-		
+		BattleController battle = JoJo.Battles[int.Parse(IDHelper.GetID(e.Id, BATTLE_ID_INDEX))];
+		BattlePlayer player = battle.GetPlayer(ulong.Parse(IDHelper.GetID(e.Id, CURRENT_PLAYER_INDEX)));
+		await e.Interaction.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(player.Stand!.FormatDescription(player)).AsEphemeral());
 	}
 
 	private const int BATTLE_ID_INDEX = 1;

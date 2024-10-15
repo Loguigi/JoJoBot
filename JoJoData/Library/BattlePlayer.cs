@@ -136,6 +136,7 @@ public class BattlePlayer : Player
 		if (!remove && StatusDuration != 0) return true;
 		
 		Status = null;
+		StatusDuration = 0;
 		DamageOverTime = 0;
 		return false;
 	}
@@ -160,6 +161,7 @@ public class BattlePlayer : Player
 		if (!remove && BuffDuration != 0) return true;
 		
 		Buff = null;
+		BuffDuration = 0;
 		return false;
 	}
 
@@ -211,24 +213,15 @@ public class BattlePlayer : Player
 	#endregion
 
 	#region Discord Output Methods
-	public string FormatBattleInfo(DiscordClient s)
+	public string FormatBattleInfo()
 	{
 		var info = new StringBuilder();
-		if (_barrier > 0)
-		{
-			info.Append($"{DiscordEmoji.FromName(s, ":blue_heart:", false)} HP: {Hp} / {MaxHp}\n");
-		}
-		else
-		{
-			info.Append($"{DiscordEmoji.FromName(s, ":heart:", false)} HP: {Hp} / {MaxHp}\n");
-		}
-		info.Append($"{DiscordEmoji.FromName(s, ":gem:", false)} MP: {Mp} / {BattleConstants.BASE_MP}\n");
-		info.Append($"{DiscordEmoji.FromName(s, ":crossed_swords:", false)} Damage: {MinDamage} - {MaxDamage}\n");
-		if (Buff != null)
-			info.Append($"{DiscordEmoji.FromName(s, ":up_arrow:", false)} Buff: {Buff.Name} `({BuffDuration})`\n");
-
-		if (Status != null)
-			info.Append($"{DiscordEmoji.FromName(s, ":down_arrow:", false)} Status: {Status.Name} `({StatusDuration})`\n");
+		info.AppendLine($"{(_barrier > 0 ? "💙" : "❤️")} HP: {Hp} / {MaxHp}");
+		info.AppendLine($"💎 MP: {Mp} / {BattleConstants.BASE_MP}");
+		info.AppendLine($"⚔️ Damage: {MinDamage} - {MaxDamage}");
+		if (DamageResistance != 0) info.AppendLine($"🛡️ DR: {JoJo.ConvertToPercent(DamageResistance)}%");
+		if (Buff != null) info.AppendLine($"⬆️ Buff: {Buff.Name} `({BuffDuration})`");
+		if (Status != null) info.AppendLine($"⬇️ Status: {Status.Name} `({StatusDuration})`");
 
 		return info.ToString();
 	}
@@ -238,10 +231,10 @@ public class BattlePlayer : Player
 		if (Stand is null) return string.Empty;
 		StringBuilder description = new();
 		
-		description.AppendLine($"### {User.Mention} (Level `{Level}`)`");
+		description.AppendLine($"### {User.Mention} (Level `{Level}`)");
 		description.AppendLine($"### {(Barrier > 0 ? "💙" : "❤️")} HP: `{Hp}` / `{MaxHp}`");
 		description.AppendLine($"### 💎 MP: `{Mp}` / `{BattleConstants.BASE_MP}`");
-		description.AppendLine($"### ⚔️ Damage: `{MinDamage}` - `{MinDamage}`");
+		description.AppendLine($"### ⚔️ Damage: `{MinDamage}` - `{_maxDamage}`");
 		if (DamageResistance != 0) description.AppendLine($"### 🛡️ Damage Resistance: `{JoJo.ConvertToPercent(DamageResistance)}%`");
 		if (Status is not null)
 		{

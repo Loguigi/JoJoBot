@@ -11,28 +11,28 @@ public class Stand(StandModel model, Passive? psv, Ability a1, Ability a2, Abili
 {
 	#region Properties
 	public int Id { get; private set; } = model.Id;
-	public string Name { get; private set; } = model.Name;
+	public string Name { get; } = model.Name;
 	public string CoolName => $"「{Name}」";
-	public int Part { get; private set; } = model.Part;
-	public int BaseHp { get; private set; } = model.BaseHp;
-	public int BaseMinDamage { get; private set; } = model.BaseMinDamage;
-	public int BaseMaxDamage { get; private set; } = model.BaseMaxDamage;
-	public int Speed { get; private set; } = model.Speed;
-	public Passive? Passive { get; private set; } = psv;
+	public int Part { get; } = model.Part;
+	public int BaseHp { get; } = model.BaseHp;
+	public int BaseMinDamage { get; } = model.BaseMinDamage;
+	public int BaseMaxDamage { get; } = model.BaseMaxDamage;
+	public int Speed { get; } = model.Speed;
+	public Passive? Passive { get; } = psv;
 	public Ability Ability0 { get; private set; } = new StandardAttack();
-	public Ability Ability1 { get; private set; } = a1;
-	public Ability Ability2 { get; private set; } = a2;
-	public Ability Ability3 { get; private set; } = a3;
-	public Ability Ability4 { get; private set; } = a4;
-	public int Stars { get; private set; } = model.Stars;
-	public string ImageUrl { get; private set; } = model.ImageUrl;
+	public Ability Ability1 { get; } = a1;
+	public Ability Ability2 { get; } = a2;
+	public Ability Ability3 { get; } = a3;
+	public Ability Ability4 { get; } = a4;
+	public int Stars { get; } = model.Stars;
+	public string ImageUrl { get; } = model.ImageUrl;
 	#endregion
 	
 	#region Public Methods
 
 	public DiscordMessageBuilder FormatDescription(BattlePlayer? player = null)
 	{
-		StringBuilder description = new();
+		StringBuilder description = new("## Stats\n");
 		if (player is not null)
 		{
 			description.Append(player.FormatBattleDetails());
@@ -51,12 +51,16 @@ public class Stand(StandModel model, Passive? psv, Ability a1, Ability a2, Abili
 			description.Append(Passive.GetLongDescription(this, player));
 		}
 
+		description.AppendLine("\n## Abilities");
 		description.AppendLine($"### 1️⃣ {Ability1.CoolName}");
 		description.Append(Ability1.FormatLongDescription(this, player));
+		description.AppendLine();
 		description.AppendLine($"### 2️⃣ {Ability2.CoolName}");
 		description.Append(Ability2.FormatLongDescription(this, player));
+		description.AppendLine();
 		description.AppendLine($"### 3️⃣ {Ability3.CoolName}");
 		description.Append(Ability3.FormatLongDescription(this, player));
+		description.AppendLine();
 		description.AppendLine($"### 4️⃣ {Ability4.CoolName}");
 		description.Append(Ability4.FormatLongDescription(this, player));
 		string stars = string.Empty;

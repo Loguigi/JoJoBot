@@ -11,9 +11,7 @@ namespace JoJoData.Data;
 
 public class DataAccess 
 {
-	protected SqlConnection Connection => new(_connectionString);
-
-	public virtual ResultArgs GetData<T>(string sp, DynamicParameters param, out List<T> data) 
+	public ResultArgs GetData<T>(string sp, DynamicParameters param, out List<T> data) 
 	{
 		try 
 		{
@@ -22,7 +20,7 @@ public class DataAccess
 				throw new Exception("Connection string is null or empty");
 			}
 
-			using var cnn = Connection;
+			using SqlConnection cnn = new(_connectionString);
 			param.Add("@Status", null, DbType.Int32, ParameterDirection.Output);
 			param.Add("@Message", null, DbType.String, ParameterDirection.Output, 500);
 			data = cnn.Query<T>(sp, param, commandType: CommandType.StoredProcedure).ToList();
@@ -35,31 +33,8 @@ public class DataAccess
 			throw;
 		}
 	}
-	
-	public virtual ResultArgs GetMultiple(string sp, DynamicParameters param, out GridReader data) 
-	{
-		try
-		{
-			if (string.IsNullOrEmpty(_connectionString))
-			{
-				throw new Exception("Connection string is null or empty");
-			}
 
-			using SqlConnection cnn = Connection;
-			param.Add("@Status", null, DbType.Int32, ParameterDirection.Output);
-			param.Add("@Message", null, DbType.String, ParameterDirection.Output, 500);
-			data = cnn.QueryMultiple(sp, param, commandType: CommandType.StoredProcedure);
-
-			return new ResultArgs(0, "Success");
-		}
-		catch (Exception ex)
-		{
-			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
-			throw;
-		}
-	}
-
-	public virtual ResultArgs SaveData(string sp, DynamicParameters param)
+	public ResultArgs SaveData(string sp, DynamicParameters param)
 	{
 		try 
 		{
@@ -68,7 +43,7 @@ public class DataAccess
 				throw new Exception("Connection string is null or empty");
 			}
 			
-			using SqlConnection cnn = Connection;
+			using SqlConnection cnn = new(_connectionString);
 			param.Add("@Status", null, DbType.Int32, ParameterDirection.Output);
 			param.Add("@Message", null, DbType.String, ParameterDirection.Output, 500);
 			cnn.Execute(sp, param, commandType: CommandType.StoredProcedure);

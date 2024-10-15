@@ -23,7 +23,7 @@ public class OraOraOraOra : AttackAbility
 		Name = "ORA ORA ORA ORA";
 		Description = "";
 		MpCost = 45;
-		Attack = new MultiHitAttack(damage: 0.75, minHits: 2, maxHits: 5);
+		Attack = new MultiHitAttack(damage: 0.8, minHits: 2, maxHits: 5);
 	}
 }
 
@@ -35,7 +35,7 @@ public class StarFinger : AttackAbility
 		Name = "STAR FINGER!!!";
 		Description = "";
 		MpCost = 45;
-		Attack = new CritChanceIncreaseAttack(damage: 1.2, increase: 0.4);
+		Attack = new CritChanceIncreaseAttack(damage: 1.6, increase: 0.4);
 	}
 }
 
@@ -755,6 +755,7 @@ public class FogStringPuppetry : StatusAttackAbility
 		MpCost = 30;
 		Attack = new BasicAttack(damage: 1.8);
 		Status = new Confusion(duration: 2, applyChance: 0.9);
+		Cooldown = 3;
 	}
 }
 #endregion

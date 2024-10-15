@@ -34,25 +34,25 @@ public abstract class Arrow(int count) : Item(count)
 			.WithColor(DiscordColor.Gold)
 			.WithFooter($"Remaining stand arrows: {Count}");
 
-		var acceptBtn = new DiscordButtonComponent(DiscordButtonStyle.Success, $"{IDHelper.Inventory.ArrowStandAccept}\\{player.User.Id}\\{stand.Id}", "✅");
-		var declineBtn = new DiscordButtonComponent(DiscordButtonStyle.Danger, $"{IDHelper.Inventory.ArrowStandDecline}\\{player.User.Id}\\{stand.Id}", "❌");
+		var acceptBtn = new DiscordButtonComponent(DiscordButtonStyle.Success, $@"{IDHelper.Inventory.ArrowStandAccept}\{player.User.Id}\{stand.Id}", "✅");
+		var declineBtn = new DiscordButtonComponent(DiscordButtonStyle.Danger, $@"{IDHelper.Inventory.ArrowStandDecline}\{player.User.Id}\{stand.Id}", "❌");
 
 		var msg = new DiscordMessageBuilder()
 			.WithContent(player.User.Mention)
 			.AddMention(new UserMention(player.User))
 			.AddEmbed(embed)
-			.AddComponents(new DiscordComponent[] {acceptBtn, declineBtn});
+			.AddComponents(acceptBtn, declineBtn);
 
 		return msg;
 	}
 
 	protected int RollRarity() => JoJo.RNG.NextDouble() switch
 	{
-		double i when i >= 0 && i < Rarities[1] => 1,
-		double i when i >= Rarities[1] && i < Rarities[2] => 2,
-		double i when i >= Rarities[2] && i < Rarities[3] => 3,
-		double i when i >= Rarities[3] && i < Rarities[4] => 4,
-		double i when i >= Rarities[4] && i <= 1 => 5,
+		var i and >= 0 when i < Rarities[1] => 1,
+		var i when i >= Rarities[1] && i < Rarities[2] => 2,
+		var i when i >= Rarities[2] && i < Rarities[3] => 3,
+		var i when i >= Rarities[3] && i < Rarities[4] => 4,
+		var i when i >= Rarities[4] && i <= 1 => 5,
 		_ => throw new Exception("you can't do math loser")
 	};
 	

@@ -12,7 +12,7 @@ public static class JoJo
 	public static void Create(DiscordClient client) 
 	{
 		Client = client;
-		RNG = new();
+		RNG = new Random();
 		RNG.Next();
 	}
 

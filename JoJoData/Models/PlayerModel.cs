@@ -13,12 +13,12 @@ public class PlayerModel
 	public int BattlesLost { get; set; }
 
 	public PlayerModel() { }
-	
+
 	public PlayerModel(Player player) 
 	{
 		GuildId = (long)player.Guild.Id;
 		PlayerId = (long)player.User.Id;
-		StandId = player.Stand?.Id ?? 0;
+		StandId = player.Stand?.Id ?? null;
 		Level = player.Level;
 		Experience = player.Experience;
 		BattlesWon = player.BattlesWon;

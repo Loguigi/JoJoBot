@@ -22,6 +22,7 @@ public class Bot
 				.HandleComponentInteractionCreated(BattleHandler.HandleAbilitySelect)
 				.HandleComponentInteractionCreated(ItemHandler.HandleArrowStandAccept)
 				.HandleComponentInteractionCreated(ItemHandler.HandleArrowStandDecline)
+				.HandleComponentInteractionCreated(BattleHandler.HandleAbilityView)
 		);
 		DiscordClient client = builder.Build();
 

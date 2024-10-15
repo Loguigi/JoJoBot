@@ -35,15 +35,16 @@ public class Turn
 		
 		CurrentPlayer.Status?.RegisterEvents(this);
 		CurrentPlayer.Buff?.RegisterEvents(this);
-		CurrentPlayer.Stand!.Passive.RegisterEvents(this);
+		CurrentPlayer.Stand!.Passive?.RegisterEvents(this);
 		Opponent.Status?.RegisterEvents(this);
 		Opponent.Buff?.RegisterEvents(this);
-		Opponent.Stand!.Passive.RegisterEvents(this);
+		Opponent.Stand!.Passive?.RegisterEvents(this);
 	}
 
 	public void OnAbilityCast(AbilityCastEventArgs e)
 	{
 		Ability = e.Ability;
+		BattleLog = [];
 		// Check MP
 		if (CurrentPlayer.Mp < e.Ability.MpCost)
 		{
@@ -52,6 +53,7 @@ public class Turn
 				.WithDescription($"❌ Not enough MP!")
 				.WithColor(DiscordColor.Red));
 			e.IsValidCast = false;
+			return;
 		}
 		
 		// Check cooldowns
@@ -62,6 +64,7 @@ public class Turn
 				.WithDescription($"❌ On cooldown for `{CurrentPlayer.Cooldowns[e.Ability]}` turns!")
 				.WithColor(DiscordColor.Red));
 			e.IsValidCast = false;
+			return;
 		}
 		
 		// Check ability requirements
@@ -74,7 +77,8 @@ public class Turn
 			else 
 			{
 				e.OutputMessage = requirementMsg;
-				e.IsValidCast = true;
+				e.IsValidCast = false;
+				return;
 			}
 		}
 		

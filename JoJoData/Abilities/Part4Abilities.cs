@@ -21,7 +21,7 @@ public class DoraOraOra : AttackAbility
 	{
 		Name = "DORAORAORAORA!!";
 		MpCost = 40;
-		Attack = new MultiHitAttack(damage: 0.5, minHits: 2, maxHits: 8);
+		Attack = new MultiHitAttack(damage: 0.55, minHits: 2, maxHits: 8);
 	}
 }
 
@@ -55,7 +55,7 @@ public class DefenseErasure : AttackAbility
 	{
 		Name = "Defense Erasure";
 		MpCost = 30;
-		Attack = new BypassProtectAttack(damage: 1.6);
+		Attack = new BypassProtectAttack(damage: 2.2);
 	}
 }
 
@@ -64,7 +64,7 @@ public class SpaceErasure : BuffAttackAbility
 	public SpaceErasure() 
 	{
 		Name = "Space Erasure";
-		MpCost = 50;
+		MpCost = 45;
 		Attack = new BypassProtectAttack(damage: 1);
 		Buff = new Haste(duration: 2);
 		Cooldown = 9;
@@ -76,9 +76,9 @@ public class AttackErasure : BuffAttackAbility
 	public AttackErasure() 
 	{
 		Name = "Attack Erasure";
-		MpCost = 60;
-		Attack = new BypassProtectAttack(damage: 1);
-		Buff = new Await(2, 3);
+		MpCost = 50;
+		Attack = new BypassProtectAttack(damage: 1.7);
+		Buff = new Await(2, 2.5);
 		Cooldown = 3;
 	}
 }
@@ -88,8 +88,9 @@ public class UltimateErasure : AttackAbility
 	public UltimateErasure() 
 	{
 		Name = "Ultimate Erasure";
-		MpCost = 60;
-		Attack = new ErasureAttack(damage: 2.5, critDmgIncrease: 1);
+		MpCost = 50;
+		Attack = new ErasureAttack(damage: 3.1, critDmgIncrease: 1);
+		Cooldown = 6;
 	}
 }
 #endregion
@@ -143,7 +144,7 @@ public class IHateYou : AttackAbility
 	{
 		Name = "I HATE YOU!";
 		MpCost = 25;
-		Attack = new BasicAttack(damage: 2);
+		Attack = new BasicAttack(damage: 2.2);
 	}
 }
 
@@ -153,7 +154,7 @@ public class BelieveInMe : StatChangeAbility
 	{
 		Name = "Believe in me!";
 		MpCost = 45;
-		StatChange = new Strength(increase: 0.15);
+		StatChange = new Strength(increase: 0.2);
 	}
 }
 
@@ -175,7 +176,7 @@ public class SoundRush : StatusAttackAbility
 		Name = "🎶 SOUND RUSH 🎶";
 		MpCost = 40;
 		Attack = new MultiHitAttack(damage: 0.3, minHits: 5, maxHits: 10);
-		Status = new Silence(duration: 3, applyChance: 0.3);
+		Status = new Silence(duration: 3, applyChance: 0.6);
 	}
 }
 #endregion
@@ -187,7 +188,7 @@ public class Whoosh : AttackAbility
 	{
 		Name = "Whoosh";
 		MpCost = 20;
-		Attack = new MultiHitAttack(damage: 0.6, minHits: 1, maxHits: 5);
+		Attack = new MultiHitAttack(damage: 0.7, minHits: 1, maxHits: 5);
 	}
 }
 
@@ -206,7 +207,7 @@ public class BoomSound : AttackAbility
 	public BoomSound()
 	{
 		Name = "BOOM";
-		MpCost = 40;
+		MpCost = 45;
 		Attack = new BypassProtectAttack(damage: 2.7);
 	}
 }
@@ -217,7 +218,7 @@ public class Boing : BuffAbility
 	{
 		Name = "Boing";
 		MpCost = 60;
-		Buff = new Thorns(4, 0.75);
+		Buff = new Thorns(3, 0.6);
 	}
 }
 #endregion
@@ -309,7 +310,7 @@ public class MemoryRemoval : StatChangeAbility
 	{
 		Name = "Memory Removal";
 		MpCost = 65;
-		StatChange = new Regress(0.4);
+		StatChange = new Regress(0.35);
 		Requirement = new StatusRequirement(typeof(Unravel));
 	}
 }
@@ -321,7 +322,7 @@ public class BombCharge : InflictStatusAbility
 	public BombCharge() 
 	{
 		Name = "Bomb Charge";
-		MpCost = 25;
+		MpCost = 20;
 		Status = new Charged(3);
 	}
 }
@@ -331,8 +332,8 @@ public class PrimaryBomb : StatusAttackAbility
 	public PrimaryBomb() 
 	{
 		Name = "Primary Bomb";
-		MpCost = 40;
-		Attack = new DetonateAttack(3);
+		MpCost = 35;
+		Attack = new DetonateAttack(4);
 		Status = new Burn(3, 0.5);
 		Requirement = new StatusRequirement(typeof(Charged));
 	}
@@ -344,7 +345,7 @@ public class SheerHeartAttack : AttackAbility
 	{
 		Name = "Sheer Heart Attack";
 		MpCost = 40;
-		Attack = new WeaknessAttack(0.2, 5, typeof(Burn));
+		Attack = new WeaknessAttack(0.7, 6, typeof(Burn));
 	}
 }
 

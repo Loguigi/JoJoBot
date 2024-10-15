@@ -69,6 +69,17 @@ public abstract class Ability
 		{
 			desc.Append(sca.StatChange.GetLongDescription(stand, player));
 		}
+
+		if (Cooldown > 0)
+		{
+			desc.AppendLine($"* ⏱️ Cooldown: `{Cooldown}` turns");
+		}
+
+		if (Requirement is not null)
+		{
+			desc.Append(Requirement.GetLongDescription());
+			desc.AppendLine();
+		}
 		
 		return desc.ToString();
 	}

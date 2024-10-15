@@ -23,7 +23,11 @@ public abstract class Buff(int duration) : BattleEffect(duration, applyChance: 1
 			.WithColor(DiscordColor.SpringGreen)));
 	}
 
-	protected override void PostCurrentTurn(object? s, PostCurrentTurnEventArgs e) => ReduceDuration(e.Turn, e.Player);
+	protected override void PostCurrentTurn(object? s, PostCurrentTurnEventArgs e)
+	{
+		if (!CheckEffectOwner(e.Player)) return;
+		ReduceDuration(e.Turn, e.Player);
+	}
 
 	protected override bool CheckEffectOwner(BattlePlayer player) => player.Buff == this;
 
@@ -45,7 +49,7 @@ public class Protect(int duration, double dr) : Buff(duration)
 {
 	public override string Name => "🛡️ Protect";
 	
-	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"`+{JoJo.ConvertToPercent(dr)}%` damage resistance");
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"`+{JoJo.ConvertToPercent(dr)}%` damage resistance\n");
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
@@ -69,12 +73,22 @@ public class Haste(int duration) : Buff(duration)
 {
 	public override string Name => $"💨 Haste";
 	
-	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"gain {Duration} extra {(Duration == 1 ? "turn" : "turns")}");
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"gain {Duration} extra {(Duration == 1 ? "turn" : "turns")}\n");
 
-	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
+	public override void Apply(Turn turn, BattlePlayer caster, BattlePlayer target)
+	{
+		base.Apply(turn, caster, target);
+		turn.RoundRepeat = true;
+	}
+
+	protected override void PostCurrentTurn(object? s, PostCurrentTurnEventArgs e)
 	{
 		if (!CheckEffectOwner(e.Player)) return;
-		e.Turn.RoundRepeat = true;
+		base.PostCurrentTurn(s, e);
+		if (e.Player.BuffDuration != 0)
+		{
+			e.Turn.RoundRepeat = true;
+		}
 	}
 }
 
@@ -82,7 +96,7 @@ public class Await(int duration, double damage) : Buff(duration)
 {
 	public override string Name => "🗡️ Await";
 	
-	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"dodge next attack, then counter with a `x{damage}` attack`");
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"dodge next attack, then counter with a `x{damage}` attack\n");
 
 
 	protected override void BeforeAttacked(object? s, BeforeAttackedEventArgs e)
@@ -96,7 +110,7 @@ public class Await(int duration, double damage) : Buff(duration)
 			.WithDescription($"🍃 **{e.Player.Stand!.CoolName} evades the attack!**")
 			.WithColor(DiscordColor.White)));
 		counter.Execute(e.Turn, e.Player, e.Attacker);
-		e.Player.ReduceStatusDuration(true);
+		ReduceDuration(e.Turn, e.Player, true);
 	} 
 }
 
@@ -104,7 +118,7 @@ public class Charge(int duration) : Buff(duration)
 {
 	public override string Name => "💪 Charge";
 	
-	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append("gain `2x` damage");
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append("gain `2x` damage\n");
 
 	protected override void PreCurrentTurn(object? s, PreCurrentTurnEventArgs e)
 	{
@@ -118,7 +132,7 @@ public class Thorns(int duration, double reflectPercent) : Buff(duration)
 {
 	public override string Name => "🌵 Thorns";
 	
-	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"reflect `{JoJo.ConvertToPercent(reflectPercent)}%` damage to attacker");
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).Append($"reflect `{JoJo.ConvertToPercent(reflectPercent)}%` damage to attacker\n");
 
 	protected override void AfterAttacked(object? s, AfterAttackedEventArgs e)
 	{
@@ -128,6 +142,7 @@ public class Thorns(int duration, double reflectPercent) : Buff(duration)
 		try
 		{
 			if (!CheckEffectOwner(e.Player)) return;
+			e.Attacker.ReceiveDamage(e.Turn, thornsDamage, out hpBefore);
 			e.Turn.BattleLog.Add(new DiscordMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
 				.WithAuthor(e.Attacker.User.GlobalName, "", e.Attacker.User.AvatarUrl)
 				.WithDescription($"🌵 **{e.Attacker.Stand!.CoolName} takes `{thornsDamage}` damage!**")

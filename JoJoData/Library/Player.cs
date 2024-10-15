@@ -54,7 +54,7 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 			result = GetData<InventoryModel>(StoredProcedures.GET_PLAYER_INVENTORY, param, out List<InventoryModel> items);
 			foreach (InventoryModel i in items) 
 			{
-				Type? itemType = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.Name == i.ItemId).FirstOrDefault();
+				Type? itemType = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.Name == i.ItemId);
 				if (itemType is not null && Activator.CreateInstance(itemType, i.Count) is Item item) 
 				{
 					Inventory.Add(i.ItemId, item);
@@ -152,9 +152,9 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 		}
 	}
 
-	public int GetMaxHp(int level) => Stand!.BaseHp + ((int)(Stand.BaseHp * 0.35) * level - 1);
-	public int GetMinDmg(int level) => Stand!.BaseMinDamage + ((int)(Stand.BaseMinDamage * 0.3) * (level - 1));
-	public int GetMaxDmg(int level) => Stand!.BaseMaxDamage + ((int)(Stand.BaseMaxDamage * 0.3) * (level - 1));
+	public int GetMaxHp(int level) => Stand!.BaseHp + (int)(Stand.BaseHp * 0.2) * (level - 1);
+	public int GetMinDmg(int level) => Stand!.BaseMinDamage + (int)(Stand.BaseMinDamage * 0.15) * (level - 1);
+	public int GetMaxDmg(int level) => Stand!.BaseMaxDamage + (int)(Stand.BaseMaxDamage * 0.18) * (level - 1);
 	
 	public DiscordMessageBuilder LevelUpMessage() 
 	{
@@ -162,9 +162,9 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 			.WithTitle(Stand!.CoolName)
 			.WithThumbnail(Stand!.ImageUrl)
 			.WithDescription($"### ⬆️ {User.Mention} levelled up!")
-			.AddField("✨ Level", $"{LevelBefore} ➡️ {Level}", true)
-			.AddField("❤️ HP", $"{GetMaxHp(LevelBefore)} ➡️ {GetMaxHp(Level)}", true)
-			.AddField("⚔️ Damage", $"{GetMinDmg(LevelBefore)}-{GetMaxDmg(LevelBefore)} ➡️ {GetMinDmg(Level)}-{GetMaxDmg(Level)}", true)
+			.AddField("✨ Level ✨", $"{LevelBefore} ➡️ {Level}", true)
+			.AddField("❤️ HP ❤️", $"{GetMaxHp(LevelBefore)} ➡️ {GetMaxHp(Level)}", true)
+			.AddField("⚔️ Damage ⚔️", $"{GetMinDmg(LevelBefore)}-{GetMaxDmg(LevelBefore)} ➡️ {GetMinDmg(Level)}-{GetMaxDmg(Level)}", true)
 			.WithColor(DiscordColor.Aquamarine);
 
 		return new DiscordMessageBuilder()

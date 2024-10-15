@@ -10,7 +10,7 @@ public abstract class StatChange  : BattleAction
 	public abstract override string Name { get; }
 	public override string ShortDescription => Name;
 
-	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => new(ShortDescription);
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => new($"* {ShortDescription}\n");
 	
 	public abstract override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target);
 }

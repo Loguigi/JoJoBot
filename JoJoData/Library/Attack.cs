@@ -1,8 +1,6 @@
 using System.Text;
-using DSharpPlus;
 using DSharpPlus.Entities;
 using JoJoData.Controllers;
-using JoJoData.Helpers;
 
 namespace JoJoData.Library;
 
@@ -94,16 +92,16 @@ public class BypassProtectAttack(double damage) : Attack(damage)
 
 public class MultiHitAttack(double damage, int minHits, int maxHits) : Attack(damage)
 {
-	public override string ShortDescription => base.ShortDescription + $" {MinHits}-{MaxHits} hits";
-	public readonly int MinHits = minHits;
-	public readonly int MaxHits = maxHits;
+	public override string ShortDescription => base.ShortDescription + $" {minHits}-{maxHits} hits";
 	
+	public override StringBuilder GetLongDescription(Stand stand, BattlePlayer? player = null) => base.GetLongDescription(stand, player).AppendLine($"* 🌪️ `{minHits}` -` {maxHits}` hits");
+
 	public override void Execute(Turn turn, BattlePlayer caster, BattlePlayer target)
 	{
 		int dmg = 0;
 		int hpBefore = 0;
 		int critCount = 0;
-		int hits = JoJo.RNG.Next(MinHits, MaxHits + 1);
+		int hits = JoJo.RNG.Next(minHits, maxHits + 1);
 		
 		try
 		{
@@ -306,6 +304,7 @@ public class RPSAttack(double damage, int mpStealAmount = 30, double hpLossPerce
 		else
 		{
 			BasicAttack loser = new(1);
+			loser.Execute(turn, caster, target);
 		}
 	}
 

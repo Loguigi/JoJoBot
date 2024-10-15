@@ -15,22 +15,21 @@ namespace JoJoData.Controllers;
 public class BattleController(DiscordClient client, DiscordGuild guild, DiscordChannel channel, DiscordUser player1, DiscordUser player2) : DataAccess
 {
 	#region Properties
-	public int Id { get; private set; } = 0;
-	public DateTime BattleStart { get; private set; } = DateTime.Now;
+	public int Id { get; private set; }
+	public DateTime BattleStart { get; } = DateTime.Now;
 	public DateTime? BattleEnd { get; private set; }
-	public int CurrentTurn { get; private set; } = 0;
-	public BattlePlayer Player1 { get; private set; } = new(client, guild, player1);
-	public BattlePlayer Player2 { get; private set; } = new(client, guild, player2);
-	public BattlePlayer CurrentPlayer => Turns[CurrentTurn].CurrentPlayer;
-	public BattlePlayer Opponent => Turns[CurrentTurn].Opponent;
-	public Player? Winner { get; private set; }
-	public Dictionary<int, Turn> Turns { get; private set; } = [];
-	public readonly DiscordClient Client = client;
+	public int CurrentTurn { get; private set; }
+	public BattlePlayer Player1 { get; } = new(client, guild, player1);
+	public BattlePlayer Player2 { get; } = new(client, guild, player2);
+	public BattlePlayer CurrentPlayer => _turns[CurrentTurn].CurrentPlayer;
+	public BattlePlayer Opponent => _turns[CurrentTurn].Opponent;
 	public readonly DiscordGuild Guild = guild;
-	public readonly DiscordChannel Channel = channel;
+
 	#endregion
 
 	#region Public Battle Control Methods
+	public BattlePlayer GetPlayer(ulong userid) => CurrentPlayer.User.Id == userid ? CurrentPlayer : Opponent;
+	
 	public async void StartBattle()
 	{
 		try
@@ -38,34 +37,31 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			Id = SaveBattleInfo();
 			CurrentTurn++;
 
-			Turns.Add(CurrentTurn,
+			_turns.Add(CurrentTurn,
 				Player1.Stand!.Speed > Player2.Stand!.Speed ? new Turn(Player1, Player2) : new Turn(Player2, Player1));
 
-			Turns[CurrentTurn].PreCheck();
+			_turns[CurrentTurn].PreCheck();
+			await SendBattleMessages(_turns[CurrentTurn].BattleLog);
 			await CreateBattleInterface();
-			StartNextRound();
 		}
 		catch (OnDeathException ex)
 		{
-			DeathFlagEventArgs deathFlag = new(ex.DeadPlayer, Turns[CurrentTurn]);
-			Turns[CurrentTurn].OnDeathFlag(deathFlag);
+			await SendBattleMessages(_turns[CurrentTurn].BattleLog);
+			DeathFlagEventArgs deathFlag = new(ex.DeadPlayer, _turns[CurrentTurn]);
+			_turns[CurrentTurn].OnDeathFlag(deathFlag);
 			if (deathFlag.IsDead)
 			{
 				EndBattle();
 			}
 			else
 			{
-				StartNextRound();
+				await CreateBattleInterface();
 			}
 		}
 		catch (Exception ex)
 		{
 			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
-		}
-		finally
-		{
-			await SendBattleMessages(Turns[CurrentTurn].BattleLog);
 		}
 	}
 
@@ -73,8 +69,9 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 	{
 		try
 		{
-			AbilityCastEventArgs abilityCast = new(CurrentPlayer, Turns[CurrentTurn], ability);
-			Turns[CurrentTurn].OnAbilityCast(abilityCast);
+			AbilityCastEventArgs abilityCast = new(CurrentPlayer, _turns[CurrentTurn], ability);
+			_turns[CurrentTurn].OnAbilityCast(abilityCast);
+			await SendBattleMessages(_turns[CurrentTurn].BattleLog);
 			if (abilityCast is { IsValidCast: false, OutputMessage: not null })
 			{
 				await e.Interaction.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(abilityCast.OutputMessage).AsEphemeral());
@@ -82,21 +79,19 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			}
 
 			await e.Message.DeleteAsync();
-			Turns[CurrentTurn].Execute(ability);
-			await SendBattleMessages(Turns[CurrentTurn].BattleLog);
+			_turns[CurrentTurn].Execute(ability);
+			await SendBattleMessages(_turns[CurrentTurn].BattleLog);
+			StartNextRound();
 		}
 		catch (OnDeathException ex)
 		{
+			await SendBattleMessages(_turns[CurrentTurn].BattleLog);
 			PerformAutopsy(ex);
 		}
 		catch (Exception ex)
 		{
 			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
-		}
-		finally
-		{
-			await SendBattleMessages(Turns[CurrentTurn].BattleLog);
 		}
 	}
 	#endregion
@@ -109,7 +104,7 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			BattlePlayer nextPlayer;
 			BattlePlayer opponent;
 
-			if (Turns[CurrentTurn].RoundRepeat)
+			if (_turns[CurrentTurn].RoundRepeat)
 			{
 				nextPlayer = new BattlePlayer(CurrentPlayer);
 				opponent = new BattlePlayer(Opponent);
@@ -121,16 +116,19 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			}
 
 			CurrentTurn++;
-			Turns.Add(CurrentTurn, new Turn(nextPlayer, opponent));
-			Turns[CurrentTurn].PreCheck();
-			await SendBattleMessages(Turns[CurrentTurn].BattleLog);
+			_turns.Add(CurrentTurn, new Turn(nextPlayer, opponent));
+			_turns[CurrentTurn].PreCheck();
+			await SendBattleMessages(_turns[CurrentTurn].BattleLog);
+			await CreateBattleInterface();
 		}
 		catch (TurnSkipException)
 		{
+			await SendBattleMessages(_turns[CurrentTurn].BattleLog);	
 			StartNextRound();
 		}
 		catch (OnDeathException ex)
 		{
+			await SendBattleMessages(_turns[CurrentTurn].BattleLog);	
 			PerformAutopsy(ex);
 		}
 		catch (Exception ex)
@@ -138,23 +136,19 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			ex.Source = MethodBase.GetCurrentMethod()!.Name + "(): " + ex.Source;
 			throw;
 		}
-		finally
-		{
-			await SendBattleMessages(Turns[CurrentTurn].BattleLog);	
-		}
 	}
 
 	private async void EndBattle()
 	{
 		JoJo.Battles.Remove(Id);
 		BattleEnd = DateTime.Now;
-		Winner = GetWinner();
-		if (Winner == Player1) 
+		_winner = GetWinner();
+		if (_winner == Player1) 
 		{
 			Player1.GrantExp(opponent: Player2, winner: Player1);
 			Player2.GrantExp(opponent: Player1, winner: Player1);
 		}
-		else if (Winner == Player2) 
+		else if (_winner == Player2) 
 		{
 			Player1.GrantExp(opponent: Player2, winner: Player2);
 			Player2.GrantExp(opponent: Player1, winner: Player2);
@@ -162,11 +156,11 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 		
 		SaveBattleInfo();
 		
-		await Channel.SendMessageAsync(new DiscordEmbedBuilder()
-			.WithAuthor(Winner.User.GlobalName, "", Winner.User.AvatarUrl)
-			.WithTitle($"🎉 {Winner.Stand!.CoolName} wins! 🎉")
+		await channel.SendMessageAsync(new DiscordEmbedBuilder()
+			.WithAuthor(_winner.User.GlobalName, "", _winner.User.AvatarUrl)
+			.WithTitle($"🎉 {_winner.Stand!.CoolName} wins! 🎉")
 			.WithDescription($"{Player1.User.Mention}: `+{Player1.ExpGain} EXP`\n{Player2.User.Mention}: `+{Player2.ExpGain} EXP`")
-			.WithThumbnail(Winner.Stand!.ImageUrl)
+			.WithThumbnail(_winner.Stand!.ImageUrl)
 			.AddField("Rounds", CurrentTurn.ToString(), true)
 			.AddField("Start", BattleStart.ToString("M/d h:mm tt"), true)
 			.AddField("End", BattleEnd?.ToString("M/d h:mm tt") ?? "never", true)
@@ -174,19 +168,19 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			
 		if (Player1.LevelledUp) 
 		{
-			await Channel.SendMessageAsync(Player1.LevelUpMessage());
+			await channel.SendMessageAsync(Player1.LevelUpMessage());
 		}
 		
 		if (Player2.LevelledUp) 
 		{
-			await Channel.SendMessageAsync(Player2.LevelUpMessage());
+			await channel.SendMessageAsync(Player2.LevelUpMessage());
 		}
 	}
 
 	private void PerformAutopsy(OnDeathException ex)
 	{
-		DeathFlagEventArgs deathFlag = new(ex.DeadPlayer, Turns[CurrentTurn]);
-		Turns[CurrentTurn].OnDeathFlag(deathFlag);
+		DeathFlagEventArgs deathFlag = new(ex.DeadPlayer, _turns[CurrentTurn]);
+		_turns[CurrentTurn].OnDeathFlag(deathFlag);
 		if (deathFlag.IsDead)
 		{
 			EndBattle();
@@ -208,25 +202,28 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			.WithTitle($"{CurrentPlayer.Stand!.CoolName}")
 			.WithThumbnail(CurrentPlayer.Stand.ImageUrl)
 			.WithColor(DiscordColor.Aquamarine)
-			.WithFooter($"Round {CurrentTurn}");
+			.WithFooter($"Turn {CurrentTurn}");
 
-		embed.AddField($"{CurrentPlayer.User.GlobalName} (Level: {CurrentPlayer.Level})", CurrentPlayer.FormatBattleInfo(Client), true);
-		embed.AddField($"{Opponent.User.GlobalName} (Level: {Opponent.Level})", Opponent.FormatBattleInfo(Client), true);
+		embed.AddField($"{CurrentPlayer.User.GlobalName} (Level: {CurrentPlayer.Level})", CurrentPlayer.FormatBattleInfo(), true);
+		embed.AddField($"{Opponent.User.GlobalName} (Level: {Opponent.Level})", Opponent.FormatBattleInfo(), true);
+		DiscordButtonComponent details = new(DiscordButtonStyle.Success, $@"{IDHelper.Battle.AbilityView}\{Id}\{CurrentPlayer.User.Id}", $"{CurrentPlayer.Stand.CoolName} details");
+		DiscordButtonComponent enemyDetails = new(DiscordButtonStyle.Danger, $@"{IDHelper.Battle.AbilityView}\{Id}\{Opponent.User.Id}", $"{Opponent.Stand!.CoolName} details");
 
 		var msg = new DiscordMessageBuilder()
 			.WithContent(CurrentPlayer.User.Mention)
 			.AddMention(new UserMention(CurrentPlayer.User))
 			.AddEmbed(embed)
+			.AddComponents(details, enemyDetails)
 			.AddComponents(CreateAbilityDropdown(CurrentPlayer));
-
-		await Channel!.SendMessageAsync(msg);
+		
+		await channel.SendMessageAsync(msg);
 	}
 
 	private async Task SendBattleMessages(List<DiscordMessageBuilder?> msgs) 
 	{
 		foreach (var msg in msgs.Where(x => x is not null)) 
 		{
-			await Channel.SendMessageAsync(msg!);
+			await channel.SendMessageAsync(msg!);
 			await Task.Delay(750);
 		}
 	}
@@ -235,11 +232,11 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 	{
 		List<DiscordSelectComponentOption> options =
         [
-            player.Stand!.Ability0.CreateSelection(Client, 0, player),
-			player.Stand.Ability1.CreateSelection(Client, 1, player),
-			player.Stand.Ability2.CreateSelection(Client, 2, player),
-			player.Stand.Ability3.CreateSelection(Client, 3, player),
-			player.Stand.Ability4.CreateSelection(Client, 4, player)
+            player.Stand!.Ability0.CreateSelection(client, 0, player),
+			player.Stand.Ability1.CreateSelection(client, 1, player),
+			player.Stand.Ability2.CreateSelection(client, 2, player),
+			player.Stand.Ability3.CreateSelection(client, 3, player),
+			player.Stand.Ability4.CreateSelection(client, 4, player)
 		];
 
 		return new DiscordSelectComponent($@"{IDHelper.Battle.AbilitySelect}\{Id}\{CurrentPlayer.User.Id}", "Select ability...", options);
@@ -264,5 +261,10 @@ public class BattleController(DiscordClient client, DiscordGuild guild, DiscordC
 			throw;
 		}
 	}
+	#endregion
+	
+	#region Private Members
+	private readonly Dictionary<int, Turn> _turns = [];
+	private Player? _winner;
 	#endregion
 }
