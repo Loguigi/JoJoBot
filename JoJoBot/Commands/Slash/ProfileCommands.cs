@@ -2,7 +2,7 @@ using System.Reflection;
 using DSharpPlus.Commands;
 using DSharpPlus.Commands.Processors.SlashCommands;
 using DSharpPlus.Entities;
-using JoJoData.Library;
+using JoJoLibrary;
 
 namespace JoJoBot.Commands.Slash;
 

@@ -1,11 +1,10 @@
 ﻿using DSharpPlus;
-using JoJoData.Controllers;
 using JoJoBot.Handlers;
 using DSharpPlus.Commands;
 using DSharpPlus.Commands.Processors.TextCommands;
 using DSharpPlus.Commands.Processors.TextCommands.Parsing;
 using DSharpPlus.Commands.Processors.SlashCommands;
-using JoJoData;
+using JoJoLibrary;
 
 namespace JoJoBot;
 

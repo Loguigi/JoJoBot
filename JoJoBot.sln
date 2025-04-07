@@ -5,7 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoJoBot", "JoJoBot\JoJoBot.csproj", "{8315E5A2-9B2D-4C01-B0A7-495EE289E526}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoJoData", "JoJoData\JoJoData.csproj", "{DC87C6E8-9F81-49EC-994E-2789D2261F27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoJoLibrary", "JoJoLibrary\JoJoLibrary.csproj", "{DC87C6E8-9F81-49EC-994E-2789D2261F27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoJoData", "JoJoData\JoJoData.csproj", "{BA40CDD3-2C54-44E6-B818-5D808D6141D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +26,9 @@ Global
 		{DC87C6E8-9F81-49EC-994E-2789D2261F27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC87C6E8-9F81-49EC-994E-2789D2261F27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC87C6E8-9F81-49EC-994E-2789D2261F27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA40CDD3-2C54-44E6-B818-5D808D6141D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA40CDD3-2C54-44E6-B818-5D808D6141D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA40CDD3-2C54-44E6-B818-5D808D6141D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA40CDD3-2C54-44E6-B818-5D808D6141D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
