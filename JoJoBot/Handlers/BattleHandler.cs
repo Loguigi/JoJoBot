@@ -1,11 +1,8 @@
-using System.ComponentModel;
-using System.Reflection.Metadata;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
-using JoJoData.Controllers;
-using JoJoData.Helpers;
-using JoJoData.Library;
+using JoJoLibrary;
+using JoJoLibrary.Helpers;
 
 namespace JoJoBot.Handlers;
 
@@ -47,7 +44,7 @@ public static class BattleHandler
 		DiscordUser player2 = e.User;
 
 		await e.Message.DeleteAsync();
-		BattleController battle = new(s, e.Guild, e.Channel, player1, player2);
+		Battle battle = new(s, e.Guild, e.Channel, player1, player2);
 		battle.StartBattle();
 		JoJo.Battles.Add(battle.Id, battle);
 	}
@@ -66,7 +63,7 @@ public static class BattleHandler
 			return;
 		}
 
-		BattleController battle = JoJo.Battles[int.Parse(IDHelper.GetID(e.Id, BATTLE_ID_INDEX))];
+		Battle battle = JoJo.Battles[int.Parse(IDHelper.GetID(e.Id, BATTLE_ID_INDEX))];
 		Ability ability = int.Parse(e.Values.First()) switch
 		{
 			0 => battle.CurrentPlayer.Stand!.Ability0,
@@ -88,7 +85,7 @@ public static class BattleHandler
 			return;
 		}
 		
-		BattleController battle = JoJo.Battles[int.Parse(IDHelper.GetID(e.Id, BATTLE_ID_INDEX))];
+		Battle battle = JoJo.Battles[int.Parse(IDHelper.GetID(e.Id, BATTLE_ID_INDEX))];
 		BattlePlayer player = battle.GetPlayer(ulong.Parse(IDHelper.GetID(e.Id, CURRENT_PLAYER_INDEX)));
 		await e.Interaction.CreateResponseAsync(DiscordInteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder(player.Stand!.FormatDescription(player)).AsEphemeral());
 	}

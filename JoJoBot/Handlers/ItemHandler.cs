@@ -2,9 +2,8 @@ using System.Reflection;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
-using JoJoData.Controllers;
-using JoJoData.Helpers;
-using JoJoData.Library;
+using JoJoLibrary;
+using JoJoLibrary.Helpers;
 
 namespace JoJoBot.Handlers;
 

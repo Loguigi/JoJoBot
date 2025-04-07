@@ -5,8 +5,8 @@ using DSharpPlus.Commands.ContextChecks;
 using DSharpPlus.Commands.Processors.SlashCommands;
 using DSharpPlus.Entities;
 using JoJoBot.Handlers;
-using JoJoData.Helpers;
-using JoJoData.Library;
+using JoJoLibrary;
+using JoJoLibrary.Helpers;
 
 namespace JoJoBot.Commands.Slash;
 
