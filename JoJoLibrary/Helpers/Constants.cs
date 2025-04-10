@@ -1,4 +1,4 @@
-namespace JoJoLibrary.Data;
+namespace JoJoLibrary.Helpers;
 
 public static class BattleConstants 
 {

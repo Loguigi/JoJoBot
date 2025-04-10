@@ -1,6 +1,6 @@
 using System.Text;
 using DSharpPlus.Entities;
-using JoJoLibrary.Data;
+using JoJoLibrary.Helpers;
 using JoJoLibrary.Models;
 
 namespace JoJoLibrary;

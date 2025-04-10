@@ -1,7 +1,7 @@
 using System.Text;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using JoJoLibrary.Data;
+using JoJoLibrary.Helpers;
 
 namespace JoJoLibrary;
 

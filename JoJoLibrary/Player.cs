@@ -1,7 +1,7 @@
 using System.Reflection;
 using DSharpPlus.Entities;
 using JoJoData;
-using JoJoLibrary.Data;
+using JoJoLibrary.Helpers;
 using JoJoLibrary.Models;
 
 namespace JoJoLibrary;
