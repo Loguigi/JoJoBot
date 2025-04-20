@@ -1,4 +1,5 @@
 using System.Reflection;
+using Dapper;
 using JoJoData;
 using JoJoLibrary.Models;
 
@@ -43,7 +44,7 @@ public static class StandLoader
 				Passives.Add(passive);
 			}
 
-			var stands = Db.GetData<StandModel>(StoredProcedures.GET_STANDS_DATA).Result;
+			var stands = Db.GetData<StandModel>(StoredProcedures.GET_STANDS_DATA, new DynamicParameters()).Result;
 
 			foreach (StandModel stand in stands) 
 			{

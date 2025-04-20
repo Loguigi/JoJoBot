@@ -11,7 +11,7 @@ namespace JoJoData;
 
 public class DataAccess 
 {
-	public async Task<List<T>> GetData<T>(string sp, params dynamic[] parameters) 
+	public async Task<List<T>> GetData<T>(string sp, DynamicParameters param) 
 	{
 		try 
 		{
@@ -21,7 +21,6 @@ public class DataAccess
 			}
 
 			await using SqlConnection cnn = new(_connectionString);
-			DynamicParameters param = new(parameters);
 			param.Add("@Status", null, DbType.Int32, ParameterDirection.Output);
 			param.Add("@Message", null, DbType.String, ParameterDirection.Output, 500);
 			var data = await cnn.QueryAsync<T>(sp, param, commandType: CommandType.StoredProcedure);
