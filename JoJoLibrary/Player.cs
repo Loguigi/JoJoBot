@@ -33,7 +33,7 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 	{
 		try
 		{
-			var data = await GetData<PlayerModel>(StoredProcedures.GET_PLAYER_DATA, new DynamicParameters(new { GuildId = (long)Guild.Id, UserId = (long)User.Id }));
+			var data = await GetData<PlayerModel>(StoredProcedures.GET_PLAYER_DATA, new DynamicParameters(new { GuildId = (long)Guild.Id, PlayerId = (long)User.Id }));
 			
 			PlayerModel player = data.First();
 			Stand = player.StandId != null ? StandLoader.Stands[player.StandId ?? 0] : null;
@@ -42,7 +42,7 @@ public class Player(DiscordGuild guild, DiscordUser user) : DataAccess
 			BattlesWon = player.BattlesWon;
 			BattlesLost = player.BattlesLost;
 
-			var items = await GetData<InventoryModel>(StoredProcedures.GET_PLAYER_INVENTORY, new DynamicParameters(new { GuildId = (long)Guild.Id, UserId = (long)User.Id }));
+			var items = await GetData<InventoryModel>(StoredProcedures.GET_PLAYER_INVENTORY, new DynamicParameters(new { GuildId = (long)Guild.Id, PlayerId = (long)User.Id }));
 			foreach (InventoryModel i in items) 
 			{
 				var itemType = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.Name == i.ItemId);
